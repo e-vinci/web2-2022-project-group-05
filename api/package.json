@@ -1,0 +1,32 @@
+{
+  "name": "basic-api-boilerplate",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "debug": "npm run dev",
+    "dev": "nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "lint": "eslint **/*.js",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "data/*"
+    ],
+    "exec": "npm run lint && node"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.19.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "nodemon": "^2.0.19",
+    "prettier-airbnb-config": "^1.0.0"
+  },
+  "author": "e-Baron"
+}

@@ -1,0 +1,79 @@
+######### NORMAL OPERATION  ###########
+
+### Read all pizzas
+GET http://localhost:3000/pizzas
+
+### Read all pizzas with File variable
+@baseUrl = http://localhost:3000
+GET {{baseUrl}}/pizzas
+
+### Read all pizzas sorted by title (ascending)
+GET {{baseUrl}}/pizzas/?order=+title
+
+### Read all pizzas sorted by title (descending)
+GET {{baseUrl}}/pizzas/?order=-title
+
+### Read pizza identified by 2
+GET {{baseUrl}}/pizzas/2
+
+### Create a pizza
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "title":"Magic Green",
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+
+### Delete pizza identified by 2
+DELETE {{baseUrl}}/pizzas/2
+
+### Update the pizza identified by 6
+PATCH {{baseUrl}}/pizzas/6
+Content-Type: application/json
+
+{
+    "title":"Magic Green 2"
+}
+
+
+
+
+######### ERROR OPERATION  ###########
+
+### Read pizza which does not exists
+GET {{baseUrl}}/pizzas/100
+
+### Create a pizza which lacks a property
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+
+### Create a pizza without info for a property
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "title":"",
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+
+### Update for a pizza which does not exist
+PUT {{baseUrl}}/pizzas/200
+Content-Type: application/json
+
+{
+    "title":"Magic Green 2"
+}
+
+### Update for a pizza which does not provide any info for a property
+PUT {{baseUrl}}/pizzas/1
+Content-Type: application/json
+
+{
+    "title":"Magic Green 2",
+    "content":""
+}
