@@ -1,5 +1,6 @@
 {
-  "name": "basic-api-boilerplate",
+  "name": "group-03-api",
+  "description": "API of 2022 Web project, group 03",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -16,7 +17,6 @@
     "exec": "npm run lint && node"
   },
   "dependencies": {
-    "babylonjs": "^5.31.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
@@ -29,5 +29,5 @@
     "nodemon": "^2.0.19",
     "prettier-airbnb-config": "^1.0.0"
   },
-  "author": "e-Baron"
+  "author": "group-03"
 }

@@ -1,13 +1,13 @@
 {
-  "name": "js-phaser-boilerplate",
+  "name": "group-03-frontend",
   "version": "1.0.0",
-  "description": "myJScourse's modern frontend boilerplate to build a phaser game",
+  "description": "Frontend of 2022 Web project, group 03",
   "scripts": {
     "dev": "webpack --mode development --config webpack.config.base.js",
     "build": "webpack --mode production --config webpack.config.prod.js",
     "start": "webpack serve --mode development --config webpack.config.base.js"
   },
-  "author": "e-baron",
+  "author": "group-03",
   "license": "CC-BY-SA-4.0",
   "devDependencies": {
     "@babel/core": "^7.14.3",
@@ -27,8 +27,8 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@babylonjs/core": "^5.31.2",
     "@popperjs/core": "^2.9.2",
-    "bootstrap": "^5.0.1",
     "clean-webpack-plugin": "^4.0.0",
     "phaser": "^3.55.2",
     "terser-webpack-plugin": "^5.3.6",
