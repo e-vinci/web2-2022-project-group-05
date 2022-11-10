@@ -2,75 +2,50 @@
 /* eslint-disable no-return-assign */
 /* eslint-disable default-case */
 
-// Todo : filter imports and remove useless ones
-import * as BABYLON from 'babylonjs';
-// import { Vector3 } from "@babylonjs/core/Maths/math";
-// import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
-// import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
-// import { Mesh } from "@babylonjs/core/Meshes/mesh";
-// import { GridMaterial } from '@babylonjs/materials/Grid';
-// import { AsciiArtPostProcess } from '@babylonjs/post-processes/asciiArt';
-// import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-// // import { FireProceduralTexture } from '@babylonjs/procedural-textures/fireProceduralTexture';
-// import { GLTF2Export } from '@babylonjs/serializers/glTF';
-import { AdvancedDynamicTexture } from '@babylonjs/gui/2D';
-// import "@babylonjs/loaders/glTF";
-// import "@babylonjs/core/Debug/debugLayer";
-// import "@babylonjs/inspector";
+// TODO : filter imports and remove useless ones
+import * as BABYLON from "@babylonjs/core"
+import * as GUI from "@babylonjs/gui"
+import "@babylonjs/loaders"
 
-const HomePage = () => {
-    const canvas = document.querySelector('canvas');
-    const engine = new BABYLON.Engine(canvas);
+// TODO:verifier forme iport et ajuster en consequence
+import "@babylonjs/inspector"
+import "@babylonjs/materials"
+import "@babylonjs/post-processes"
+import "@babylonjs/serializers"
+import "@babylonjs/procedural-textures"
+
+
+const createScene = () => {
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true);
     const scene = new BABYLON.Scene(engine);
-    createScene(canvas, engine, scene);
-};
 
-/**
- * get a random int between 0 and max not included
- * @param {*} max
- * @returns int
- */
- function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
-/**
- * get a random int between min and max both included
- * @param {*} min
- * @param {*} max
- * @returns
- */
-function randomInRange(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-
-const createScene = async function (canvas, engine, scene) {
-    // Game Variables
+     // Game Variables
     const numberCols = 3;
-    const widthCols = 2;
+    const widthCols = 4;
     const sceneWidth = numberCols*widthCols;
     const cameraOffset = 30;
     const spawnStartZ = 20;
     const spawnEndZ = -10;
     let score=0;
-    const maxJumpHeight = 4;
-    
-    
+    const maxJumpHeight = 4;  
 
     // Create GUI Elements
+    const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    
+    var UiPanel = new GUI.StackPanel();
+    UiPanel.width = "220px";
+    UiPanel.fontSize = "14px";
+    UiPanel.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    UiPanel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    advancedTexture.addControl(UiPanel);
+        
+    var scoreText = new GUI.TextBlock();
+    scoreText.text = "Score: " + score;
+    scoreText.color = "white";
+    scoreText.height = "30px";
+    UiPanel.addControl(scoreText);
 
-    const advancedTexture = new AdvancedDynamicTexture("UI", 10,10, scene);
-    console.log(advancedTexture); // object exists
-    // advancedTexture.CreateFullscreenUI("UI");
-    // console.log(advancedTexture);
-    // var UiPanel = new StackPanel();
-    // UiPanel.width = "220px";
-    // UiPanel.fontSize = "14px";
-    // UiPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-    // UiPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    // advancedTexture.addControl(UiPanel);
-       
     //  button 
     // var buttonScore = BABYLON.GUI.Button.CreateSimpleButton("scoreButton", `Score : ${score.toString()}`);
     // buttonScore.paddingTop = "10px";
@@ -80,17 +55,8 @@ const createScene = async function (canvas, engine, scene) {
     // buttonScore.background = "grey";
     // UiPanel.addControl(buttonScore);
 
-    // var scoreText = new BABYLON.GUI.TextBlock();
-    // scoreText.text = "score : 0";
-    // scoreText.color = "white";
-    // scoreText.fontSize = 24;
-    // scoreText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT
-    // scoreText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    // advancedTexture.addControl(scoreText);
-
-
-//     // This creates and positions a free camera (non-mesh)
-   const camera = new BABYLON.ArcRotateCamera(
+    // This creates and positions a free camera (non-mesh)
+    const camera = new BABYLON.ArcRotateCamera(
        "Camera",
        -Math.PI / 2,
        (2 * Math.PI) / 5,
@@ -134,7 +100,12 @@ const createScene = async function (canvas, engine, scene) {
     // Spawn Animations
     // Jump
     const frameRate = 10;
-    const ySlide = new BABYLON.Animation("ySlide", "position.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+    const ySlide = new BABYLON.Animation(
+        "ySlide", 
+        "position.y", 
+        frameRate, 
+        BABYLON.Animation.ANIMATIONTYPE_FLOAT, 
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
     
     // a 2 sec il saute
     const kf1 ={
@@ -251,7 +222,7 @@ const createScene = async function (canvas, engine, scene) {
     let target;
     const targets=[]
     const boucleSpawn = setInterval(spawnObstacle,1000,[target]) ;
-    function spawnObstacle() {
+    function spawnObstacle(target) {
         // set a random spawn position as startPosition
         const startPosition = spawns[getRandomInt(spawns.length)];
 
@@ -280,19 +251,18 @@ const createScene = async function (canvas, engine, scene) {
             endPosition,
             BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT,
             null,
-            function() //quand l'animation est terminer...
-            {  
+            //quand l'animation est terminer
+            function(){  
                 //detruit le target
                 target.dispose();
                 //BUG : limiter la taille de runninganimation[] en suppriment l'animation qui n'est plus sur le terrain ameliorerai les perf mais cela ne marche pas comme prevu ...
                 //runningAnimations.shift()
-            },
-            scene
-        )
+            }
+        );
 
 
         // quand sphere touché...
-        target.actionManager= new BABYLON.ActionManager(scene);
+        target.actionManager = new BABYLON.ActionManager();
         target.actionManager.registerAction(
             new BABYLON.ExecuteCodeAction(
                 {
@@ -315,25 +285,48 @@ const createScene = async function (canvas, engine, scene) {
         );
 
         // quand scoreZone toucher...
-        //     target.actionManager.registerAction(
-        //     new BABYLON.ExecuteCodeAction(
-        //         {
-        //             trigger:BABYLON.ActionManager.OnIntersectionExitTrigger,
-        //             parameter:scoreZone,
-        //             usePreciseIntersection: true
-        //         }, 
-        //         function() //increment le score
-        //         {
-        //         score++;
-        //         scoreText.text = "score : "+score.toString();
-        //         }
-        //     )
-        // );
-    }    
-  engine.runRenderLoop(() => {
-     scene.render();
-  });
-  return scene;
+            target.actionManager.registerAction(
+            new BABYLON.ExecuteCodeAction(
+                {
+                    trigger:BABYLON.ActionManager.OnIntersectionExitTrigger,
+                    parameter:scoreZone,
+                    usePreciseIntersection: true
+                }, 
+                function() {
+                score++;
+                scoreText.text = "Score : "+score.toString();
+                }
+            )
+        );
+    }
+    return scene
+}
+
+const HomePage = () => {
+    const scene = createScene();
+    const engine = scene.getEngine();
+    engine.runRenderLoop(() => {
+        scene.render();
+    });
 };
+
+/**
+ * get a random int between 0 and max not included
+ * @param {*} max
+ * @returns int
+ */
+ function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+/**
+ * get a random int between min and max both included
+ * @param {*} min
+ * @param {*} max
+ * @returns
+ */
+function randomInRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
 export default HomePage;
