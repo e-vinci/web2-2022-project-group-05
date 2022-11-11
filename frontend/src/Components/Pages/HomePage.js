@@ -13,6 +13,7 @@ import "@babylonjs/materials"
 import "@babylonjs/post-processes"
 import "@babylonjs/serializers"
 import "@babylonjs/procedural-textures"
+import { TextBlock } from "@babylonjs/gui"
 
 
 const createScene = () => {
@@ -46,14 +47,16 @@ const createScene = () => {
     scoreText.height = "30px";
     UiPanel.addControl(scoreText);
 
-    //  button 
-    // var buttonScore = BABYLON.GUI.Button.CreateSimpleButton("scoreButton", `Score : ${score.toString()}`);
-    // buttonScore.paddingTop = "10px";
-    // buttonScore.width = "100px";
-    // buttonScore.height = "50px";
-    // buttonScore.color = "white";
-    // buttonScore.background = "grey";
-    // UiPanel.addControl(buttonScore);
+    // button 
+    var buttonScore = 
+    GUI.Button.CreateSimpleButton("scoreButton");
+    buttonScore.textBlock.text = `Score : ${score}`;
+    buttonScore.paddingTop = "10px";
+    buttonScore.width = "100px";
+    buttonScore.height = "50px";
+    buttonScore.color = "white";
+    buttonScore.background = "grey";
+    UiPanel.addControl(buttonScore);
 
     // This creates and positions a free camera (non-mesh)
     const camera = new BABYLON.ArcRotateCamera(
@@ -295,6 +298,7 @@ const createScene = () => {
                 function() {
                 score++;
                 scoreText.text = "Score : "+score.toString();
+                buttonScore.textBlock.text = `Score : ${score}`;
                 }
             )
         );
