@@ -7,13 +7,12 @@ import * as BABYLON from "@babylonjs/core"
 import * as GUI from "@babylonjs/gui"
 import "@babylonjs/loaders"
 
-// TODO:verifier forme iport et ajuster en consequence
+// TODO:verifier forme import dans les docs respectives et ajuster en consequence
 import "@babylonjs/inspector"
 import "@babylonjs/materials"
 import "@babylonjs/post-processes"
 import "@babylonjs/serializers"
 import "@babylonjs/procedural-textures"
-import { TextBlock } from "@babylonjs/gui"
 
 
 const createScene = () => {
@@ -21,7 +20,7 @@ const createScene = () => {
     const engine = new BABYLON.Engine(canvas, true);
     const scene = new BABYLON.Scene(engine);
 
-     // Game Variables
+    // Game Variables
     const numberCols = 3;
     const widthCols = 4;
     const sceneWidth = numberCols*widthCols;
@@ -34,6 +33,24 @@ const createScene = () => {
     // Create GUI Elements
     const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     
+    //Ajout menu
+    // FIXME pourquoi marche pas avec JSON?
+    // advancedTexture.parseSerializedObject("../../assets/guiTexture.json")
+    // TODO: trouver comment get les elements present dans le menu et interagir avec 
+    let boutonStart = new GUI.Button();
+    advancedTexture.parseFromSnippetAsync("B1UN9I#1",true)
+    .then((menu)=>{
+        console.log(menu)
+        advancedTexture.addControl(menu)
+     boutonStart = menu.getControlByName("B Start")
+     console.log(boutonStart);
+    });
+    
+    boutonStart.onPointerClickObservable.add(()=>{
+        console.log("click");
+        boutonStart.isVisible=false;
+    })
+
     var UiPanel = new GUI.StackPanel();
     UiPanel.width = "220px";
     UiPanel.fontSize = "14px";
@@ -69,7 +86,7 @@ const createScene = () => {
    );
     // camera.attachControl("canvas",true)
     
-//     // Sphere
+    // Sphere
     const sphere = BABYLON.MeshBuilder.CreateSphere(
         "sphere",
         { diameter: 2, segments: 32 },
@@ -82,7 +99,7 @@ const createScene = () => {
         { width: widthCols*numberCols, height:100},
         scene
     );
-    // material
+    // Material
     const groundMaterial = new BABYLON.StandardMaterial("Ground Material", scene);
     ground.material = groundMaterial;
     ground.material.diffuseColor = BABYLON.Color3.Random();
@@ -110,17 +127,14 @@ const createScene = () => {
         BABYLON.Animation.ANIMATIONTYPE_FLOAT, 
         BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
     
-    // a 2 sec il saute
     const kf1 ={
         frame:0*frameRate,
         value:1
     }
-    // a 2 sec il atteint le pic
     const kf2={
         frame:0.4*frameRate,
         value:7
     }
-   // a 3 sec il est au sol
     const kf3={
         frame:1*frameRate,
         value:1
@@ -242,8 +256,7 @@ const createScene = () => {
         // add to targets
         targets.push(target);
         
-        // BUG Fait tilter la console ... creer l'animation, faire l'attribution et la lancer separement 
-        // animation spawn
+        //animation spawn
         BABYLON.Animation.CreateAndStartAnimation(
             "anim",
             target,
