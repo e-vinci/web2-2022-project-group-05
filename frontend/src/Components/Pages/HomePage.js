@@ -5,6 +5,7 @@
 // TODO : filter imports and remove useless ones
 import * as BABYLON from "@babylonjs/core"
 import * as GUI from "@babylonjs/gui"
+import menu from "../../assets/guiTexture.json"
 import "@babylonjs/loaders"
 
 // TODO:verifier forme import dans les docs respectives et ajuster en consequence
@@ -34,21 +35,15 @@ const createScene = () => {
     const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     
     //Ajout menu
-    // FIXME pourquoi marche pas avec JSON?
-    // advancedTexture.parseSerializedObject("../../assets/guiTexture.json")
-    // TODO: trouver comment get les elements present dans le menu et interagir avec 
-    let boutonStart = new GUI.Button();
-    advancedTexture.parseFromSnippetAsync("B1UN9I#1",true)
-    .then((menu)=>{
-        console.log(menu)
-        advancedTexture.addControl(menu)
-     boutonStart = menu.getControlByName("B Start")
-     console.log(boutonStart);
-    });
-    
+    let boutonStart = new GUI.Button(); //new utile que a avoir des suggestions
+    advancedTexture.parseSerializedObject(menu,true)
+
+    boutonStart=advancedTexture.getControlByName('B Start');
+    console.log(boutonStart);
+
     boutonStart.onPointerClickObservable.add(()=>{
-        console.log("click");
-        boutonStart.isVisible=false;
+        advancedTexture.dispose()
+        startGame();
     })
 
     var UiPanel = new GUI.StackPanel();
@@ -85,7 +80,8 @@ const createScene = () => {
        scene
    );
     // camera.attachControl("canvas",true)
-    
+    //fonction starting the game
+    const startGame = () => {
     // Sphere
     const sphere = BABYLON.MeshBuilder.CreateSphere(
         "sphere",
@@ -116,7 +112,7 @@ const createScene = () => {
     // Move the sphere upward 1/2 its height
     // TODO generalize for all sizes
     sphere.position.y = 1;
-
+        
     // Spawn Animations
     // Jump
     const frameRate = 10;
@@ -315,6 +311,7 @@ const createScene = () => {
                 }
             )
         );
+    }
     }
     return scene
 }
