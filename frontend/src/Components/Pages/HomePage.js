@@ -20,6 +20,8 @@ const createScene = () => {
     const engine = new BABYLON.Engine(canvas, true);
     const scene = new BABYLON.Scene(engine);
 
+    //Game Assets
+    BABYLON.SceneLoader.ImportMesh("waterMesh","./../../assets/3Dmodels", "water.obj", scene);
     // Game Variables
     const numberCols = 3;
     const widthCols = 4;
