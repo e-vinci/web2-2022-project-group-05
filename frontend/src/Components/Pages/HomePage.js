@@ -22,7 +22,7 @@ const createScene = () => {
     const scene = new BABYLON.Scene(engine);
 
     //Game Assets
-    BABYLON.SceneLoader.ImportMesh("waterMesh","./../../assets/3Dmodels", "water.obj", scene);
+    BABYLON.SceneLoader.ImportMesh("waterMesh","./../../assets/3Dmodels", "/water.obj", scene);
     // Game Variables
     const numberCols = 3;
     const widthCols = 4;
