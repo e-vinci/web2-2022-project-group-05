@@ -37,6 +37,7 @@
     "@babylonjs/serializers": "^5.32.0",
     "@popperjs/core": "^2.9.2",
     "clean-webpack-plugin": "^4.0.0",
+    "file-loader": "^6.2.0",
     "terser-webpack-plugin": "^5.3.6",
     "webpack-merge": "^5.8.0"
   }
