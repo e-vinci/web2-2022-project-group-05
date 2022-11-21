@@ -319,30 +319,13 @@ const createScene = () => {
 }
 
 const HomePage = () => {
+    const main = document.querySelector('main');
+    main.innerHTML = 'Deal with the content of your Homepage';
     const scene = createScene();
     const engine = scene.getEngine();
     engine.runRenderLoop(() => {
         scene.render();
-    });
+  });
 };
-
-/**
- * get a random int between 0 and max not included
- * @param {*} max
- * @returns int
- */
- function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
-/**
- * get a random int between min and max both included
- * @param {*} min
- * @param {*} max
- * @returns
- */
-function randomInRange(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
 
 export default HomePage;
