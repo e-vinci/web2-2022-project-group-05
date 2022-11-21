@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
+
 module.exports = {
   mode: 'none',
   entry: './src/index.js',
@@ -41,16 +42,19 @@ module.exports = {
       // default condition: a file with size less than 8kb will be treated as a inline
       // module type and resource module type otherwise
       {
-        test: /\.(png|jpg|gif|svg|mp3|mpe?g)$/,
+        test: /\.(png|jpg|gif|svg|mp3|mpe?g|babylon|gltf|obj|stl)$/,
         type: 'asset/resource',
       },
 
-      /* automatically chooses between exporting a data URI and emitting a separate file.
-      {
-        test: /\.(png|jpg|gif|svg|mp3|mpe?g)$/,
-        type : 'asset',
-      },  */
+      
+      // automatically chooses between exporting a data URI and emitting a separate file.
+      // {
+      //   test: /\.(png|jpg|gif|svg|mp3|mpe?g)$/,
+      //   type : 'asset',
+      // },  
 
+
+      
       // in html file, emits files in output directory
       // and replace the src with the final path (to deal with svg, img...)
       {

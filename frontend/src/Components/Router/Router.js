@@ -7,7 +7,7 @@ const Router = () => {
 };
 
 function onNavBarClick() {
-  const navItems = document.querySelectorAll('.nav-link');
+  const navItems = document.querySelectorAll('.navLink');
 
   navItems.forEach((item) => {
     item.addEventListener('click', (e) => {
@@ -35,7 +35,6 @@ function onFrontendLoad() {
     const uri = window.location.pathname;
     const componentToRender = routes[uri];
     if (!componentToRender) throw Error(`The ${uri} ressource does not exist.`);
-
     componentToRender();
   });
 }
