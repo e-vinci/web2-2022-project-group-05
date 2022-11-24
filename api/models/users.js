@@ -12,6 +12,8 @@ const defaultUsers = [
     id: 1,
     username: 'user1',
     password: 'user1',
+    balance: 1100,
+    highscore: 3, 
   },
 ];
 
@@ -78,6 +80,17 @@ function createOneUser(username, password) {
   return createdUser;
 }
 
+function getAllUsers(){
+  return parse(jsonDbPath,defaultUsers);
+}
+
+function getUserById(id){
+  const idUser = parseInt(id, 10);
+  const users = parse(jsonDbPath,defaultUsers);
+  const indexOfUserFound = users.findIndex((user) => user.id === idUser);
+  return (indexOfUserFound < 0 ? undefined : defaultUsers[indexOfUserFound]);
+}
+
 function getNextId() {
   const users = parse(jsonDbPath, defaultUsers);
   const lastItemIndex = users?.length !== 0 ? users.length - 1 : undefined;
@@ -87,9 +100,32 @@ function getNextId() {
   return nextId;
 }
 
+function updateBalance(operator, balance, id){
+  // FIXME
+  const idUser = parseInt(id, 10);
+  const users = parse(jsonDbPath, defaultUsers);
+  const index = users.findIndex((user) => user.id === idUser);
+  if (index < 0) return undefined;
+  console.log(operator);
+  const updatedUser = (operator === '+') ? 
+  {...users[index], balance: users[index].balance + parseInt(balance,10)}:
+  (users[index].balance >= balance) ?
+  {...users[index], balance: users[index].balance - parseInt(balance,10)} : undefined;
+  users[index] = updatedUser;
+
+  serialize(jsonDbPath, users);
+
+  return updatedUser;
+  
+}
+
+
 module.exports = {
   login,
   register,
   readOneUserFromUsername,
+  getAllUsers,
+  getUserById,
+  updateBalance,
 };
 

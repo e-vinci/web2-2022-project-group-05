@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:3000
+
+### Read all users
+GET {{baseUrl}}/users
+
+### Get one user by its id 
+GET {{baseUrl}}/users/1
+
+### Update balance of the user
+PATCH {{baseUrl}}/users/balance/1
+Content-Type: application/json
+
+{
+    "balance":"200",
+    "operator": "-"
+}
