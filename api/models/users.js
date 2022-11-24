@@ -1,9 +1,13 @@
+// const escape = require('escape-html');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const path = require('node:path');
 const { parse, serialize } = require('../utils/json');
 
 const jwtSecret = 'myRealNameIsOTTO';
 const lifetimeJwt = 24 * 60 * 60 * 1000; // in ms : 24 * 60 * 60 * 1000 = 24h
+
+const saltRounds = 10;
 
 const jsonDbPath = path.join(__dirname, '/../data/users.json');
 
@@ -11,14 +15,17 @@ const defaultUsers = [
   {
     id: 1,
     username: 'user1',
-    password: 'user1',
+    password: bcrypt.hashSync('user1', saltRounds),
   },
 ];
 
-function login(username, password) {
+async function login(username, password) {
   const userFound = readOneUserFromUsername(username);
   if (!userFound) return undefined;
   if (userFound.password !== password) return undefined;
+
+  const passwordMatch = await bcrypt.compare(password, userFound.password);
+  if (!passwordMatch) return undefined;
 
   const token = jwt.sign(
     { username }, // session data added to the payload (payload : part 2 of a JWT)
@@ -34,10 +41,12 @@ function login(username, password) {
   return authenticatedUser;
 }
 
-function register(username, password) {
+async function register(username, password) {
   const userFound = readOneUserFromUsername(username);
   if (userFound) return undefined;
 
+  await createOneUser(username, password);
+  
   createOneUser(username, password);
 
   const token = jwt.sign(
@@ -62,13 +71,15 @@ function readOneUserFromUsername(username) {
   return users[indexOfUserFound];
 }
 
-function createOneUser(username, password) {
+async function createOneUser(username, password) {
   const users = parse(jsonDbPath, defaultUsers);
+
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
 
   const createdUser = {
     id: getNextId(),
     username,
-    password,
+    password : hashedPassword,
   };
 
   users.push(createdUser);
