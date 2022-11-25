@@ -26,9 +26,11 @@ router.patch('/balance/:id', (req, res) => {
 
 /* GET user highest score */
 router.patch('/highscore/:id', (req, res) => {
-  const updatedBalance = userData.updateProperty('highscore', 200);
-  if (!updatedBalance) return res.sendStatus(404);
-
-  return res.json(updatedBalance);
+  const highscore = req?.body?.highscore;
+  if (!highscore || parseInt(highscore, 10) < 0) return res.sendStatus(404);
+  const updatedHighscore = userData.updateHighscore(highscore, req.params.id);
+  
+  if (!updatedHighscore) return res.sendStatus(404);
+  return res.json(updatedHighscore);
 }); 
 module.exports = router;

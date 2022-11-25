@@ -14,3 +14,11 @@ Content-Type: application/json
     "balance":"200",
     "operator": "-"
 }
+
+### Update user's highscore
+PATCH {{baseUrl}}/users/highscore/1
+Content-Type: application/json
+
+{
+    "highscore": 3000
+}

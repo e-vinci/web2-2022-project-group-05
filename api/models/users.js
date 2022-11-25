@@ -100,8 +100,8 @@ function getNextId() {
   return nextId;
 }
 
-function updateBalance(operator, balance, id){
-  const idUser = parseInt(id, 10);
+function updateBalance(operator, balance, userId){
+  const idUser = parseInt(userId, 10);
   const users = parse(jsonDbPath, defaultUsers);
   const index = users.findIndex((user) => user.id === idUser);
   if (index < 0) return undefined;
@@ -114,7 +114,21 @@ function updateBalance(operator, balance, id){
   serialize(jsonDbPath, users);
 
   return updatedUser;
+}
+
+function updateHighscore(highscore, userId){
+  const idUser = parseInt(userId, 10);
+  const users = parse(jsonDbPath, defaultUsers);
+  const index = users.findIndex((user) => user.id === idUser);
+  if (index < 0) return undefined;
   
+  let updatedUser;
+  if (users[index].highscore < parseInt(highscore,10)) updatedUser = {...users[index], highscore: parseInt(highscore,10)};
+
+  users[index] = updatedUser;
+  serialize(jsonDbPath, users);
+
+  return updatedUser;
 }
 
 
@@ -125,5 +139,6 @@ module.exports = {
   getAllUsers,
   getUserById,
   updateBalance,
+  updateHighscore
 };
 
