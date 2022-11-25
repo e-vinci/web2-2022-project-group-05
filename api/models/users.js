@@ -101,18 +101,16 @@ function getNextId() {
 }
 
 function updateBalance(operator, balance, id){
-  // FIXME
   const idUser = parseInt(id, 10);
   const users = parse(jsonDbPath, defaultUsers);
   const index = users.findIndex((user) => user.id === idUser);
   if (index < 0) return undefined;
-  console.log(operator);
-  const updatedUser = (operator === '+') ? 
-  {...users[index], balance: users[index].balance + parseInt(balance,10)}:
-  (users[index].balance >= balance) ?
-  {...users[index], balance: users[index].balance - parseInt(balance,10)} : undefined;
-  users[index] = updatedUser;
+  
+  let updatedUser;
+  if (operator === '+') updatedUser = {...users[index], balance: users[index].balance + parseInt(balance,10)};
+  else if (users[index].balance >= balance) updatedUser = {...users[index], balance: users[index].balance - parseInt(balance,10)}
 
+  users[index] = updatedUser;
   serialize(jsonDbPath, users);
 
   return updatedUser;
