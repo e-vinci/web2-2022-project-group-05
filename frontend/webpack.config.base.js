@@ -35,7 +35,7 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: ['style-loader', 'css-loader','postcss-loader'],
       },
 
       // emits a separate file and exports the URLs => works for import in JS and url in CSS

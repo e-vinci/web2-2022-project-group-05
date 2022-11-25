@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 /* eslint-disable no-shadow */
 import * as BABYLON from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
@@ -12,11 +13,12 @@ import '@babylonjs/serializers';
 import '@babylonjs/procedural-textures';
 
 import * as tools from '../../utils/tools';
+
 // assets
 import water from '../../assets/3Dmodels/water.gltf';
 import seal from '../../assets/3Dmodels/seal.glb';
 
-const createScene = () => {
+const createScene = async () => {
   const canvas = document.getElementById('renderCanvas');
   const engine = new BABYLON.Engine(canvas, true);
   const scene = new BABYLON.Scene(engine);
@@ -25,39 +27,68 @@ const createScene = () => {
   console.log('water', water);
   console.log('seal', seal);
 
-  BABYLON.SceneLoader.ImportMesh(
+ const waterMesh = await BABYLON.SceneLoader.ImportMeshAsync
+  (
     null,
     water,
     null,
-    scene,
-    (meshes, particles, skeleton, AnimationGroup, transformNode, geometry, lights) => {
-      console.log('water loaded');
-      console.log('meshes', meshes);
-      console.log('particles', particles);
-      console.log('skeleton', skeleton);
-      console.log('AnimationGroup', AnimationGroup);
-      console.log('transformNode', transformNode);
-      console.log('geometry', geometry);
-      console.log('lights', lights);
-    },
-  );
+    scene
+  ).then((result) => result.meshes[1])
 
-  BABYLON.SceneLoader.ImportMesh(
+console.log("here",waterMesh);
+// waterMesh.position = new BABYLON.Vector3(0, 0, 0);
+// waterMesh.scaling = new BABYLON.Vector3(1, 1, 10);
+// waterMesh.rotation = new BABYLON.Vector3(0, 0, 0);
+// waterMesh.isVisible = true;
+// waterMesh.isPickable = true;
+// waterMesh.checkCollisions = true;
+// waterMesh.receiveShadows = true;
+// waterMesh.name = 'water';
+// waterMesh.material = new BABYLON.StandardMaterial('water', scene);
+// waterMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 1);
+// waterMesh.material.specularColor = new BABYLON.Color3(0, 0, 1);
+// waterMesh.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
+// waterMesh.material.ambientColor = new BABYLON.Color3(0, 0, 1);
+// waterMesh.material.alpha = 0.5;
+// waterMesh.material.backFaceCulling = false;
+// waterMesh.material.freeze();
+// waterMesh.freezeWorldMatrix();
+// waterMesh.freezeNormals();
+// waterMesh.freeze();
+// waterMesh.isPickable = true;
+// const direction=waterMesh.getDirection()
+// console.log("direction",direction);
+
+const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
+   (
     null,
     seal,
     null,
-    scene,
-    (meshes, particles, skeleton, AnimationGroup, transformNode, geometry, lights) => {
-      console.log('water loaded');
-      console.log('meshes', meshes);
-      console.log('particles', particles);
-      console.log('skeleton', skeleton);
-      console.log('AnimationGroup', AnimationGroup);
-      console.log('transformNode', transformNode);
-      console.log('geometry', geometry);
-      console.log('lights', lights);
-    },
-  );
+    scene
+  ).then((result) => result.meshes[0]);
+  console.log('sealMesh', sealMesh);
+  // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
+  // sealMesh.scaling = new BABYLON.Vector3(1, 1, 1);
+  // sealMesh.rotation = new BABYLON.Vector3(0, 0, 0);
+  // sealMesh.isVisible = true;
+  // sealMesh.isPickable = true;
+  // sealMesh.checkCollisions = true;
+  // sealMesh.receiveShadows = true;
+  // sealMesh.name = 'seal';
+  // sealMesh.material = new BABYLON.StandardMaterial('seal', scene);
+  // sealMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 1);
+  // sealMesh.material.specularColor = new BABYLON.Color3(0, 0, 1);
+  // sealMesh.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
+  // sealMesh.material.ambientColor = new BABYLON.Color3(0, 0, 1);
+  // sealMesh.material.alpha = 0.5;
+  // sealMesh.material.backFaceCulling = false;
+  // sealMesh.material.freeze();
+  // sealMesh.freezeWorldMatrix();
+  // sealMesh.freezeNormals();
+  // sealMesh.freeze();
+  // sealMesh.isPickable = true;
+
+
   // Game Variables
   const numberCols = 3;
   const widthCols = 4;
@@ -108,7 +139,7 @@ const createScene = () => {
   buttonScore.background = 'grey';
   UiPanel.addControl(buttonScore);
 
-  // This creates and positions a free camera (non-mesh)
+  // Camera
   // eslint-disable-next-line no-unused-vars
   const camera = new BABYLON.ArcRotateCamera(
     'Camera',
@@ -118,8 +149,8 @@ const createScene = () => {
     new BABYLON.Vector3(0, 0, 0),
     scene,
   );
-
   camera.attachControl("canvas",true)
+
   // fonction starting the game
   const startGame = () => {
     // Sphere
@@ -128,7 +159,7 @@ const createScene = () => {
     // Ground
     const ground = BABYLON.MeshBuilder.CreateGround(
       'ground',
-      { width: widthCols * numberCols, height: 100 },
+      { width: sceneWidth, height: 100 },
       scene,
     );
     // Material
@@ -141,7 +172,6 @@ const createScene = () => {
     light.intensity = 0.7;
 
     // Move the sphere upward 1/2 its height
-    // TODO generalize for all sizes
     sphere.position.y = 1;
 
     // Spawn Animations
