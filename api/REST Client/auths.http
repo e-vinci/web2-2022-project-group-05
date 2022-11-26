@@ -6,7 +6,7 @@ Content-Type: application/json
 
 {
     "username":"unknown",
-    "password":"admin"
+    "password":"unknown"
 }
 
 ### Login the default user
@@ -24,8 +24,8 @@ POST {{baseUrl}}/auths/register
 Content-Type: application/json
 
 {
-    "username":"manager",
-    "password":"manager"
+    "username":"hello",
+    "password":"hello"
 }
 
 ### Login the manager user
