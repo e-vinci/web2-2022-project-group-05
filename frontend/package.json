@@ -7,7 +7,7 @@
     "build": "webpack --mode production --config webpack.config.prod.js",
     "start": "webpack serve --mode development --config webpack.config.base.js"
   },
-  "author": "Kymberley Blomme, Alicia Boltryk, Omar Jetti, Antoine Puttens, Guilherme Yamamoto",
+  "author": "Kimberley Blomme, Alicia Boltryk, Omar Jetti, Antoine Putmans, Guilherme Yamamoto",
   "license": "CC-BY-SA-4.0",
   "devDependencies": {
     "@babel/core": "^7.14.3",
