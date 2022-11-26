@@ -23,21 +23,27 @@ function renderUsersFromString(users) {
   main.innerHTML += usersTableAsString;
 }
 
-
 function getAllTableLinesAsString(listUsers) {
   let counter = 0;
 
   let usersLines = `
-        <h1 class="mb-3">Leaderboard</h1>
-        <table class "table-auto">
+        <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-black">Leaderboard</h1>
+        <table class="table-auto">
+        <thead>
+        <tr>
+        <th>Rank</th>
+        <th>Name</th>
+        <th>Score</th>
+        </tr>
+        </thead>
         <tbody>`;
 
   listUsers?.forEach((user) => {
     counter++;
     usersLines += `<tr>
-                <td class="fw-bold text-info" >${counter}</td>
-                <td class="fw-bold text-info" >${user.username}</td>
-                <td class="fw-bold text-info" >${user.highscore}</td>
+                <td>${counter}</td>
+                <td>${user.username}</td>
+                <td>${user.highscore}</td>
             </tr>`;
   });
 
