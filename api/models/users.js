@@ -16,6 +16,8 @@ const defaultUsers = [
     id: 1,
     username: 'user1',
     password: bcrypt.hashSync('user1', saltRounds),
+    balance: 1000,
+    highscore: 2000,
   },
 ];
 
@@ -89,8 +91,15 @@ async function createOneUser(username, password) {
   return createdUser;
 }
 
-function getAllUsers(){
-  return parse(jsonDbPath,defaultUsers);
+function getAllUsers(orderBy){
+  const orderByScore = orderBy?.includes('score') ? orderBy : undefined;
+  let orderedLeaderboard; 
+  const users = parse(jsonDbPath,defaultUsers);
+
+  if (orderByScore) orderedLeaderboard = [...users].sort((a, b) => b.highscore-a.highscore);
+
+  const usersPotentiallyOrdered = orderedLeaderboard ?? users;
+  return usersPotentiallyOrdered;
 }
 
 function getUserById(id){
@@ -118,6 +127,8 @@ function updateBalance(operator, balance, userId){
   let updatedUser;
   if (operator === '+') updatedUser = {...users[index], balance: users[index].balance + parseInt(balance,10)};
   else if (users[index].balance >= balance) updatedUser = {...users[index], balance: users[index].balance - parseInt(balance,10)}
+
+  if(!updatedUser) return undefined; 
 
   users[index] = updatedUser;
   serialize(jsonDbPath, users);
