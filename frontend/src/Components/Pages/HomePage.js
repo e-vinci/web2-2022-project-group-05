@@ -375,7 +375,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
   };
   return scene;
 };
-
+let gameStopped = false;
 const HomePage = async () => {
   const main = document.querySelector('main');
   main.innerHTML = 'Deal with the content of your Homepage';
@@ -383,8 +383,13 @@ const HomePage = async () => {
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
     scene.render();
+    if (gameStopped) engine.stopRenderLoop();
   });
 };
+
+function stopGame(){
+  gameStopped = true;
+}
 
 async function scoreLoggedPlayer(score){
   const res = await fetch(`/api/users/highscore/1`, { // for now the request is !!! HARD CODED !!! while waiting for session data management
@@ -402,3 +407,4 @@ async function scoreLoggedPlayer(score){
 }
 
 export default HomePage;
+export { stopGame };

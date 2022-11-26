@@ -48,8 +48,7 @@ async function register(username, password) {
   if (userFound) return undefined;
 
   await createOneUser(username, password);
-  
-  createOneUser(username, password);
+
 
   const token = jwt.sign(
     { username }, // session data added to the payload (payload : part 2 of a JWT)
@@ -81,7 +80,9 @@ async function createOneUser(username, password) {
   const createdUser = {
     id: getNextId(),
     username,
-    password : hashedPassword,
+    password: hashedPassword,
+    balance: 0,
+    highscore: 0
   };
 
   users.push(createdUser);
