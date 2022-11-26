@@ -4,7 +4,10 @@ const userData = require('../models/users');
 const router = express.Router();
 
 /* GET users listing. */ 
-router.get('/', (req, res) => res.json(userData.getAllUsers())); 
+router.get('/', (req, res) => {
+  const usersPotentiallyOrdered = userData.getAllUsers(req?.query?.order);
+  return res.json(usersPotentiallyOrdered);
+});
 
 /* GET one user by its id */
 router.get('/:id', (req, res) => {
