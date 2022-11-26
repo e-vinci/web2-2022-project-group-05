@@ -20,7 +20,7 @@ router.patch('/balance/:id', (req, res) => {
   if (!balance || !operator || parseInt(balance,10) === 0 || (operator !== '+' && operator !== '-')) return res.sendStatus(404);
   const updatedBalance = userData.updateBalance(operator, balance, req.params.id);
   
-  if (!updatedBalance) return res.sendStatus(404);
+  if (!updatedBalance) return res.json();
   return res.json(updatedBalance);
 }); 
 
@@ -30,7 +30,7 @@ router.patch('/highscore/:id', (req, res) => {
   if (!highscore || parseInt(highscore, 10) < 0) return res.sendStatus(404);
   const updatedHighscore = userData.updateHighscore(highscore, req.params.id);
   
-  if (!updatedHighscore) return res.sendStatus(404);
+  if (!updatedHighscore) return res.json(); // empty json
   return res.json(updatedHighscore);
 }); 
 module.exports = router;

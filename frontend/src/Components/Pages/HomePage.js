@@ -5,6 +5,9 @@ import * as GUI from '@babylonjs/gui';
 import menu from '../../assets/guiTexture.json';
 import '@babylonjs/loaders';
 
+// import utils 
+// import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
+
 // TODO:verifier forme import dans les docs respectives et ajuster en consequence
 import '@babylonjs/inspector';
 import '@babylonjs/materials';
@@ -346,6 +349,9 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
             }
             // detruit la sphere
             sealMesh.dispose();
+            // need to get the score updated
+            console.log(score);
+            scoreLoggedPlayer(score);
           },
         ),
       );
@@ -379,5 +385,20 @@ const HomePage = async () => {
     scene.render();
   });
 };
+
+async function scoreLoggedPlayer(score){
+  const res = await fetch(`/api/users/highscore/1`, { // for now the request is !!! HARD CODED !!! while waiting for session data management
+    method: 'PATCH',
+    body: JSON.stringify({
+      highscore: score
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }); 
+
+  if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
+
+}
 
 export default HomePage;
