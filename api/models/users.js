@@ -122,9 +122,10 @@ function updateHighscore(highscore, userId){
   const index = users.findIndex((user) => user.id === idUser);
   if (index < 0) return undefined;
   
-  let updatedUser;
-  if (users[index].highscore < parseInt(highscore,10)) updatedUser = {...users[index], highscore: parseInt(highscore,10)};
-
+  
+  if (users[index].highscore >= parseInt(highscore,10)) return undefined; 
+  
+  const updatedUser = {...users[index], highscore: parseInt(highscore,10)};
   users[index] = updatedUser;
   serialize(jsonDbPath, users);
 

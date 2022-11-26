@@ -20,5 +20,5 @@ PATCH {{baseUrl}}/users/highscore/1
 Content-Type: application/json
 
 {
-    "highscore": 3000
+    "highscore": 3001
 }
