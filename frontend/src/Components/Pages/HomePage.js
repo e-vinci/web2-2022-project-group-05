@@ -23,6 +23,7 @@ const createScene = async () => {
   const engine = new BABYLON.Engine(canvas, true);
   const scene = new BABYLON.Scene(engine);
 
+  // TODO: rearrange mesh axes
   // Game Assets
   console.log('water', water);
   console.log('seal', seal);
@@ -37,8 +38,8 @@ const createScene = async () => {
 
 console.log("here",waterMesh);
 // waterMesh.position = new BABYLON.Vector3(0, 0, 0);
-// waterMesh.scaling = new BABYLON.Vector3(1, 1, 10);
-// waterMesh.rotation = new BABYLON.Vector3(0, 0, 0);
+waterMesh.scaling = new BABYLON.Vector3(10, 10, 1);
+waterMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
 // waterMesh.isVisible = true;
 // waterMesh.isPickable = true;
 // waterMesh.checkCollisions = true;
@@ -67,6 +68,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
     scene
   ).then((result) => result.meshes[0]);
   console.log('sealMesh', sealMesh);
+  sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
   // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
   // sealMesh.scaling = new BABYLON.Vector3(1, 1, 1);
   // sealMesh.rotation = new BABYLON.Vector3(0, 0, 0);
@@ -91,7 +93,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
 
   // Game Variables
   const numberCols = 3;
-  const widthCols = 4;
+  const widthCols = 10;
   // eslint-disable-next-line no-unused-vars
   const sceneWidth = numberCols * widthCols;
   const cameraOffset = 30;
@@ -153,26 +155,12 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
 
   // fonction starting the game
   const startGame = () => {
-    // Sphere
-    const sphere = BABYLON.MeshBuilder.CreateSphere('sphere', { diameter: 2, segments: 32 }, scene);
-
-    // Ground
-    const ground = BABYLON.MeshBuilder.CreateGround(
-      'ground',
-      { width: sceneWidth, height: 100 },
-      scene,
-    );
-    // Material
-    const groundMaterial = new BABYLON.StandardMaterial('Ground Material', scene);
-    ground.material = groundMaterial;
-    ground.material.diffuseColor = BABYLON.Color3.Random();
-
     // Light
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
 
-    // Move the sphere upward 1/2 its height
-    sphere.position.y = 1;
+    // Move the seal upward 1/2 its height
+    sealMesh.position.y = 1;
 
     // Spawn Animations
     // Jump
@@ -203,7 +191,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
 
     // AnimationGroup
     const jump = new BABYLON.AnimationGroup('jump');
-    jump.addTargetedAnimation(ySlide, sphere);
+    jump.addTargetedAnimation(ySlide, sealMesh);
 
     //  Sphere mouvement
     let isMoving = false;
@@ -215,16 +203,16 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
             case 'q':
             case 'Q':
             case 'ArrowLeft':
-              if (sphere.position.x !== -widthCols) {
+              if (sealMesh.position.x !== -widthCols) {
                 isMoving = true;
                 BABYLON.Animation.CreateAndStartAnimation(
                   'slideRight',
-                  sphere,
+                  sealMesh,
                   'position.x',
                   10,
                   2,
-                  sphere.position.x,
-                  sphere.position.x - widthCols,
+                  sealMesh.position.x,
+                  sealMesh.position.x - widthCols,
                   BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT,
                   null,
                   () => (isMoving = false),
@@ -234,16 +222,16 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
             case 'd':
             case 'D':
             case 'ArrowRight':
-              if (sphere.position.x !== widthCols) {
+              if (sealMesh.position.x !== widthCols) {
                 isMoving = true;
                 BABYLON.Animation.CreateAndStartAnimation(
                   'slideLeft',
-                  sphere,
+                  sealMesh,
                   'position.x',
                   10,
                   2,
-                  sphere.position.x,
-                  sphere.position.x + widthCols,
+                  sealMesh.position.x,
+                  sealMesh.position.x + widthCols,
                   BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT,
                   null,
                   () => (isMoving = false),
@@ -254,7 +242,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
             case 'Z':
             case 'ArrowUp':
             case ' ':
-              if (sphere.position.y < maxJumpHeight) {
+              if (sealMesh.position.y < maxJumpHeight) {
                 isMoving = true;
                 // start animation
                 jump.play().onAnimationGroupEndObservable.add(() => (isMoving = false));
@@ -275,7 +263,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
       updatable: true,
       sideOrientation: BABYLON.Mesh.DOUBLESIDE,
     });
-    scoreZone.position.z -= sphere.absoluteScaling.z;
+    scoreZone.position.z -= sealMesh.absoluteScaling.z;
     scoreZone.isVisible = false;
 
     // Obstacles
@@ -346,7 +334,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
         new BABYLON.ExecuteCodeAction(
           {
             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-            parameter: sphere,
+            parameter: sealMesh,
             usePreciseIntersection: true,
           },
           () => {
@@ -357,7 +345,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
               targets[i]?.dispose();
             }
             // detruit la sphere
-            sphere.dispose();
+            sealMesh.dispose();
           },
         ),
       );
