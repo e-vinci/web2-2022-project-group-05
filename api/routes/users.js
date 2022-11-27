@@ -9,9 +9,11 @@ router.get('/', (req, res) => {
   return res.json(usersPotentiallyOrdered);
 });
 
-/* GET one user by its id */
-router.get('/:id', (req, res) => {
-  const user = userData.getUserById(req.params.id);
+/* GET one user (either by its id or its username) */
+router.get('/user', (req, res) => {
+  let user;
+  if (req?.query?.id) user = userData.getUserById(req.query.id);
+  if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
   if (!user) return res.sendStatus(404);
   return res.json(user);
 }); 

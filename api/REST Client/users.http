@@ -5,7 +5,11 @@ GET {{baseUrl}}/users
 ### Read all users ordered by highscore
 GET {{baseUrl}}/users/?order=score
 ### Get one user by its id 
-GET {{baseUrl}}/users/1
+GET {{baseUrl}}/users/user?id=1
+
+### get one user by its username
+GET {{baseUrl}}/users/user?username=manager
+
 
 ### Update balance of the user
 PATCH {{baseUrl}}/users/balance/1
