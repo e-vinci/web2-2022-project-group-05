@@ -370,6 +370,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
           },
           () => {
             score++;
+            console.log(score);
             scoreText.text = `Score : ${score.toString()}`;
             buttonScore.textBlock.text = `Score : ${score}`;
           },
