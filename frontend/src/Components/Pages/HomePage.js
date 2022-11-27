@@ -8,7 +8,6 @@ import '@babylonjs/loaders';
 // import utils 
 // import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
-// TODO:verifier forme import dans les docs respectives et ajuster en consequence
 import '@babylonjs/inspector';
 import '@babylonjs/materials';
 import '@babylonjs/post-processes';
@@ -23,9 +22,9 @@ import seal from '../../assets/3Dmodels/seal.glb';
 
 const createScene = async () => {
   const game =  document.querySelector('#game');
-  const newCanva = document.createElement('canvas');
-  newCanva.id = 'renderCanvas';
-  game.appendChild(newCanva);
+  const newCanvas = document.createElement('canvas');
+  newCanvas.id = 'renderCanvas';
+  game.appendChild(newCanvas);
   const canvas = document.getElementById('renderCanvas');
   const engine = new BABYLON.Engine(canvas, true);
   const scene = new BABYLON.Scene(engine);
@@ -112,7 +111,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
   // Create GUI Elements
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
 
-  // Ajout menu
+  // menu
   let boutonStart = new GUI.Button(); // new utile que a avoir des suggestions
   advancedTexture.parseSerializedObject(menu, true);
 
@@ -326,7 +325,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
         endPosition,
         BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT,
         null,
-        // quand l'animation est terminer
+        // on animation end
         () => {
           // detruit le target
           target.dispose();
@@ -335,7 +334,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
         },
       );
 
-      // quand sphere touché...
+      // on seal collide
       target.actionManager = new BABYLON.ActionManager();
       target.actionManager.registerAction(
         new BABYLON.ExecuteCodeAction(
@@ -345,16 +344,16 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
             usePreciseIntersection: true,
           },
           () => {
-            // arrete de faire spawn les obstacle
+            // stop obstacles spawn
             clearInterval(boucleSpawn);
-            // elimine les obstacles encore en jeu
+            // destroy every other obstacle
             for (let i = 0; i < targets.length; i++) {
               targets[i]?.dispose();
             }
-            // detruit la sphere
+            // seal dispose
             sealMesh.dispose();
-            // need to get the score updated
-            console.log(score);
+          
+            // update user score
             scoreLoggedPlayer(score);
           },
         ),
@@ -370,7 +369,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
           },
           () => {
             score++;
-            console.log(score);
+            
             scoreText.text = `Score : ${score.toString()}`;
             buttonScore.textBlock.text = `Score : ${score}`;
           },
@@ -383,8 +382,6 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
 
 
 const HomePage = async () => {
-  const main = document.querySelector('main');
-  main.innerHTML = 'Deal with the content of your Homepage';
   const scene = await createScene();
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
