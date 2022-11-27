@@ -54,3 +54,9 @@ canvas {
     height: 100%;
     width: 100%;
 }
+
+main{
+    background-color: #fbef7e;
+    background-image: linear-gradient(180deg, #fbef7e 62%, #91f768 100%);
+
+}
