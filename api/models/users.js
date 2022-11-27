@@ -16,6 +16,8 @@ const defaultUsers = [
     id: 1,
     username: 'user1',
     password: bcrypt.hashSync('user1', saltRounds),
+    balance: 1000,
+    highscore: 2000,
   },
 ];
 
@@ -46,8 +48,7 @@ async function register(username, password) {
   if (userFound) return undefined;
 
   await createOneUser(username, password);
-  
-  createOneUser(username, password);
+
 
   const token = jwt.sign(
     { username }, // session data added to the payload (payload : part 2 of a JWT)
@@ -79,7 +80,9 @@ async function createOneUser(username, password) {
   const createdUser = {
     id: getNextId(),
     username,
-    password : hashedPassword,
+    password: hashedPassword,
+    balance: 0,
+    highscore: 0
   };
 
   users.push(createdUser);
@@ -87,6 +90,24 @@ async function createOneUser(username, password) {
   serialize(jsonDbPath, users);
 
   return createdUser;
+}
+
+function getAllUsers(orderBy){
+  const orderByScore = orderBy?.includes('score') ? orderBy : undefined;
+  let orderedLeaderboard; 
+  const users = parse(jsonDbPath,defaultUsers);
+
+  if (orderByScore) orderedLeaderboard = [...users].sort((a, b) => b.highscore-a.highscore);
+
+  const usersPotentiallyOrdered = orderedLeaderboard ?? users;
+  return usersPotentiallyOrdered;
+}
+
+function getUserById(id){
+  const idUser = parseInt(id, 10);
+  const users = parse(jsonDbPath,defaultUsers);
+  const indexOfUserFound = users.findIndex((user) => user.id === idUser);
+  return (indexOfUserFound < 0 ? undefined : defaultUsers[indexOfUserFound]);
 }
 
 function getNextId() {
@@ -98,9 +119,48 @@ function getNextId() {
   return nextId;
 }
 
+function updateBalance(operator, balance, userId){
+  const idUser = parseInt(userId, 10);
+  const users = parse(jsonDbPath, defaultUsers);
+  const index = users.findIndex((user) => user.id === idUser);
+  if (index < 0) return undefined;
+  
+  let updatedUser;
+  if (operator === '+') updatedUser = {...users[index], balance: users[index].balance + parseInt(balance,10)};
+  else if (users[index].balance >= balance) updatedUser = {...users[index], balance: users[index].balance - parseInt(balance,10)}
+
+  if(!updatedUser) return undefined; 
+
+  users[index] = updatedUser;
+  serialize(jsonDbPath, users);
+
+  return updatedUser;
+}
+
+function updateHighscore(highscore, userId){
+  const idUser = parseInt(userId, 10);
+  const users = parse(jsonDbPath, defaultUsers);
+  const index = users.findIndex((user) => user.id === idUser);
+  if (index < 0) return undefined;
+  
+  
+  if (users[index].highscore >= parseInt(highscore,10)) return undefined; 
+  
+  const updatedUser = {...users[index], highscore: parseInt(highscore,10)};
+  users[index] = updatedUser;
+  serialize(jsonDbPath, users);
+
+  return updatedUser;
+}
+
+
 module.exports = {
   login,
   register,
   readOneUserFromUsername,
+  getAllUsers,
+  getUserById,
+  updateBalance,
+  updateHighscore
 };
 
