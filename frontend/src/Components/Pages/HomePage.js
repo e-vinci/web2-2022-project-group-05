@@ -22,6 +22,10 @@ import water from '../../assets/3Dmodels/water.gltf';
 import seal from '../../assets/3Dmodels/seal.glb';
 
 const createScene = async () => {
+  const game =  document.querySelector('#game');
+  const newCanva = document.createElement('canvas');
+  newCanva.id = 'renderCanvas';
+  game.appendChild(newCanva);
   const canvas = document.getElementById('renderCanvas');
   const engine = new BABYLON.Engine(canvas, true);
   const scene = new BABYLON.Scene(engine);
@@ -375,7 +379,8 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
   };
   return scene;
 };
-let gameStopped = false;
+
+
 const HomePage = async () => {
   const main = document.querySelector('main');
   main.innerHTML = 'Deal with the content of your Homepage';
@@ -383,13 +388,10 @@ const HomePage = async () => {
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
     scene.render();
-    if (gameStopped) engine.stopRenderLoop();
   });
 };
 
-function stopGame(){
-  gameStopped = true;
-}
+
 
 async function scoreLoggedPlayer(score){
   const res = await fetch(`/api/users/highscore/1`, { // for now the request is !!! HARD CODED !!! while waiting for session data management
@@ -407,4 +409,3 @@ async function scoreLoggedPlayer(score){
 }
 
 export default HomePage;
-export { stopGame };

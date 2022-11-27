@@ -1,4 +1,7 @@
 const clearPage = () => {
+  const canva = document.getElementById('renderCanvas');
+
+  canva.remove();
   const main = document.querySelector('main');
   main.innerHTML = '';
 };

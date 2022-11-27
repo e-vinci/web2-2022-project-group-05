@@ -29,10 +29,6 @@ function getAllTableLinesAsString(listUsers) {
   let usersLines = `
   <div class="py-10 inline-block min-w-full sm:px-6 lg:px-8">
   <h1 class="text-center mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-black">Leaderboard</h1>
-  </di>
-
- 
-     
         <table class="text-center min-w-full">
           <thead class="border-b">
             <tr class="bg-emerald-300">
@@ -64,6 +60,7 @@ function getAllTableLinesAsString(listUsers) {
   usersLines += `
    </tbody>
   </table>
+</div>
 </div>
 </div>
 `;
