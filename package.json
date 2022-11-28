@@ -1,5 +1,9 @@
 {
   "devDependencies": {
+<<<<<<< Updated upstream
+=======
+    "commitizen": "^4.2.5",
+>>>>>>> Stashed changes
     "cz-conventional-changelog": "^3.3.0"
   },
   "config": {
