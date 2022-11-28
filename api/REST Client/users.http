@@ -27,3 +27,6 @@ Content-Type: application/json
 {
     "highscore": 32222
 }
+
+### get random animal
+GET {{baseUrl}}/animals
