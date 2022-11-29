@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-shadow */
 import * as BABYLON from '@babylonjs/core';
@@ -18,7 +19,7 @@ import * as tools from '../../utils/tools';
 
 // assets
 import water from '../../assets/3Dmodels/water.gltf';
-import seal from '../../assets/3Dmodels/seal.glb';
+import seal from '../../assets/3Dmodels/seal_animated.glb';
 
 const createScene = async () => {
   const game =  document.querySelector('#game');
@@ -65,16 +66,17 @@ waterMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
 // waterMesh.isPickable = true;
 // const direction=waterMesh.getDirection()
 // console.log("direction",direction);
-
 const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
    (
     null,
     seal,
     null,
     scene
-  ).then((result) => result.meshes[0]);
-  console.log('sealMesh', sealMesh);
-  sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
+  ).then((result) =>console.log(result));
+  
+
+  // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
+  // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
   // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
   // sealMesh.scaling = new BABYLON.Vector3(1, 1, 1);
   // sealMesh.rotation = new BABYLON.Vector3(0, 0, 0);
@@ -157,7 +159,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
     new BABYLON.Vector3(0, 0, 0),
     scene,
   );
-  camera.attachControl("canvas",true)
+  // camera.attachControl("canvas",true)
 
   // fonction starting the game
   const startGame = () => {
@@ -341,7 +343,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
           {
             trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
             parameter: sealMesh,
-            usePreciseIntersection: true,
+            usePreciseIntersection: false,
           },
           () => {
             // stop obstacles spawn
