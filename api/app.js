@@ -4,6 +4,7 @@ const logger = require('morgan');
 
 const usersRouter = require('./routes/users');
 const authsRouter = require('./routes/auths');
+const animalsRouter = require('./routes/animals');
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.use(cookieParser());
 
 app.use('/users', usersRouter);
 app.use('/auths', authsRouter);
+app.use('/animals', animalsRouter);
 
 module.exports = app;
