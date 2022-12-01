@@ -11,8 +11,11 @@ router.post('/register', async (req, res) => {
   if (!username || !password) return res.sendStatus(400); // 400 Bad Request
 
   const authenticatedUser = await register(username, password);
-
+  console.log(authenticatedUser);
   if (!authenticatedUser) return res.sendStatus(409); // 409 Conflict
+
+  req.session.username = authenticatedUser.username;
+  req.session.token = authenticatedUser.token;
 
   return res.json(authenticatedUser);
 });
@@ -28,7 +31,15 @@ router.post('/login', async (req, res) => {
 
   if (!authenticatedUser) return res.sendStatus(401); // 401 Unauthorized
 
-  return res.json(authenticatedUser);
+  req.session.username = authenticatedUser.username;
+  req.session.token = authenticatedUser.token;
+
+  return res.json({ username: authenticatedUser.username });
 });
 
+/* Logout a user */
+router.get('/logout', (req, res) => {
+  req.session = null;
+  return res.sendStatus(200);
+});
 module.exports = router;
