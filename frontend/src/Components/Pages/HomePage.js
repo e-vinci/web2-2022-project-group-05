@@ -66,14 +66,24 @@ waterMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
 // waterMesh.isPickable = true;
 // const direction=waterMesh.getDirection()
 // console.log("direction",direction);
-const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
+const sealMesh= await BABYLON.SceneLoader.ImportMeshAsync
    (
     null,
     seal,
     null,
-    scene
+    scene,
   ).then((result) =>console.log(result));
+
+
+  const sealSwimmingAnimation = scene.getAnimationGroupByName("ArmatureAction.004");
+  sealSwimmingAnimation.pause();
   
+  // --------------- test animation : -----------------------
+  // const sealMesh = sealMeshImportResult.meshes[0].getChildren();
+  // sealMesh.setParent(null);
+  // const sealImportedAnimation = sealMesh.animationGroups;
+  // sealImportedAnimation[1].stop();
+  // --------------------------------------------------------
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
