@@ -6,7 +6,7 @@ import * as GUI from '@babylonjs/gui';
 import menu from '../../assets/guiTexture.json';
 import '@babylonjs/loaders';
 
-// import utils 
+// import utils
 // import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
 import '@babylonjs/inspector';
@@ -22,7 +22,7 @@ import water from '../../assets/3Dmodels/water.gltf';
 import seal from '../../assets/3Dmodels/seal_animated.glb';
 
 const createScene = async () => {
-  const game =  document.querySelector('#game');
+  const game = document.querySelector('#game');
   const newCanvas = document.createElement('canvas');
   newCanvas.id = 'renderCanvas';
   game.appendChild(newCanvas);
@@ -35,45 +35,51 @@ const createScene = async () => {
   console.log('water', water);
   console.log('seal', seal);
 
- const waterMesh = await BABYLON.SceneLoader.ImportMeshAsync
-  (
-    null,
-    water,
-    null,
-    scene
-  ).then((result) => result.meshes[1])
+  const waterMesh = await BABYLON.SceneLoader.ImportMeshAsync(null, water, null, scene).then(
+    (result) => result.meshes[1],
+  );
 
-console.log("here",waterMesh);
-// waterMesh.position = new BABYLON.Vector3(0, 0, 0);
-waterMesh.scaling = new BABYLON.Vector3(10, 10, 1);
-waterMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
-// waterMesh.isVisible = true;
-// waterMesh.isPickable = true;
-// waterMesh.checkCollisions = true;
-// waterMesh.receiveShadows = true;
-// waterMesh.name = 'water';
-// waterMesh.material = new BABYLON.StandardMaterial('water', scene);
-// waterMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 1);
-// waterMesh.material.specularColor = new BABYLON.Color3(0, 0, 1);
-// waterMesh.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
-// waterMesh.material.ambientColor = new BABYLON.Color3(0, 0, 1);
-// waterMesh.material.alpha = 0.5;
-// waterMesh.material.backFaceCulling = false;
-// waterMesh.material.freeze();
-// waterMesh.freezeWorldMatrix();
-// waterMesh.freezeNormals();
-// waterMesh.freeze();
-// waterMesh.isPickable = true;
-// const direction=waterMesh.getDirection()
-// console.log("direction",direction);
-const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
-   (
-    null,
-    seal,
-    null,
-    scene
-  ).then((result) =>console.log(result));
-  
+  console.log('here', waterMesh);
+  // waterMesh.position = new BABYLON.Vector3(0, 0, 0);
+  waterMesh.scaling = new BABYLON.Vector3(10, 10, 1);
+  waterMesh.rotate(BABYLON.Axis.Y, -Math.PI / 2, BABYLON.Space.WORLD);
+  // waterMesh.isVisible = true;
+  // waterMesh.isPickable = true;
+  // waterMesh.checkCollisions = true;
+  // waterMesh.receiveShadows = true;
+  // waterMesh.name = 'water';
+  // waterMesh.material = new BABYLON.StandardMaterial('water', scene);
+  // waterMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 1);
+  // waterMesh.material.specularColor = new BABYLON.Color3(0, 0, 1);
+  // waterMesh.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
+  // waterMesh.material.ambientColor = new BABYLON.Color3(0, 0, 1);
+  // waterMesh.material.alpha = 0.5;
+  // waterMesh.material.backFaceCulling = false;
+  // waterMesh.material.freeze();
+  // waterMesh.freezeWorldMatrix();
+  // waterMesh.freezeNormals();
+  // waterMesh.freeze();
+  // waterMesh.isPickable = true;
+  // const direction=waterMesh.getDirection()
+  // console.log("direction",direction);
+  const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene).then(
+    (result) => {
+      console.log(result);
+      // result.animationGroups.forEach((a)=> a.pause())
+    },
+  );
+
+  const sealMesh = sealMeshImport.meshes[1];
+  // FIXME arrange axis
+  // const sealSwimmingAnimation = scene.getAnimationGroupByName("ArmatureAction.004");
+  // sealSwimmingAnimation.pause();
+
+  // --------------- test animation : -----------------------
+  // const sealMesh = sealMeshImportResult.meshes[0].getChildren();
+  // sealMesh.setParent(null);
+  // const sealImportedAnimation = sealMesh.animationGroups;
+  // sealImportedAnimation[1].stop();
+  // --------------------------------------------------------
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
@@ -97,7 +103,6 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
   // sealMesh.freezeNormals();
   // sealMesh.freeze();
   // sealMesh.isPickable = true;
-
 
   // Game Variables
   const numberCols = 3;
@@ -354,7 +359,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
             }
             // seal dispose
             sealMesh.dispose();
-          
+
             // update user score
             scoreLoggedPlayer(score);
           },
@@ -371,7 +376,7 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
           },
           () => {
             score++;
-            
+
             scoreText.text = `Score : ${score.toString()}`;
             buttonScore.textBlock.text = `Score : ${score}`;
           },
@@ -382,30 +387,33 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
   return scene;
 };
 
-
 const HomePage = async () => {
   const scene = await createScene();
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
     scene.render();
   });
+  
+  window.addEventListener("resize",  () =>{
+  engine.resize();
+});
 };
 
 
 
-async function scoreLoggedPlayer(score){
-  const res = await fetch(`/api/users/highscore/1`, { // for now the request is !!! HARD CODED !!! while waiting for session data management
+async function scoreLoggedPlayer(score) {
+  const res = await fetch(`/api/users/highscore/1`, {
+    // for now the request is !!! HARD CODED !!! while waiting for session data management
     method: 'PATCH',
     body: JSON.stringify({
-      highscore: score
+      highscore: score,
     }),
     headers: {
       'Content-Type': 'application/json',
     },
-  }); 
+  });
 
   if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
-
 }
 
 export default HomePage;
