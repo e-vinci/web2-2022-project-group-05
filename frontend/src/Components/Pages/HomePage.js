@@ -22,17 +22,17 @@ import water from '../../assets/3Dmodels/test2.glb';
 import seal from '../../assets/3Dmodels/seal_animated.glb';
 
 // eslint-disable-next-line camelcase
-import sky_px from '../../assets/3Dmodels/skyTest/_px.png'
+import sky_px from '../../assets/3Dmodels/skyTest/_px.png';
 // eslint-disable-next-line camelcase
-import sky_py from '../../assets/3Dmodels/skyTest/_py.png'
+import sky_py from '../../assets/3Dmodels/skyTest/_py.png';
 // eslint-disable-next-line camelcase
-import sky_pz from '../../assets/3Dmodels/skyTest/_pz.png'
+import sky_pz from '../../assets/3Dmodels/skyTest/_pz.png';
 // eslint-disable-next-line camelcase
-import sky_nx from '../../assets/3Dmodels/skyTest/_nx.png'
+import sky_nx from '../../assets/3Dmodels/skyTest/_nx.png';
 // eslint-disable-next-line camelcase
-import sky_ny from '../../assets/3Dmodels/skyTest/_ny.png'
+import sky_ny from '../../assets/3Dmodels/skyTest/_ny.png';
 // eslint-disable-next-line camelcase
-import sky_nz from '../../assets/3Dmodels/skyTest/_nz.png'
+import sky_nz from '../../assets/3Dmodels/skyTest/_nz.png';
 
 const createScene = async () => {
   const game = document.querySelector('#game');
@@ -45,51 +45,40 @@ const createScene = async () => {
 
   // TODO: rearrange mesh axes
   // Game Assets
- const waterMeshImport = await BABYLON.SceneLoader.ImportMeshAsync
-  (
-    null,
-    water,
-    null,
-    scene
-  );
+  const waterMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, water, null, scene);
   console.log('waterMeshImport', waterMeshImport);
   waterMeshImport.meshes[2].dispose();
-const waterMesh = waterMeshImport.meshes[1];
-waterMesh.scaling = new BABYLON.Vector3(3, 3, 1.2);
+  const waterMesh = waterMeshImport.meshes[1];
+  waterMesh.scaling = new BABYLON.Vector3(3, 3, 1.2);
 
-// waterMeshImport.dispose()
+  // waterMeshImport.dispose()
 
-console.log("here",waterMesh);
-// waterMesh.position = new BABYLON.Vector3(0, 0, 0);
-waterMesh.scaling = new BABYLON.Vector3(10, 10, 1);
-waterMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
-// waterMesh.isVisible = true;
-// waterMesh.isPickable = true;
-// waterMesh.checkCollisions = true;
-// waterMesh.receiveShadows = true;
-// waterMesh.name = 'water';
-// waterMesh.material = new BABYLON.StandardMaterial('water', scene);
-// waterMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 1);
-// waterMesh.material.specularColor = new BABYLON.Color3(0, 0, 1);
-// waterMesh.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
-// waterMesh.material.ambientColor = new BABYLON.Color3(0, 0, 1);
-// waterMesh.material.alpha = 0.5;
-// waterMesh.material.backFaceCulling = false;
-// waterMesh.material.freeze();
-// waterMesh.freezeWorldMatrix();
-// waterMesh.freezeNormals();
-// waterMesh.freeze();
-// waterMesh.isPickable = true;
-// const direction=waterMesh.getDirection()
-// console.log("direction",direction);
-const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
-   (
-    null,
-    seal,
-    null,
-    scene
-  ).then((result) =>console.log(result));
-  
+  console.log('here', waterMesh);
+  // waterMesh.position = new BABYLON.Vector3(0, 0, 0);
+  waterMesh.scaling = new BABYLON.Vector3(10, 10, 1);
+  waterMesh.rotate(BABYLON.Axis.Y, -Math.PI / 2, BABYLON.Space.WORLD);
+  // waterMesh.isVisible = true;
+  // waterMesh.isPickable = true;
+  // waterMesh.checkCollisions = true;
+  // waterMesh.receiveShadows = true;
+  // waterMesh.name = 'water';
+  // waterMesh.material = new BABYLON.StandardMaterial('water', scene);
+  // waterMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 1);
+  // waterMesh.material.specularColor = new BABYLON.Color3(0, 0, 1);
+  // waterMesh.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
+  // waterMesh.material.ambientColor = new BABYLON.Color3(0, 0, 1);
+  // waterMesh.material.alpha = 0.5;
+  // waterMesh.material.backFaceCulling = false;
+  // waterMesh.material.freeze();
+  // waterMesh.freezeWorldMatrix();
+  // waterMesh.freezeNormals();
+  // waterMesh.freeze();
+  // waterMesh.isPickable = true;
+  // const direction=waterMesh.getDirection()
+  // console.log("direction",direction);
+  const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene);
+
+  const sealMesh = sealMeshImport.meshes[1];
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
@@ -173,21 +162,28 @@ const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
     new BABYLON.Vector3(0, 0, 0),
     scene,
   );
-  camera.attachControl("canvas",true)
+  camera.attachControl('canvas', true);
 
   // fonction starting the game
   const startGame = () => {
-  // sealSwimmingAnimation.start();
+    // sealSwimmingAnimation.start();
     // Light
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
 
     // skybox
-    const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
-    const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    const skybox = BABYLON.MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
+    const skyboxMaterial = new BABYLON.StandardMaterial('skyBox', scene);
     skyboxMaterial.backFaceCulling = false;
     // eslint-disable-next-line camelcase
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("", scene,null,null,[sky_px,sky_py,sky_pz,sky_nx,sky_ny,sky_nz]);
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture('', scene, null, null, [
+      sky_px,
+      sky_py,
+      sky_pz,
+      sky_nx,
+      sky_ny,
+      sky_nz,
+    ]);
     skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
@@ -413,13 +409,11 @@ const HomePage = async () => {
   engine.runRenderLoop(() => {
     scene.render();
   });
-  
-  window.addEventListener("resize",  () =>{
-  engine.resize();
-});
+
+  window.addEventListener('resize', () => {
+    engine.resize();
+  });
 };
-
-
 
 async function scoreLoggedPlayer(score) {
   const res = await fetch(`/api/users/highscore/1`, {
