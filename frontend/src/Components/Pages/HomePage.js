@@ -6,7 +6,7 @@ import * as GUI from '@babylonjs/gui';
 import menu from '../../assets/guiTexture.json';
 import '@babylonjs/loaders';
 
-// import utils 
+// import utils
 // import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
 import '@babylonjs/inspector';
@@ -35,7 +35,7 @@ import sky_ny from '../../assets/3Dmodels/skyTest/_ny.png'
 import sky_nz from '../../assets/3Dmodels/skyTest/_nz.png'
 
 const createScene = async () => {
-  const game =  document.querySelector('#game');
+  const game = document.querySelector('#game');
   const newCanvas = document.createElement('canvas');
   newCanvas.id = 'renderCanvas';
   game.appendChild(newCanvas);
@@ -59,8 +59,10 @@ waterMesh.scaling = new BABYLON.Vector3(3, 3, 1.2);
 
 // waterMeshImport.dispose()
 
+console.log("here",waterMesh);
 // waterMesh.position = new BABYLON.Vector3(0, 0, 0);
-// waterMesh.scaling = new BABYLON.Vector3(10, 10, 1);
+waterMesh.scaling = new BABYLON.Vector3(10, 10, 1);
+waterMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
 // waterMesh.isVisible = true;
 // waterMesh.isPickable = true;
 // waterMesh.checkCollisions = true;
@@ -80,28 +82,14 @@ waterMesh.scaling = new BABYLON.Vector3(3, 3, 1.2);
 // waterMesh.isPickable = true;
 // const direction=waterMesh.getDirection()
 // console.log("direction",direction);
-const sealImport= await BABYLON.SceneLoader.ImportMeshAsync
+const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
    (
     null,
     seal,
     null,
-    scene,
-   );
-console.log('Seal Import',sealImport);
-  const sealMesh = await sealImport.meshes[1];
-    // sealMesh.scaling = new BABYLON.Vector3(0.1, 0.1, 0.1);
-  // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
-  // sealMesh.forward = new BABYLON.Vector3.Forward;
-  console.log('Seal Mesh',sealMesh);
-
-  const sealSwimmingAnimation = scene.getAnimationGroupByName("ArmatureAction.004");
+    scene
+  ).then((result) =>console.log(result));
   
-  // --------------- test animation : -----------------------
-  // const sealMesh = sealMeshImportResult.meshes[0].getChildren();
-  // sealMesh.setParent(null);
-  // const sealImportedAnimation = sealMesh.animationGroups;
-  // sealImportedAnimation[1].stop();
-  // --------------------------------------------------------
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
@@ -125,7 +113,6 @@ console.log('Seal Import',sealImport);
   // sealMesh.freezeNormals();
   // sealMesh.freeze();
   // sealMesh.isPickable = true;
-
 
   // Game Variables
   const numberCols = 3;
@@ -392,7 +379,7 @@ console.log('Seal Import',sealImport);
             }
             // seal dispose
             sealMesh.dispose();
-          
+
             // update user score
             scoreLoggedPlayer(score);
           },
@@ -409,7 +396,7 @@ console.log('Seal Import',sealImport);
           },
           () => {
             score++;
-            
+
             scoreText.text = `Score : ${score.toString()}`;
             buttonScore.textBlock.text = `Score : ${score}`;
           },
@@ -420,30 +407,33 @@ console.log('Seal Import',sealImport);
   return scene;
 };
 
-
 const HomePage = async () => {
   const scene = await createScene();
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
     scene.render();
   });
+  
+  window.addEventListener("resize",  () =>{
+  engine.resize();
+});
 };
 
 
 
-async function scoreLoggedPlayer(score){
-  const res = await fetch(`/api/users/highscore/1`, { // for now the request is !!! HARD CODED !!! while waiting for session data management
+async function scoreLoggedPlayer(score) {
+  const res = await fetch(`/api/users/highscore/1`, {
+    // for now the request is !!! HARD CODED !!! while waiting for session data management
     method: 'PATCH',
     body: JSON.stringify({
-      highscore: score
+      highscore: score,
     }),
     headers: {
       'Content-Type': 'application/json',
     },
-  }); 
+  });
 
   if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
-
 }
 
 export default HomePage;

@@ -7,5 +7,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "cookie-session": "^2.0.0"
   }
 }

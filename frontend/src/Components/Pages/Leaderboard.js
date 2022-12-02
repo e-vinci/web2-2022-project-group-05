@@ -1,4 +1,5 @@
 import { clearPage } from '../../utils/render';
+import Footer from '../Footer/Footer';
 
 const Leaderboard = async () => {
   try {
@@ -10,6 +11,7 @@ const Leaderboard = async () => {
 
     const users = await response.json();
     renderUsersFromString(users);
+    Footer();
   } catch (err) {
     console.error('Leaderboard error ', err);
   }
