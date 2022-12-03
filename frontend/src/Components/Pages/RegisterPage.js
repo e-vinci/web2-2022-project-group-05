@@ -1,4 +1,5 @@
 import { clearPage, renderPageTitle } from '../../utils/render';
+import Footer from '../Footer/Footer';
 // import Navigate from '../Router/Navigate';
 // import Navbar from '../Navbar/Navbar';
 // import { setAuthenticatedUser } from '../../utils/auths';
@@ -8,6 +9,7 @@ const RegisterPage = () => {
   renderPageTitle('Register');
   const main = document.querySelector('main');
   main.innerHTML = 'Register here or you\'ll die';
+  Footer();
   // form.addEventListener('submit', onRegister);
   };
 

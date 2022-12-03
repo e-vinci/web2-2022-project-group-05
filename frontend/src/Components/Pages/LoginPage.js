@@ -1,5 +1,6 @@
 // import { setAuthenticatedUser } from '../../utils/auths';
 import { clearPage, renderPageTitle } from '../../utils/render';
+import Footer from '../Footer/Footer';
 // import Navbar from '../Navbar/Navbar';
 // import Navigate from '../Router/Navigate';
 
@@ -10,6 +11,7 @@ const LoginPage = () => {
   main.innerHTML = 'You login here bitchhhhhhhhh';
   // form.addEventListener('submit', onLogin);
   };
+  Footer();
 
   function createForm(){
     const form = `
