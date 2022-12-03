@@ -11,6 +11,19 @@ const LoginPage = () => {
   // form.addEventListener('submit', onLogin);
   };
 
+  function createForm(){
+    const form = `
+      <form>
+        <label>pseudo :</label>
+        <input type="text" id="login_pseudo" name="login_pseudo">
+        <label>password :</label>
+        <input type="password" id="login_password" name="login_password">
+        <input type="submit">
+      </form>
+     `
+     return form;
+  }
+
 /* async function onLogin(e) {
   e.preventDefault();
 

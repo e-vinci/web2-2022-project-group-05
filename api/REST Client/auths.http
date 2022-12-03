@@ -14,8 +14,8 @@ POST {{baseUrl}}/auths/login
 Content-Type: application/json
 
 {
-    "username":"user1",
-    "password":"user1"
+    "username":"hi",
+    "password":"hi"
 }
 
 
@@ -24,8 +24,8 @@ POST {{baseUrl}}/auths/register
 Content-Type: application/json
 
 {
-    "username":"hello",
-    "password":"hello"
+    "username":"hi",
+    "password":"hi"
 }
 
 ### Login the manager user

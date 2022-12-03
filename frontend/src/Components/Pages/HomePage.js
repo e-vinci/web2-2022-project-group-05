@@ -66,7 +66,7 @@ waterMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
 // waterMesh.isPickable = true;
 // const direction=waterMesh.getDirection()
 // console.log("direction",direction);
-const sealMesh= await BABYLON.SceneLoader.ImportMeshAsync
+const sealMesh = await BABYLON.SceneLoader.ImportMeshAsync
    (
     null,
     seal,
@@ -74,6 +74,8 @@ const sealMesh= await BABYLON.SceneLoader.ImportMeshAsync
     scene,
   ).then((result) =>console.log(result));
 
+  console.log("SEAL TEST");
+  console.log(sealMesh);
 
   const sealSwimmingAnimation = scene.getAnimationGroupByName("ArmatureAction.004");
   sealSwimmingAnimation.pause();
@@ -178,6 +180,7 @@ const sealMesh= await BABYLON.SceneLoader.ImportMeshAsync
     light.intensity = 0.7;
 
     // Move the seal upward 1/2 its height
+    console.log(sealMesh);
     sealMesh.position.y = 1;
 
     // Spawn Animations
