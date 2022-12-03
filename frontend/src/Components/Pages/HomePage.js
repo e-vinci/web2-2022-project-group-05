@@ -163,7 +163,7 @@ const createScene = async () => {
     new BABYLON.Vector3(0, 0, 0),
     scene,
   );
-  camera.attachControl('canvas', true);
+  // camera.attachControl('canvas', true);
 
   // fonction starting the game
   const startGame = () => {
@@ -236,9 +236,9 @@ const createScene = async () => {
       switch (kbInfo.type) {
         case BABYLON.KeyboardEventTypes.KEYDOWN:
           switch (kbInfo.event.key) {
-            case 'q':
-            case 'Q':
-            case 'ArrowLeft':
+            case 'd':
+            case 'D':
+            case 'ArrowRight':
               if (sealMesh.position.x !== -widthCols) {
                 isMoving = true;
                 BABYLON.Animation.CreateAndStartAnimation(
@@ -255,9 +255,9 @@ const createScene = async () => {
                 );
               }
               break;
-            case 'd':
-            case 'D':
-            case 'ArrowRight':
+            case 'q':
+            case 'Q':
+            case 'ArrowLeft':
               if (sealMesh.position.x !== widthCols) {
                 isMoving = true;
                 BABYLON.Animation.CreateAndStartAnimation(
@@ -294,7 +294,7 @@ const createScene = async () => {
     });
 
     // Money
-    const mon1 = BABYLON.MeshBuilder.CreateBox('box', { size: 4 }, scene);
+    const mon1 = BABYLON.MeshBuilder.CreateBox('box', { size: 0.5 }, scene);
     mon1.visibility = false;
     mon1.position.y = 100;
 
@@ -380,7 +380,7 @@ const createScene = async () => {
           },
           () => {
             moneyRecolted++;
-			target.dispose();
+            target.dispose();
           },
         ),
       );
@@ -438,13 +438,13 @@ const createScene = async () => {
           () => {
             // stop obstacles spawn
             clearInterval(boucleSpawn);
-			clearInterval(moneySpawn);
+            clearInterval(moneySpawn);
             // destroy every other obstacle
             for (let i = 0; i < targets.length; i++) {
               targets[i]?.dispose();
             }
             for (let i = 0; i < moneyTargets.length; i++) {
-				moneyTargets[i]?.dispose();
+              moneyTargets[i]?.dispose();
             }
             // seal dispose
 
@@ -453,8 +453,8 @@ const createScene = async () => {
             // update user score
             scoreLoggedPlayer(score);
             // TODO UPDATE NEW USER BALANCE
-			console.log("MONEY = ");
-			console.log(moneyRecolted);
+            console.log('MONEY = ');
+            console.log(moneyRecolted);
           },
         ),
       );

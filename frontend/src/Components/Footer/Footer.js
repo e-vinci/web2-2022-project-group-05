@@ -26,24 +26,24 @@ async function getRandomAnimalInfo(){
 
         // if no biggest threat found get another one
         let i = 0;
-        while (i < 50 && !animal.characteristics.biggest_threat) {
+        while (i < 50 && (!animal.characteristics || animal.characteristics.biggest_threat)) {
             animal = infos[Math.floor(Math.random() * infos.length)];
             i++;
         }
+        console.log("RETURN ");
+    console.log(animal);
+    return animal;
 
-        return animal;
 
     } catch (err) {
         console.error('Leaderboard error ', err);
     }
-
-    return animal;
     
+    return undefined;
 }
 
 async function renderRandomFacts(){
     const animal = await getRandomAnimalInfo();
-
     const footer = document.querySelector('footer');
     footer.classList = 'text-center text-white';
     footer.style = 'background-color: #0a4275;'
