@@ -18,8 +18,21 @@ import '@babylonjs/procedural-textures';
 import * as tools from '../../utils/tools';
 
 // assets
-import water from '../../assets/3Dmodels/water.gltf';
+import water from '../../assets/3Dmodels/test2.glb';
 import seal from '../../assets/3Dmodels/seal_animated.glb';
+
+// eslint-disable-next-line camelcase
+import sky_px from '../../assets/3Dmodels/skyTest/_px.png';
+// eslint-disable-next-line camelcase
+import sky_py from '../../assets/3Dmodels/skyTest/_py.png';
+// eslint-disable-next-line camelcase
+import sky_pz from '../../assets/3Dmodels/skyTest/_pz.png';
+// eslint-disable-next-line camelcase
+import sky_nx from '../../assets/3Dmodels/skyTest/_nx.png';
+// eslint-disable-next-line camelcase
+import sky_ny from '../../assets/3Dmodels/skyTest/_ny.png';
+// eslint-disable-next-line camelcase
+import sky_nz from '../../assets/3Dmodels/skyTest/_nz.png';
 
 const createScene = async () => {
   const game = document.querySelector('#game');
@@ -32,12 +45,13 @@ const createScene = async () => {
 
   // TODO: rearrange mesh axes
   // Game Assets
-  console.log('water', water);
-  console.log('seal', seal);
+  const waterMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, water, null, scene);
+  console.log('waterMeshImport', waterMeshImport);
+  waterMeshImport.meshes[2].dispose();
+  const waterMesh = waterMeshImport.meshes[1];
+  waterMesh.scaling = new BABYLON.Vector3(3, 3, 1.2);
 
-  const waterMesh = await BABYLON.SceneLoader.ImportMeshAsync(null, water, null, scene).then(
-    (result) => result.meshes[1],
-  );
+  // waterMeshImport.dispose()
 
   console.log('here', waterMesh);
   // waterMesh.position = new BABYLON.Vector3(0, 0, 0);
@@ -62,24 +76,9 @@ const createScene = async () => {
   // waterMesh.isPickable = true;
   // const direction=waterMesh.getDirection()
   // console.log("direction",direction);
-  const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene).then(
-    (result) => {
-      console.log(result);
-      // result.animationGroups.forEach((a)=> a.pause())
-    },
-  );
+  const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene);
 
   const sealMesh = sealMeshImport.meshes[1];
-  // FIXME arrange axis
-  // const sealSwimmingAnimation = scene.getAnimationGroupByName("ArmatureAction.004");
-  // sealSwimmingAnimation.pause();
-
-  // --------------- test animation : -----------------------
-  // const sealMesh = sealMeshImportResult.meshes[0].getChildren();
-  // sealMesh.setParent(null);
-  // const sealImportedAnimation = sealMesh.animationGroups;
-  // sealImportedAnimation[1].stop();
-  // --------------------------------------------------------
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
@@ -123,7 +122,6 @@ const createScene = async () => {
   advancedTexture.parseSerializedObject(menu, true);
 
   boutonStart = advancedTexture.getControlByName('B Start');
-  console.log(boutonStart);
 
   boutonStart.onPointerClickObservable.add(() => {
     advancedTexture.dispose();
@@ -164,16 +162,35 @@ const createScene = async () => {
     new BABYLON.Vector3(0, 0, 0),
     scene,
   );
-  // camera.attachControl("canvas",true)
+  camera.attachControl('canvas', true);
 
   // fonction starting the game
   const startGame = () => {
+    // sealSwimmingAnimation.start();
     // Light
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
 
+    // skybox
+    const skybox = BABYLON.MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
+    const skyboxMaterial = new BABYLON.StandardMaterial('skyBox', scene);
+    skyboxMaterial.backFaceCulling = false;
+    // eslint-disable-next-line camelcase
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture('', scene, null, null, [
+      sky_px,
+      sky_py,
+      sky_pz,
+      sky_nx,
+      sky_ny,
+      sky_nz,
+    ]);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skybox.material = skyboxMaterial;
     // Move the seal upward 1/2 its height
-    sealMesh.position.y = 1;
+    console.log(sealMesh);
+    // sealMesh.position.y = 1;
 
     // Spawn Animations
     // Jump
@@ -393,13 +410,11 @@ const HomePage = async () => {
   engine.runRenderLoop(() => {
     scene.render();
   });
-  
-  window.addEventListener("resize",  () =>{
-  engine.resize();
-});
+
+  window.addEventListener('resize', () => {
+    engine.resize();
+  });
 };
-
-
 
 async function scoreLoggedPlayer(score) {
   const res = await fetch(`/api/users/highscore/1`, {
