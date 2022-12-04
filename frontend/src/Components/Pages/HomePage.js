@@ -5,7 +5,7 @@ import * as BABYLON from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
 import menu from '../../assets/guiTexture.json';
 import '@babylonjs/loaders';
-
+import { clearPage } from '../../utils/render';
 // import utils
 // import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
@@ -405,6 +405,7 @@ const createScene = async () => {
 };
 
 const HomePage = async () => {
+  await clearPage();
   const scene = await createScene();
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
