@@ -14,32 +14,19 @@ async function getRandomAnimalInfo(){
 
         const animalRes = await fetch('/api/animals');
         if (!animalRes.ok) throw new Error(`fetch error : ${animalRes.status} : ${animalRes.statusText}`);
+
         const animalName = await animalRes.json();
-
         const response = await fetch(`https://api.api-ninjas.com/v1/animals?name=${animalName.animal}`, options);
-
         if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
 
         const infos = await response.json();
-
         animal = infos[Math.floor(Math.random() * infos.length)];
-
-        // if no biggest threat found get another one
-        let i = 0;
-        while (i < 50 && (!animal.characteristics || animal.characteristics.biggest_threat)) {
-            animal = infos[Math.floor(Math.random() * infos.length)];
-            i++;
-        }
-        console.log("RETURN ");
-    console.log(animal);
-    return animal;
-
 
     } catch (err) {
         console.error('Leaderboard error ', err);
     }
     
-    return undefined;
+    return animal;
 }
 
 async function renderRandomFacts(){
