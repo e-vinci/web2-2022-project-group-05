@@ -119,7 +119,7 @@ const createScene = async () => {
   const spawnEndZ = -10;
   let score = 0;
   const maxJumpHeight = 4;
-  let moneyRecolted = 0;
+  let moneyCollected = 0;
 
   // Create GUI Elements
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
@@ -390,7 +390,7 @@ const createScene = async () => {
             usePreciseIntersection: false,
           },
           () => {
-            moneyRecolted++;
+            moneyCollected++;
             target.dispose();
           },
         ),
@@ -460,15 +460,15 @@ const createScene = async () => {
             // seal dispose
             sealMesh.dispose();
 
-            // update user score
             if (isAuthenticated()){
+              // update user score
               console.log("user logged");
               scoreLoggedPlayer(score);
+              // add money to user balance
+              addMoneyToBalance(moneyCollected);
             } 
+            else console.log("no user logged in");
               
-            // TODO UPDATE NEW USER BALANCE
-            console.log('MONEY = ');
-            console.log(moneyRecolted);
           },
         ),
       );
@@ -494,7 +494,7 @@ const createScene = async () => {
 };
 
 const HomePage = async () => {
-  await clearPage();
+  await clearPage();  // <-- await necessary ?? (alicia)
   const footer = document.querySelector('footer');
   const scene = await createScene();
   const engine = scene.getEngine();
@@ -521,6 +521,24 @@ async function scoreLoggedPlayer(score) {
     },
   });
 
+
+  if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
+}
+
+async function addMoneyToBalance(money) {
+  const user = getAuthenticatedUser();
+  console.log(`adding money to ${user.username}'s balance :${money}`);
+
+  const res = await fetch(`/api/users/balance?username=${user.username}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      balance: money,
+      operator: '+'
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
   if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
 }
