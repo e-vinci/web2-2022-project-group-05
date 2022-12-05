@@ -4,14 +4,14 @@ import Footer from '../Footer/Footer';
 const Leaderboard = async () => {
   try {
     clearPage();
-
+    Footer();
     const response = await fetch('/api/users/?order=score');
 
     if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
 
     const users = await response.json();
     renderUsersFromString(users);
-    Footer();
+    
   } catch (err) {
     console.error('Leaderboard error ', err);
   }

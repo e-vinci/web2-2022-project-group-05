@@ -489,6 +489,7 @@ const createScene = async () => {
 
 const HomePage = async () => {
   await clearPage();
+  const footer = document.querySelector('footer');
   const scene = await createScene();
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
