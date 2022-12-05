@@ -21,6 +21,7 @@ import * as tools from '../../utils/tools';
 import water from '../../assets/3Dmodels/water.gltf';
 import seal from '../../assets/3Dmodels/seal_animated.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
+import waterTexture from '../../assets/texture/flare.png';
 
 const createScene = async () => {
   const game = document.querySelector('#game');
@@ -71,7 +72,7 @@ const createScene = async () => {
   ).then((result) => console.log(result));
 
   const waterParticles = BABYLON.ParticleSystem.Parse(importedWaterParticles, scene, '');
-  waterParticles.particleTexture = new BABYLON.Texture('../../assets/texture/flare.png');
+  waterParticles.particleTexture = new BABYLON.Texture(waterTexture);
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);

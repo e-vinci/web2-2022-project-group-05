@@ -1,7 +1,7 @@
 {
   "name": "particles",
   "id": "particles",
-  "capacity": 5000,
+  "capacity": 500,
   "disposeOnStop": false,
   "manualEmitCount": -1,
   "emitter": [0, 1, 0],
@@ -14,7 +14,7 @@
   },
   "texture": {
     "tags": null,
-    "url": "textures/flare.png",
+    "url": "texture/flare.png",
     "uOffset": 0,
     "vOffset": 0,
     "uScale": 1,
@@ -27,7 +27,7 @@
     "wRotationCenter": 0.5,
     "homogeneousRotationInUVTransform": false,
     "isBlocking": true,
-    "name": "textures/flare.png",
+    "name": "texture/flare.png",
     "hasAlpha": false,
     "getAlphaFromRGB": false,
     "level": 1,
