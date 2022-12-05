@@ -7,8 +7,7 @@ import '@babylonjs/loaders';
 
 import menu from '../../assets/guiTexture.json';
 import { clearPage } from '../../utils/render';
-// import utils
-// import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
+import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
 import '@babylonjs/inspector';
 import '@babylonjs/materials';
@@ -455,11 +454,14 @@ const createScene = async () => {
               moneyTargets[i]?.dispose();
             }
             // seal dispose
-
             sealMesh.dispose();
 
             // update user score
-            scoreLoggedPlayer(score);
+            if (isAuthenticated()){
+              console.log("user logged");
+              scoreLoggedPlayer(score);
+            } 
+              
             // TODO UPDATE NEW USER BALANCE
             console.log('MONEY = ');
             console.log(moneyRecolted);
@@ -501,8 +503,10 @@ const HomePage = async () => {
 };
 
 async function scoreLoggedPlayer(score) {
-  const res = await fetch(`/api/users/highscore/1`, {
-    // for now the request is !!! HARD CODED !!! while waiting for session data management
+  const user = getAuthenticatedUser();
+  console.log(user);
+
+  const res = await fetch(`/api/users/highscore/${user.username}`, {
     method: 'PATCH',
     body: JSON.stringify({
       highscore: score,

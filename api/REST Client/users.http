@@ -8,11 +8,11 @@ GET {{baseUrl}}/users/?order=score
 GET {{baseUrl}}/users/user?id=1
 
 ### get one user by its username
-GET {{baseUrl}}/users/user?username=manager
+GET {{baseUrl}}/users/user?username=Aikyu
 
 
 ### Update balance of the user
-PATCH {{baseUrl}}/users/balance/1
+PATCH {{baseUrl}}/users/balance?username=Aikyu
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### Update user's highscore
-PATCH {{baseUrl}}/users/highscore/2
+PATCH {{baseUrl}}/users/highscore?username=Aikyu
 Content-Type: application/json
 
 {
