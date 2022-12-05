@@ -14,6 +14,8 @@ const jsonDbPath = path.join(__dirname, '/../data/users.json');
 const defaultUsers = [
   {
     id: 1,
+    lname: 'lname',
+    fname: 'fname',
     username: 'user1',
     password: bcrypt.hashSync('user1', saltRounds),
     balance: 1000,

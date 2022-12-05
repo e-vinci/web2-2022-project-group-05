@@ -1,19 +1,47 @@
-// import { setAuthenticatedUser } from '../../utils/auths';
+import { setAuthenticatedUser } from '../../utils/auths';
 import { clearPage, renderPageTitle } from '../../utils/render';
 import Footer from '../Footer/Footer';
-// import Navbar from '../Navbar/Navbar';
-// import Navigate from '../Router/Navigate';
+import Navbar from '../Navbar/Navbar';
+import Navigate from '../Router/Navigate';
 
 const LoginPage = () => {
   clearPage();
-  renderPageTitle("Login page");
-  const main = document.querySelector('main');
-  main.innerHTML = 'You login here bitchhhhhhhhh';
-  // form.addEventListener('submit', onLogin);
-  };
-  Footer();
+  renderPageTitle("Login");
 
-/* async function onLogin(e) {
+  const main = document.querySelector('main');
+  main.innerHTML += renderLoginForm();
+
+  const form = document.querySelector('form');
+  form.addEventListener('submit', onLogin);
+
+  const registerButton = document.querySelector('#register-redirection');
+  registerButton.addEventListener('click', redirectToRegisterPage);
+
+  Footer();
+  };
+
+  function renderLoginForm(){
+    const form = `
+    <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
+      <form class="bg-custom-blue px-10 pt-6 pb-8 mb-4 rounded-3xl">
+        <div class="flex flex-col justify-center">
+          <label class="bg-wood-board-01 bg-cover bg-center block text-white text-center text-xl font-mono mt-10 w-1/5 h-15" for="username">username :</label>
+            <input  id="username" class="bg-custom-lightyellow shadow appearance-none rounded w-1/2 py-2 px-3" name="username" type="text">
+            <label class="bg-wood-board-01 bg-cover bg-center block text-white text-center text-xl font-mono mt-10 w-1/5 h-15" for="password">password :</label>
+            <input  id="password" class="bg-custom-lightyellow shadow appearance-none rounded w-1/2 py-2 px-3" name="password" type="password">
+        </div>
+        <div class="flex flex-rox justify-between static overflow-visible mt-100">
+          <button id="register-redirection" class="bg-wood-board-02 hover:text-custom-blue bg-cover bg-left mt-10 text-white text-xl font-mono py-5 px-10">register</button>
+          <input class="bg-wood-board-02 hover:text-custom-blue bg-cover bg-left mt-10 text-white text-xl font-mono py-5 px-10" type="submit" value="login">
+        </div>
+      </form>
+    </div>
+    `
+
+    return form;
+  }
+
+  async function onLogin(e) {
   e.preventDefault();
 
   const username = document.querySelector('#username').value;
@@ -43,6 +71,10 @@ const LoginPage = () => {
   Navbar();
 
   Navigate('/');
-} */
+}
+
+function redirectToRegisterPage(){
+  Navigate('/register');
+}
   
   export default LoginPage;

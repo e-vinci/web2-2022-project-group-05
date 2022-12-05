@@ -45,8 +45,7 @@ async function renderRandomFacts(){
     const animal = await getRandomAnimalInfo();
 
     const footer = document.querySelector('footer');
-    footer.classList = 'text-center text-white';
-    footer.style = 'background-color: #0a4275;'
+    footer.classList = 'bg-custom-brown text-center text-white';
     footer.innerHTML = `<div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.2);">
     <b>Did you know ?</b> The biggest threat of the ${animal.name} is ${(animal.characteristics.biggest_threat).toLowerCase()}.
     
