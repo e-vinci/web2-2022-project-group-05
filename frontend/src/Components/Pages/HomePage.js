@@ -5,7 +5,7 @@ import * as BABYLON from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
 import menu from '../../assets/guiTexture.json';
 import '@babylonjs/loaders';
-
+import { clearPage } from '../../utils/render';
 // import utils
 // import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
@@ -18,8 +18,21 @@ import '@babylonjs/procedural-textures';
 import * as tools from '../../utils/tools';
 
 // assets
-import water from '../../assets/3Dmodels/water.gltf';
+import water from '../../assets/3Dmodels/test2.glb';
 import seal from '../../assets/3Dmodels/seal_animated.glb';
+
+// eslint-disable-next-line camelcase
+import sky_px from '../../assets/3Dmodels/skyTest/_px.png';
+// eslint-disable-next-line camelcase
+import sky_py from '../../assets/3Dmodels/skyTest/_py.png';
+// eslint-disable-next-line camelcase
+import sky_pz from '../../assets/3Dmodels/skyTest/_pz.png';
+// eslint-disable-next-line camelcase
+import sky_nx from '../../assets/3Dmodels/skyTest/_nx.png';
+// eslint-disable-next-line camelcase
+import sky_ny from '../../assets/3Dmodels/skyTest/_ny.png';
+// eslint-disable-next-line camelcase
+import sky_nz from '../../assets/3Dmodels/skyTest/_nz.png';
 
 const createScene = async () => {
   const game = document.querySelector('#game');
@@ -32,12 +45,13 @@ const createScene = async () => {
 
   // TODO: rearrange mesh axes
   // Game Assets
-  console.log('water', water);
-  console.log('seal', seal);
+  const waterMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, water, null, scene);
+  console.log('waterMeshImport', waterMeshImport);
+  waterMeshImport.meshes[2].dispose();
+  const waterMesh = waterMeshImport.meshes[1];
+  waterMesh.scaling = new BABYLON.Vector3(3, 3, 1.2);
 
-  const waterMesh = await BABYLON.SceneLoader.ImportMeshAsync(null, water, null, scene).then(
-    (result) => result.meshes[1],
-  );
+  // waterMeshImport.dispose()
 
   console.log('here', waterMesh);
   // waterMesh.position = new BABYLON.Vector3(0, 0, 0);
@@ -62,24 +76,9 @@ const createScene = async () => {
   // waterMesh.isPickable = true;
   // const direction=waterMesh.getDirection()
   // console.log("direction",direction);
-  const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene).then(
-    (result) => {
-      console.log(result);
-      // result.animationGroups.forEach((a)=> a.pause())
-    },
-  );
+  const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene);
 
   const sealMesh = sealMeshImport.meshes[1];
-  // FIXME arrange axis
-  // const sealSwimmingAnimation = scene.getAnimationGroupByName("ArmatureAction.004");
-  // sealSwimmingAnimation.pause();
-
-  // --------------- test animation : -----------------------
-  // const sealMesh = sealMeshImportResult.meshes[0].getChildren();
-  // sealMesh.setParent(null);
-  // const sealImportedAnimation = sealMesh.animationGroups;
-  // sealImportedAnimation[1].stop();
-  // --------------------------------------------------------
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
@@ -114,6 +113,7 @@ const createScene = async () => {
   const spawnEndZ = -10;
   let score = 0;
   const maxJumpHeight = 4;
+  let moneyRecolted = 0;
 
   // Create GUI Elements
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
@@ -123,7 +123,6 @@ const createScene = async () => {
   advancedTexture.parseSerializedObject(menu, true);
 
   boutonStart = advancedTexture.getControlByName('B Start');
-  console.log(boutonStart);
 
   boutonStart.onPointerClickObservable.add(() => {
     advancedTexture.dispose();
@@ -164,16 +163,41 @@ const createScene = async () => {
     new BABYLON.Vector3(0, 0, 0),
     scene,
   );
-  // camera.attachControl("canvas",true)
+  // camera.attachControl('canvas', true);
 
   // fonction starting the game
   const startGame = () => {
+    // sealSwimmingAnimation.start();
     // Light
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
 
+    // skybox
+    const skybox = BABYLON.MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
+    const skyboxMaterial = new BABYLON.StandardMaterial('skyBox', scene);
+    skyboxMaterial.backFaceCulling = false;
+    // eslint-disable-next-line camelcase
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture('', scene, null, null, [
+      // eslint-disable-next-line camelcase
+      sky_px,
+      // eslint-disable-next-line camelcase
+      sky_py,
+      // eslint-disable-next-line camelcase
+      sky_pz,
+      // eslint-disable-next-line camelcase
+      sky_nx,
+      // eslint-disable-next-line camelcase
+      sky_ny,
+      // eslint-disable-next-line camelcase
+      sky_nz,
+    ]);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skybox.material = skyboxMaterial;
     // Move the seal upward 1/2 its height
-    sealMesh.position.y = 1;
+    console.log(sealMesh);
+    // sealMesh.position.y = 1;
 
     // Spawn Animations
     // Jump
@@ -213,9 +237,9 @@ const createScene = async () => {
       switch (kbInfo.type) {
         case BABYLON.KeyboardEventTypes.KEYDOWN:
           switch (kbInfo.event.key) {
-            case 'q':
-            case 'Q':
-            case 'ArrowLeft':
+            case 'd':
+            case 'D':
+            case 'ArrowRight':
               if (sealMesh.position.x !== -widthCols) {
                 isMoving = true;
                 BABYLON.Animation.CreateAndStartAnimation(
@@ -232,9 +256,9 @@ const createScene = async () => {
                 );
               }
               break;
-            case 'd':
-            case 'D':
-            case 'ArrowRight':
+            case 'q':
+            case 'Q':
+            case 'ArrowLeft':
               if (sealMesh.position.x !== widthCols) {
                 isMoving = true;
                 BABYLON.Animation.CreateAndStartAnimation(
@@ -270,6 +294,11 @@ const createScene = async () => {
       }
     });
 
+    // Money
+    const mon1 = BABYLON.MeshBuilder.CreateBox('box', { size: 0.5 }, scene);
+    mon1.visibility = false;
+    mon1.position.y = 100;
+
     // ScoreZone
     const scoreZone = BABYLON.MeshBuilder.CreatePlane('scoreZone', {
       size: 10,
@@ -300,6 +329,64 @@ const createScene = async () => {
     const spawn3 = new BABYLON.Vector3(widthCols, 1, spawnStartZ);
     spawns.push(spawn1, spawn2, spawn3);
 
+    // Handle money spawn
+    let money;
+    const moneyTargets = [];
+    const moneySpawn = setInterval(spawnMoney, 1000, [money]);
+
+    function spawnMoney(target) {
+      // set a random spawn position as startPosition
+      const startPosition = spawns[tools.getRandomInt(spawns.length)];
+      console.log(startPosition);
+      // endPosition = startPoition with different z index
+      const endPosition = startPosition.clone();
+      endPosition.z = spawnEndZ;
+
+      // create a clone of a random obstacle as target
+      target = mon1.clone('target');
+      moneyTargets.push(target);
+      // adjust target parameters
+      target.position = startPosition;
+      target.visibility = true;
+      // add to targets
+
+      // animation spawn
+      BABYLON.Animation.CreateAndStartAnimation(
+        'anim',
+        target,
+        'position',
+        30,
+        100,
+        startPosition,
+        endPosition,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT,
+        null,
+        // on animation end
+        () => {
+          // detruit le target
+          target.dispose();
+          // BUG : limiter la taille de runninganimation[] en suppriment l'animation qui n'est plus sur le terrain ameliorerai les perf mais cela ne marche pas comme prevu ...
+          // runningAnimations.shift()
+        },
+      );
+
+      // on Seal collide
+      target.actionManager = new BABYLON.ActionManager();
+      target.actionManager.registerAction(
+        new BABYLON.ExecuteCodeAction(
+          {
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: sealMesh,
+            usePreciseIntersection: false,
+          },
+          () => {
+            moneyRecolted++;
+            target.dispose();
+          },
+        ),
+      );
+    }
+
     // Handle obstacles spawn
     let target;
     const targets = [];
@@ -307,7 +394,6 @@ const createScene = async () => {
     function spawnObstacle(target) {
       // set a random spawn position as startPosition
       const startPosition = spawns[tools.getRandomInt(spawns.length)];
-
       // endPosition = startPoition with different z index
       const endPosition = startPosition.clone();
       endPosition.z = spawnEndZ;
@@ -353,15 +439,23 @@ const createScene = async () => {
           () => {
             // stop obstacles spawn
             clearInterval(boucleSpawn);
+            clearInterval(moneySpawn);
             // destroy every other obstacle
             for (let i = 0; i < targets.length; i++) {
               targets[i]?.dispose();
             }
+            for (let i = 0; i < moneyTargets.length; i++) {
+              moneyTargets[i]?.dispose();
+            }
             // seal dispose
+
             sealMesh.dispose();
 
             // update user score
             scoreLoggedPlayer(score);
+            // TODO UPDATE NEW USER BALANCE
+            console.log('MONEY = ');
+            console.log(moneyRecolted);
           },
         ),
       );
@@ -376,7 +470,6 @@ const createScene = async () => {
           },
           () => {
             score++;
-
             scoreText.text = `Score : ${score.toString()}`;
             buttonScore.textBlock.text = `Score : ${score}`;
           },
@@ -388,18 +481,17 @@ const createScene = async () => {
 };
 
 const HomePage = async () => {
+  await clearPage();
   const scene = await createScene();
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
     scene.render();
   });
-  
-  window.addEventListener("resize",  () =>{
-  engine.resize();
-});
+
+  window.addEventListener('resize', () => {
+    engine.resize();
+  });
 };
-
-
 
 async function scoreLoggedPlayer(score) {
   const res = await fetch(`/api/users/highscore/1`, {
