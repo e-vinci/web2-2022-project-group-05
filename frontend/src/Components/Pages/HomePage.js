@@ -81,10 +81,10 @@ const createScene = async () => {
 
   const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene);
   const sealMesh = sealMeshImport.meshes[1];
-  
+
   const waterParticles = BABYLON.ParticleSystem.Parse(importedWaterParticles, scene, '');
   waterParticles.particleTexture = new BABYLON.Texture(waterTexture);
-
+  waterParticles.emitter = sealMesh;
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
@@ -286,9 +286,13 @@ const createScene = async () => {
             case 'ArrowUp':
             case ' ':
               if (sealMesh.position.y < maxJumpHeight) {
+                waterParticles.stop();
                 isMoving = true;
                 // start animation
-                jump.play().onAnimationGroupEndObservable.add(() => (isMoving = false));
+                jump.play().onAnimationGroupEndObservable.add(() => {
+                  isMoving = false;
+                  waterParticles.start();
+                });
               }
               break;
             default:
@@ -491,6 +495,7 @@ const createScene = async () => {
 
 const HomePage = async () => {
   await clearPage();
+  const footer = document.querySelector('footer');
   const scene = await createScene();
   const engine = scene.getEngine();
   engine.runRenderLoop(() => {
