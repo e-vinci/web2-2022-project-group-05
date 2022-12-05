@@ -9,10 +9,9 @@ router.get('/', (req, res) => {
   return res.json(usersPotentiallyOrdered);
 });
 
-/* GET one user (either by its id or its username) */
+/* GET one user by its username */
 router.get('/user', (req, res) => {
   let user;
-  if (req?.query?.id) user = userData.getUserById(req.query.id);
   if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
   if (!user) return res.sendStatus(404);
   return res.json(user);
@@ -25,7 +24,7 @@ router.patch('/balance', (req, res) => {
   const balance = req?.body?.balance;
   const operator = req?.body?.operator;
   if (!balance || !operator || parseInt(balance,10) === 0 || (operator !== '+' && operator !== '-')) return res.sendStatus(404);
-  const updatedBalance = userData.updateBalance(operator, balance, user.id);
+  const updatedBalance = userData.updateBalance(operator, balance, user.username);
   
   if (!updatedBalance) return res.json();
   return res.json(updatedBalance);
@@ -37,7 +36,7 @@ router.patch('/highscore', (req, res) => {
   if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
   const highscore = req?.body?.highscore;
   if (!highscore || parseInt(highscore, 10) < 0) return res.sendStatus(404);
-  const updatedHighscore = userData.updateHighscore(highscore, user.id);
+  const updatedHighscore = userData.updateHighscore(highscore, user.username);
   
   if (!updatedHighscore) return res.json(); // empty json
   return res.json(updatedHighscore);
