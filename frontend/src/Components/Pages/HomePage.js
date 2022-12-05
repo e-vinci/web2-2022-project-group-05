@@ -3,8 +3,9 @@
 /* eslint-disable no-shadow */
 import * as BABYLON from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
-import menu from '../../assets/guiTexture.json';
 import '@babylonjs/loaders';
+
+import menu from '../../assets/guiTexture.json';
 import { clearPage } from '../../utils/render';
 // import utils
 // import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
@@ -20,6 +21,8 @@ import * as tools from '../../utils/tools';
 // assets
 import water from '../../assets/3Dmodels/test2.glb';
 import seal from '../../assets/3Dmodels/seal_animated.glb';
+import importedWaterParticles from '../../assets/waterParticles.json';
+import waterTexture from '../../assets/texture/flare.png';
 
 // eslint-disable-next-line camelcase
 import sky_px from '../../assets/3Dmodels/skyTest/_px.png';
@@ -76,9 +79,13 @@ const createScene = async () => {
   // waterMesh.isPickable = true;
   // const direction=waterMesh.getDirection()
   // console.log("direction",direction);
-  const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene);
 
+  const sealMeshImport = await BABYLON.SceneLoader.ImportMeshAsync(null, seal, null, scene);
   const sealMesh = sealMeshImport.meshes[1];
+  
+  const waterParticles = BABYLON.ParticleSystem.Parse(importedWaterParticles, scene, '');
+  waterParticles.particleTexture = new BABYLON.Texture(waterTexture);
+
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
