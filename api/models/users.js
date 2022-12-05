@@ -14,6 +14,8 @@ const jsonDbPath = path.join(__dirname, '/../data/users.json');
 const defaultUsers = [
   {
     id: 1,
+    lname: 'lname',
+    fname: 'fname',
     username: 'user1',
     password: bcrypt.hashSync('user1', saltRounds),
     balance: 1000,
@@ -24,7 +26,6 @@ const defaultUsers = [
 async function login(username, password) {
   const userFound = readOneUserFromUsername(username);
   if (!userFound) return undefined;
-  if (userFound.password !== password) return undefined;
 
   const passwordMatch = await bcrypt.compare(password, userFound.password);
   if (!passwordMatch) return undefined;

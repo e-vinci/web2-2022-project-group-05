@@ -30,3 +30,7 @@ Content-Type: application/json
 
 ### get random animal
 GET {{baseUrl}}/animals
+
+### get info on animal by name
+GET https://api.api-ninjas.com/v1/animals?name=Dolphin
+X-Api-Key: sDkpQuiIx0EY/GZKXSCbtA==O6Tm10FAA9ee9GZu

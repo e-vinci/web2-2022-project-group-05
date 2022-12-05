@@ -41,7 +41,7 @@ function createPotentialLastDirectory(filePath) {
 
   if (fs.existsSync(pathToLastDirectory)) return;
 
-  fs.mkdirSync(pathToLastDirectory);
+  fs.mkdirSync(pathToLastDirectory,{recursive : true});
 }
 
 module.exports = { parse, serialize };

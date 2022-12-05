@@ -14,13 +14,22 @@ POST {{baseUrl}}/auths/login
 Content-Type: application/json
 
 {
-    "username":"user1",
-    "password":"user1"
+    "username":"hi",
+    "password":"hi"
 }
 
 
-### Create the manager user
+### Create random user
 POST {{baseUrl}}/auths/register
+Content-Type: application/json
+
+{
+    "username":"user2",
+    "password":"user2"
+}
+
+### Login random user
+POST {{baseUrl}}/auths/login
 Content-Type: application/json
 
 {
@@ -28,11 +37,5 @@ Content-Type: application/json
     "password":"hello"
 }
 
-### Login the manager user
-POST {{baseUrl}}/auths/login
-Content-Type: application/json
-
-{
-    "username":"manager",
-    "password":"manager"
-}
+### Logout any user
+GET {{baseUrl}}/auths/logout
