@@ -509,9 +509,9 @@ const HomePage = async () => {
 
 async function scoreLoggedPlayer(score) {
   const user = getAuthenticatedUser();
-  console.log(user);
+  console.log(`Updating score for ${user.username}:${score} (if higher than highscore)`);
 
-  const res = await fetch(`/api/users/highscore/${user.username}`, {
+  const res = await fetch(`/api/users/highscore?username=${user.username}`, {
     method: 'PATCH',
     body: JSON.stringify({
       highscore: score,
@@ -520,6 +520,7 @@ async function scoreLoggedPlayer(score) {
       'Content-Type': 'application/json',
     },
   });
+
 
   if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
 }
