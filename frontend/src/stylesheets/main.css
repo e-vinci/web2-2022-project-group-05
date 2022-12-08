@@ -12,6 +12,9 @@ body {
     font-size: 16px;
     line-height: 1.5;
     color: #333;
+    background-color: #ffec22;
+    background-image: linear-gradient(180deg, #ffbe00 2%,#ffec22 50%, #9ff6cd 100%);
+    background-repeat: no-repeat;
 }
 
 #navbarWrapper{
@@ -55,8 +58,11 @@ canvas {
     width: 100%;
 }
 
-main{
-    background-color: #fbef7e;
-    background-image: linear-gradient(180deg, #fbef7e 62%, #91f768 100%);
-
+footer {
+    position: fixed;
+    height: 50px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin-bottom: 0px;
 }

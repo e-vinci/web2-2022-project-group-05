@@ -21,6 +21,7 @@ import {
   StandardMaterial,
   HemisphericLight,
   MeshBuilder,
+  ParticleSystem,
   CubeTexture,
   KeyboardEventTypes,
   KeyboardInfo,
@@ -33,11 +34,11 @@ import {
   setAndStartTimer,
 } from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
-import menu from '../../assets/guiTexture.json';
 import '@babylonjs/loaders';
 
-// import utils
-// import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
+import menu from '../../assets/guiTexture.json';
+import { clearPage } from '../../utils/render';
+import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
 import '@babylonjs/inspector';
 import '@babylonjs/materials';
@@ -50,6 +51,8 @@ import * as tools from '../../utils/tools';
 // assets
 import water from '../../assets/3Dmodels/test.glb';
 import seal from '../../assets/3Dmodels/seal_animated.glb';
+import importedWaterParticles from '../../assets/waterParticles.json';
+import waterTexture from '../../assets/texture/flare.png';
 
 // eslint-disable-next-line camelcase
 import sky_px from '../../assets/3Dmodels/skyTest/_px.png';
@@ -97,12 +100,18 @@ const createScene = async (scene) => {
   // waterMesh.isPickable = true;
   // const direction=waterMesh.getDirection()
   // console.log("direction",direction);
-  const sealMeshImport = await SceneLoader.ImportMeshAsync(null, seal, null, scene);
 
+
+  const sealMeshImport = await SceneLoader.ImportMeshAsync(null, seal, null, scene);
   const sealMesh = sealMeshImport.meshes[1];
   sealMesh.parent = null;
   sealMesh.scaling = new Vector3(0.7, 0.7, 0.7);
   console.log(sealMesh);
+
+  const waterParticles = ParticleSystem.Parse(importedWaterParticles, scene, '');
+  waterParticles.particleTexture = new Texture(waterTexture);
+  waterParticles.emitter = sealMesh;
+
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
   // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
@@ -136,6 +145,7 @@ const createScene = async (scene) => {
   const spawnEndZ = -10;
   let score = 0;
   const maxJumpHeight = 4;
+  let moneyCollected = 0;
 
   // Create GUI Elements
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
@@ -185,7 +195,7 @@ const createScene = async (scene) => {
     new Vector3(0, 0, 0),
     scene,
   );
-  camera.attachControl('canvas', true);
+  // camera.attachControl('canvas', true);
 
   // Light
   const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene);
@@ -215,6 +225,27 @@ const createScene = async (scene) => {
   skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
   skyboxMaterial.specularColor = new Color3(0, 0, 0);
   skybox.material = skyboxMaterial;
+  skyboxMaterial.reflectionTexture = new CubeTexture('', scene, null, null, [
+      // eslint-disable-next-line camelcase
+      sky_px,
+      // eslint-disable-next-line camelcase
+      sky_py,
+      // eslint-disable-next-line camelcase
+      sky_pz,
+      // eslint-disable-next-line camelcase
+      sky_nx,
+      // eslint-disable-next-line camelcase
+      sky_ny,
+      // eslint-disable-next-line camelcase
+      sky_nz,
+    ]);
+    skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new Color3(0, 0, 0);
+    skybox.material = skyboxMaterial;
+    // Move the seal upward 1/2 its height
+    console.log(sealMesh);
+    // sealMesh.position.y = 1;
 
   // ScoreZone
   const scoreZone = MeshBuilder.CreatePlane('scoreZone', {
@@ -270,6 +301,7 @@ const createScene = async (scene) => {
             case 'D':
             case 'ArrowRight':
               if (sealMesh.position.x !== widthCols) {
+
                 isMoving = true;
                 Animation.CreateAndStartAnimation(
                   'slideRight',
@@ -289,6 +321,7 @@ const createScene = async (scene) => {
             case 'Q':
             case 'ArrowLeft':
               if (sealMesh.position.x !== -widthCols) {
+
                 isMoving = true;
                 Animation.CreateAndStartAnimation(
                   'slideLeft',
@@ -308,9 +341,14 @@ const createScene = async (scene) => {
             case 'Z':
             case 'ArrowUp':
               if (sealMesh.position.y < maxJumpHeight) {
-                // isMoving = true;
+
+                waterParticles.stop();
+                isMoving = true;
                 // start animation
-                jump.play().onAnimationGroupEndObservable.add(() => (isMoving = false));
+                jump.play().onAnimationGroupEndObservable.add(() => {
+                  isMoving = false;
+                  waterParticles.start();
+                });
               }
               break;
             default:
@@ -321,6 +359,21 @@ const createScene = async (scene) => {
           break;
       }
     });
+
+
+    // Money
+    const mon1 = MeshBuilder.CreateBox('box', { size: 0.5 }, scene);
+    mon1.visibility = false;
+    mon1.position.y = 100;
+
+    // ScoreZone
+    const scoreZone = MeshBuilder.CreatePlane('scoreZone', {
+      size: 10,
+      updatable: true,
+      sideOrientation: Mesh.DOUBLESIDE,
+    });
+    scoreZone.position.z -= sealMesh.absoluteScaling.z;
+    scoreZone.isVisible = false;
 
     // Obstacles
     const obstacles = [];
@@ -343,6 +396,64 @@ const createScene = async (scene) => {
     const spawn3 = new Vector3(widthCols, 1, spawnStartZ);
     spawns.push(spawn1, spawn2, spawn3);
 
+    // Handle money spawn
+    let money;
+    const moneyTargets = [];
+    const moneySpawn = setInterval(spawnMoney, 1000, [money]);
+
+    function spawnMoney(target) {
+      // set a random spawn position as startPosition
+      const startPosition = spawns[tools.getRandomInt(spawns.length)];
+      console.log(startPosition);
+      // endPosition = startPoition with different z index
+      const endPosition = startPosition.clone();
+      endPosition.z = spawnEndZ;
+
+      // create a clone of a random obstacle as target
+      target = mon1.clone('target');
+      moneyTargets.push(target);
+      // adjust target parameters
+      target.position = startPosition;
+      target.visibility = true;
+      // add to targets
+
+      // animation spawn
+      Animation.CreateAndStartAnimation(
+        'anim',
+        target,
+        'position',
+        30,
+        100,
+        startPosition,
+        endPosition,
+        Animation.ANIMATIONLOOPMODE_CONSTANT,
+        null,
+        // on animation end
+        () => {
+          // detruit le target
+          target.dispose();
+          // BUG : limiter la taille de runninganimation[] en suppriment l'animation qui n'est plus sur le terrain ameliorerai les perf mais cela ne marche pas comme prevu ...
+          // runningAnimations.shift()
+        },
+      );
+
+      // on Seal collide
+      target.actionManager = new ActionManager();
+      target.actionManager.registerAction(
+        new ExecuteCodeAction(
+          {
+            trigger: ActionManager.OnIntersectionEnterTrigger,
+            parameter: sealMesh,
+            usePreciseIntersection: false,
+          },
+          () => {
+            moneyCollected++;
+            target.dispose();
+          },
+        ),
+      );
+    }
+
     // Handle obstacles spawn
     let target;
     const targets = [];
@@ -350,7 +461,6 @@ const createScene = async (scene) => {
     function spawnObstacle(target) {
       // set a random spawn position as startPosition
       const startPosition = spawns[tools.getRandomInt(spawns.length)];
-
       // endPosition = startPoition with different z index
       const endPosition = startPosition.clone();
       endPosition.z = spawnEndZ;
@@ -394,15 +504,26 @@ const createScene = async (scene) => {
           () => {
             // stop obstacles spawn
             clearInterval(boucleSpawn);
+            clearInterval(moneySpawn);
             // destroy every other obstacle
             for (let i = 0; i < targets.length; i++) {
               targets[i]?.dispose();
             }
+            for (let i = 0; i < moneyTargets.length; i++) {
+              moneyTargets[i]?.dispose();
+            }
             // seal dispose
             sealMesh.dispose();
 
-            // update user score
-            scoreLoggedPlayer(score);
+            if (isAuthenticated()){
+              // update user score
+              console.log("user logged");
+              scoreLoggedPlayer(score);
+              // add money to user balance
+              addMoneyToBalance(moneyCollected);
+            } 
+            else console.log("no user logged in");
+              
           },
         ),
       );
@@ -423,13 +544,14 @@ const createScene = async (scene) => {
         ),
       );
     }
-  //   setTimeout(() => {
-  //     scene.freezeActiveMeshes(true);
-  //     const f = new Scene();
-  //     f.animationsEnabled=false;
+      //   setTimeout(() => {
+      //     scene.freezeActiveMeshes(true);
+      //     const f = new Scene();
+      //     f.animationsEnabled=false;
       
-  //   }, 3000);
-  // };
+      //   }, 3000);
+      // };
+  };
   return scene;
 };
 
@@ -452,9 +574,11 @@ const HomePage = async () => {
   }, true);
 
   engine = scene.getEngine();
+
   engine.runRenderLoop(() => {
     scene.render();
   });
+  // tester mais marche pas
   window.addEventListener('keydown', (ev) => {
     // Shift
     console.log(ev);
@@ -472,11 +596,32 @@ const HomePage = async () => {
 };
 
 async function scoreLoggedPlayer(score) {
-  const res = await fetch(`/api/users/highscore/1`, {
-    // for now the request is !!! HARD CODED !!! while waiting for session data management
+  const user = getAuthenticatedUser();
+  console.log(`Updating score for ${user.username}:${score} (if higher than highscore)`);
+
+  const res = await fetch(`/api/users/highscore?username=${user.username}`, {
     method: 'PATCH',
     body: JSON.stringify({
       highscore: score,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+
+  if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
+}
+
+async function addMoneyToBalance(money) {
+  const user = getAuthenticatedUser();
+  console.log(`adding money to ${user.username}'s balance :${money}`);
+
+  const res = await fetch(`/api/users/balance?username=${user.username}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      balance: money,
+      operator: '+'
     }),
     headers: {
       'Content-Type': 'application/json',

@@ -6,9 +6,10 @@ import UserPage from '../Pages/UserPage'
 import ErrorPage from '../Pages/ErrorPage';
 import Leaderboard from '../Pages/Leaderboard';
 import Logout from '../Logout/Logout';
+import MenuPage from '../Pages/MenuPage';
 
 const routes = {
-  '/': HomePage,
+  '/': MenuPage,
   '/new': NewPage,
   '/ranking': Leaderboard,
   '/login': LoginPage,
@@ -16,6 +17,7 @@ const routes = {
   '/user': UserPage,
   '/error': ErrorPage,
   '/logout': Logout,
+  '/game': HomePage
 };
 
 export default routes;

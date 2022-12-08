@@ -13,7 +13,8 @@ const jsonDbPath = path.join(__dirname, '/../data/users.json');
 
 const defaultUsers = [
   {
-    id: 1,
+    lname: 'lname',
+    fname: 'fname',
     username: 'user1',
     password: bcrypt.hashSync('user1', saltRounds),
     balance: 1000,
@@ -42,11 +43,11 @@ async function login(username, password) {
   return authenticatedUser;
 }
 
-async function register(username, password) {
+async function register(lname, fname, username, password) {
   const userFound = readOneUserFromUsername(username);
   if (userFound) return undefined;
 
-  await createOneUser(username, password);
+  await createOneUser(lname, fname, username, password);
 
 
   const token = jwt.sign(
@@ -71,13 +72,14 @@ function readOneUserFromUsername(username) {
   return users[indexOfUserFound];
 }
 
-async function createOneUser(username, password) {
+async function createOneUser(lname, fname, username, password) {
   const users = parse(jsonDbPath, defaultUsers);
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
   const createdUser = {
-    id: getNextId(),
+    lname,
+    fname,
     username,
     password: hashedPassword,
     balance: 0,
@@ -102,26 +104,9 @@ function getAllUsers(orderBy){
   return usersPotentiallyOrdered;
 }
 
-function getUserById(id){
-  const idUser = parseInt(id, 10);
-  const users = parse(jsonDbPath,defaultUsers);
-  const indexOfUserFound = users.findIndex((user) => user.id === idUser);
-  return (indexOfUserFound < 0 ? undefined : defaultUsers[indexOfUserFound]);
-}
-
-function getNextId() {
+function updateBalance(operator, balance, username){
   const users = parse(jsonDbPath, defaultUsers);
-  const lastItemIndex = users?.length !== 0 ? users.length - 1 : undefined;
-  if (lastItemIndex === undefined) return 1;
-  const lastId = users[lastItemIndex]?.id;
-  const nextId = lastId + 1;
-  return nextId;
-}
-
-function updateBalance(operator, balance, userId){
-  const idUser = parseInt(userId, 10);
-  const users = parse(jsonDbPath, defaultUsers);
-  const index = users.findIndex((user) => user.id === idUser);
+  const index = users.findIndex((user) => user.username === username);
   if (index < 0) return undefined;
   
   let updatedUser;
@@ -136,10 +121,9 @@ function updateBalance(operator, balance, userId){
   return updatedUser;
 }
 
-function updateHighscore(highscore, userId){
-  const idUser = parseInt(userId, 10);
+function updateHighscore(highscore, username){
   const users = parse(jsonDbPath, defaultUsers);
-  const index = users.findIndex((user) => user.id === idUser);
+  const index = users.findIndex((user) => user.username === username);
   if (index < 0) return undefined;
   
   
@@ -158,7 +142,6 @@ module.exports = {
   register,
   readOneUserFromUsername,
   getAllUsers,
-  getUserById,
   updateBalance,
   updateHighscore
 };

@@ -4,33 +4,25 @@
 GET {{baseUrl}}/users
 ### Read all users ordered by highscore
 GET {{baseUrl}}/users/?order=score
-### Get one user by its id 
-GET {{baseUrl}}/users/user?id=1
+### Get one user by its username 
+GET {{baseUrl}}/users/user?username=user1
 
-### get one user by its username
-GET {{baseUrl}}/users/user?username=manager
 
 
 ### Update balance of the user
-PATCH {{baseUrl}}/users/balance/1
+PATCH {{baseUrl}}/users/balance?username=user1
 Content-Type: application/json
 
 {
     "balance":"200",
-    "operator": "-"
+    "operator": "+"
 }
 
 ### Update user's highscore
-PATCH {{baseUrl}}/users/highscore/2
+PATCH {{baseUrl}}/users/highscore?username=user1
 Content-Type: application/json
 
 {
     "highscore": 32222
 }
 
-### get random animal
-GET {{baseUrl}}/animals
-
-### get info on animal by name
-GET https://api.api-ninjas.com/v1/animals?name=Dolphin
-X-Api-Key: sDkpQuiIx0EY/GZKXSCbtA==O6Tm10FAA9ee9GZu

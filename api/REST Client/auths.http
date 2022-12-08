@@ -24,8 +24,10 @@ POST {{baseUrl}}/auths/register
 Content-Type: application/json
 
 {
-    "username":"hi",
-    "password":"hi"
+    "lname": "two",
+    "fname": "user",
+    "username":"user2",
+    "password":"user2"
 }
 
 ### Login random user
