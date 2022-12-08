@@ -67,6 +67,8 @@ import sky_ny from '../../assets/3Dmodels/skyTest/_ny.png';
 // eslint-disable-next-line camelcase
 import sky_nz from '../../assets/3Dmodels/skyTest/_nz.png';
 
+let startGame;
+
 const createScene = async () => {
   const game = document.querySelector('#game');
   const newCanvas = document.createElement('canvas');
@@ -75,7 +77,6 @@ const createScene = async () => {
   const canvas = document.getElementById('renderCanvas');
   const engine = new Engine(canvas, true);
   const scene = new Scene(engine);
-  const playerUI = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
   // TODO: rearrange mesh axes
   // Game Assets
@@ -252,7 +253,7 @@ const createScene = async () => {
   });
   scoreZone.position.z -= sealMesh.absoluteScaling.z;
   scoreZone.isVisible = false;
-  const startGame = () => {
+  startGame = () => {
     // TODO extract animation from StartGame function
     // TODO extract input logic from StartGame function
     // Spawn Animations
@@ -568,6 +569,7 @@ const HomePage = async () => {
 
   scene.executeWhenReady(() => {
     loadingScreen.hideLoadingUI();
+    startGame();
   }, true);
 
   engine = scene.getEngine();
