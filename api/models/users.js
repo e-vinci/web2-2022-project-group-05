@@ -29,9 +29,9 @@ async function login(username, password) {
   if (!passwordMatch) return undefined;
 
   const token = jwt.sign(
-    { username }, // session data added to the payload (payload : part 2 of a JWT)
-    jwtSecret, // secret used for the signature (signature part 3 of a JWT)
-    { expiresIn: lifetimeJwt }, // lifetime of the JWT (added to the JWT payload)
+    { username },
+    jwtSecret,
+    { expiresIn: lifetimeJwt },
   );
 
   const authenticatedUser = {
