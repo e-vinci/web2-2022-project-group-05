@@ -67,7 +67,16 @@ import sky_ny from '../../assets/3Dmodels/skyTest/_ny.png';
 // eslint-disable-next-line camelcase
 import sky_nz from '../../assets/3Dmodels/skyTest/_nz.png';
 
-const createScene = async (scene) => {
+const createScene = async () => {
+  const game = document.querySelector('#game');
+  const newCanvas = document.createElement('canvas');
+  newCanvas.id = 'renderCanvas';
+  game.appendChild(newCanvas);
+  const canvas = document.getElementById('renderCanvas');
+  const engine = new Engine(canvas, true);
+  const scene = new Scene(engine);
+  const playerUI = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
   // TODO: rearrange mesh axes
   // Game Assets
   const waterMeshImport = await SceneLoader.ImportMeshAsync(null, water, null, scene);
@@ -149,18 +158,6 @@ const createScene = async (scene) => {
 
   // Create GUI Elements
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
-
-  // menu
-  let boutonStart = new GUI.Button(); // new utile que a avoir des suggestions
-  advancedTexture.parseSerializedObject(menu, true);
-
-  boutonStart = advancedTexture.getControlByName('B Start');
-
-  boutonStart.onPointerClickObservable.add(() => {
-    advancedTexture.dispose();
-    // eslint-disable-next-line no-use-before-define
-    startGame();
-  });
 
   const UiPanel = new GUI.StackPanel();
   UiPanel.width = '220px';
