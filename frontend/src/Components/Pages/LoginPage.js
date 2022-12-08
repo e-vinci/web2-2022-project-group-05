@@ -25,7 +25,7 @@ const LoginPage = () => {
     <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
       <form class="bg-custom-blue px-10 pt-6 pb-8 mb-4 rounded-3xl">
         <div class="flex flex-col justify-center">
-          <label class="bg-wood-board-01 bg-cover bg-center block text-white text-center text-xl font-mono mt-10 w-1/5 h-15" for="username">username :</label>
+            <label class="bg-wood-board-01 bg-cover bg-center block text-white text-center text-xl font-mono mt-10 w-1/5 h-15" for="username">username :</label>
             <input  id="username" class="bg-custom-lightyellow shadow appearance-none rounded w-1/2 py-2 px-3" name="username" type="text">
             <label class="bg-wood-board-01 bg-cover bg-center block text-white text-center text-xl font-mono mt-10 w-1/5 h-15" for="password">password :</label>
             <input  id="password" class="bg-custom-lightyellow shadow appearance-none rounded w-1/2 py-2 px-3" name="password" type="password">
