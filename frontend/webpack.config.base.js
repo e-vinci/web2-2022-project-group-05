@@ -42,7 +42,7 @@ module.exports = {
       // default condition: a file with size less than 8kb will be treated as a inline
       // module type and resource module type otherwise
       {
-        test: /\.(png|jpg|gif|svg|mp3|mpe?g|babylon|gltf|obj|stl|glb)$/,
+        test: /\.(png|jpg|gif|svg|mp3|mpe?g|babylon|gltf|obj|stl|glb|bmp)$/,
         type: 'asset/resource',
       },
       

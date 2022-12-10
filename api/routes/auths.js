@@ -9,16 +9,16 @@ router.post('/register', async (req, res) => {
   const fname = req?.body?.fname?.length !== 0 ? req.body.fname : undefined;
   const username = req?.body?.username?.length !== 0 ? req.body.username : undefined;
   const password = req?.body?.password?.length !== 0 ? req.body.password : undefined;
-
-  if (!username || !password) return res.sendStatus(400); // 400 Bad Request
-
+  
+  if (!username || !password || !lname || !fname) return res.sendStatus(400); // 400 Bad Request
+  
   const authenticatedUser = await register(lname, fname, username, password);
   console.log(authenticatedUser);
   if (!authenticatedUser) return res.sendStatus(409); // 409 Conflict
 
   req.session.username = authenticatedUser.username;
   req.session.token = authenticatedUser.token;
-
+  
   return res.json(authenticatedUser);
 });
 
@@ -26,8 +26,8 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const username = req?.body?.username?.length !== 0 ? req.body.username : undefined;
   const password = req?.body?.password?.length !== 0 ? req.body.password : undefined;
-
-  if (!username || !password || !lname || !fname) return res.sendStatus(400); // 400 Bad Request
+  
+  if (!username || !password) return res.sendStatus(400); // 400 Bad Request
 
   const authenticatedUser = await login(username, password);
 
