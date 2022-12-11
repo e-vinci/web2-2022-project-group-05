@@ -4,6 +4,8 @@ import Footer from '../Footer/Footer';
 import Navbar from '../Navbar/Navbar';
 import Navigate from '../Router/Navigate';
 import rope01 from '../../assets/img/rope_01.png';
+import rope02 from '../../assets/img/rope_02.png';
+import rope03 from '../../assets/img/rope_03.png';
 
 const MenuPage = () => {
     clearPage();
@@ -26,9 +28,7 @@ const MenuPage = () => {
 
 function renderMenu(){
     const menu = `
-    <div class="grid grid-col-3 bg-custom-blue pb-10 inline-block min-w-1/2 sm:px-6 lg:px-60">
-        <img src="${rope01}" class="w-1/5 h-50">
-
+    <div class="relative flex flex-row rounded-3xl pb-10 inline-block min-w-1/2 lg:px-60">
         <div class="flex flex-col">
             <button id="start-button" class="bg-wood-board-02 bg-cover bg-center block text-white text-center text-xl font-mono">
                 Start
