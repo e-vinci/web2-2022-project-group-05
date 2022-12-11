@@ -30,9 +30,9 @@ import {
   PointerInfo,
   ActionEvent,
   DefaultLoadingScreen,
-SceneOptimizer,
-SceneOptimizerOptions,
-NodeMaterial
+  SceneOptimizer,
+  SceneOptimizerOptions,
+  NodeMaterial,
 } from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
 import '@babylonjs/loaders';
@@ -50,12 +50,14 @@ import * as tools from '../../utils/tools';
 
 // assets
 import water from '../../assets/3Dmodels/test3.glb';
-import vague from '../../assets/vague.json'
+import vague from '../../assets/vague.json';
 import seal from '../../assets/3Dmodels/seal_animated.glb';
 import money from '../../assets/3Dmodels/fishMoney.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
-import gameOverMenuURL from '../../assets/img/GameOver.json'
+import gameOverMenuURL from '../../assets/img/GameOver.json';
+import fur from '../../assets/texture/fur.jpg';
+import pandaTexture from '../../assets/texture/Seal_ColorMap_Panda.png';
 
 // eslint-disable-next-line camelcase
 import sky_px from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_px.bmp';
@@ -73,7 +75,6 @@ import sky_nz from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_nz.
 let startGame;
 
 const createScene = async (scene) => {
-
   // TODO: rearrange mesh axes
   // Game Assets
   const waterMeshImport = await SceneLoader.ImportMeshAsync(null, water, null, scene);
@@ -106,18 +107,26 @@ const createScene = async (scene) => {
   // waterMesh.isPickable = true;
   // const direction=waterMesh.getDirection()
   // console.log("direction",direction);
-  
+
   // const waterMaterial = NodeMaterial.Parse(vague,scene);
   // console.log("waterMaterial",waterMaterial);
   // waterMesh.material=waterMaterial;
+
+  // const greyFur = new StandardMaterial('fur', scene);
+  // greyFur.ambientTexture = new Texture(fur, scene);
+  // greyFur.diffuseColor = new Color3(1, 1, 1);
+  const pandaFur = new StandardMaterial('panda', scene);
+  pandaFur.ambientTexture = new Texture(pandaTexture, scene);
+  pandaFur.diffuseColor = new Color3(1, 1, 1);
 
   const sealMeshImport = await SceneLoader.ImportMeshAsync(null, seal, null, scene);
   const sealMesh = sealMeshImport.meshes[1];
   sealMesh.parent = null;
   sealMesh.scaling = new Vector3(0.5, 0.5, 0.5);
+  sealMesh.material = pandaFur;
   console.log(sealMesh);
 
-  const moneyImport = await SceneLoader.ImportMeshAsync(null,money,null,scene)
+  const moneyImport = await SceneLoader.ImportMeshAsync(null, money, null, scene);
   const moneyMesh = moneyImport.meshes[1];
   moneyMesh.parent = null;
   moneyMesh.scaling = new Vector3(0.5, 0.5, 0.5);
@@ -126,8 +135,6 @@ const createScene = async (scene) => {
   const waterParticles = ParticleSystem.Parse(importedWaterParticles, scene, '');
   waterParticles.particleTexture = new Texture(waterTexture);
   waterParticles.emitter = sealMesh;
-
-  
 
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
@@ -223,10 +230,10 @@ const createScene = async (scene) => {
   skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
   skyboxMaterial.specularColor = new Color3(0, 0, 0);
   skybox.material = skyboxMaterial;
-  
-    // Move the seal upward 1/2 its height
-    console.log(sealMesh);
-    sealMesh.position.y = 1/2;
+
+  // Move the seal upward 1/2 its height
+  console.log(sealMesh);
+  sealMesh.position.y = 1 / 2;
 
   // ScoreZone
   const scoreZone = MeshBuilder.CreatePlane('scoreZone', {
@@ -253,7 +260,7 @@ const createScene = async (scene) => {
 
     const kf1 = {
       frame: 0.1 * frameRate,
-      value: -1/2,
+      value: -1 / 2,
     };
     const kf2 = {
       frame: 0.4 * frameRate,
@@ -261,7 +268,7 @@ const createScene = async (scene) => {
     };
     const kf3 = {
       frame: 1.5 * frameRate,
-      value: 1/2,
+      value: 1 / 2,
     };
     const keyFrames = [kf1, kf2, kf3];
 
@@ -282,7 +289,6 @@ const createScene = async (scene) => {
             case 'D':
             case 'ArrowRight':
               if (sealMesh.position.x !== widthCols) {
-
                 isMoving = true;
                 Animation.CreateAndStartAnimation(
                   'slideRight',
@@ -302,7 +308,6 @@ const createScene = async (scene) => {
             case 'Q':
             case 'ArrowLeft':
               if (sealMesh.position.x !== -widthCols) {
-
                 isMoving = true;
                 Animation.CreateAndStartAnimation(
                   'slideLeft',
@@ -339,7 +344,7 @@ const createScene = async (scene) => {
           break;
       }
     });
-    
+
     // Spawns
     const spawns = [];
     const spawn1 = new Vector3(-widthCols, 1, spawnStartZ);
@@ -360,13 +365,12 @@ const createScene = async (scene) => {
     const obs3 = MeshBuilder.CreateTorusKnot('torus', { radius: 0.3 }, scene);
     obs3.visibility = false;
     obs3.position.y = 100;
-    
+
     obstacles.push(obs1, obs2, obs3);
-    
+
     // Money
     moneyMesh.visibility = false;
     moneyMesh.position.y = 100;
-
 
     // Handle obstacles spawn
     let obstacle;
@@ -407,8 +411,8 @@ const createScene = async (scene) => {
         Vector3.Zero(),
         new Vector3(0, 2 * Math.PI, 0),
         Animation.ANIMATIONLOOPMODE_CONSTANT,
-        );
-        // animation spawn
+      );
+      // animation spawn
       Animation.CreateAndStartAnimation(
         'ani',
         target,
@@ -442,7 +446,7 @@ const createScene = async (scene) => {
         ),
       );
     }
-    
+
     function spawnObstacle(target) {
       // set a random spawn position as startPosition
       const startPosition = spawns[tools.getRandomInt(spawns.length)];
@@ -501,17 +505,16 @@ const createScene = async (scene) => {
             // seal dispose
             sealMesh.dispose();
 
-            if (isAuthenticated()){
+            if (isAuthenticated()) {
               // update user score
-              console.log("user logged");
+              console.log('user logged');
               scoreLoggedPlayer(score);
               // add money to user balance
               addMoneyToBalance(moneyCollected);
-            } 
-            else console.log("no user logged in");
+            } else console.log('no user logged in');
 
             // display game over menu
-            getGameOverMenu(scene,score,getAuthenticatedUser());
+            getGameOverMenu(scene, score, getAuthenticatedUser());
           },
         ),
       );
@@ -531,13 +534,13 @@ const createScene = async (scene) => {
         ),
       );
     }
-      //   setTimeout(() => {
-      //     scene.freezeActiveMeshes(true);
-      //     const f = new Scene();
-      //     f.animationsEnabled=false;
-      
-      //   }, 3000);
-      // };
+    //   setTimeout(() => {
+    //     scene.freezeActiveMeshes(true);
+    //     const f = new Scene();
+    //     f.animationsEnabled=false;
+
+    //   }, 3000);
+    // };
   };
   return scene;
 };
@@ -549,15 +552,15 @@ const HomePage = async () => {
   newCanvas.id = 'renderCanvas';
   game.appendChild(newCanvas);
   const canvas = document.getElementById('renderCanvas');
-  let engine = new Engine(canvas, true,null,true);
+  let engine = new Engine(canvas, true, null, true);
   let scene = new Scene(engine);
   scene.detachControl();
-  const loadingScreen = new DefaultLoadingScreen(newCanvas, "Loading ...");
+  const loadingScreen = new DefaultLoadingScreen(newCanvas, 'Loading ...');
   // TODO chercher info sur ca ...bon pour perf?
   scene.useDelayedTextureLoading = true;
   loadingScreen.displayLoadingUI();
   scene = await createScene(scene);
-  SceneOptimizer.OptimizeAsync(scene,SceneOptimizerOptions.ModerateDegradationAllowed());
+  SceneOptimizer.OptimizeAsync(scene, SceneOptimizerOptions.ModerateDegradationAllowed());
 
   scene.executeWhenReady(() => {
     loadingScreen.hideLoadingUI();
@@ -612,7 +615,7 @@ async function addMoneyToBalance(money) {
     method: 'PATCH',
     body: JSON.stringify({
       balance: money,
-      operator: '+'
+      operator: '+',
     }),
     headers: {
       'Content-Type': 'application/json',
@@ -622,22 +625,21 @@ async function addMoneyToBalance(money) {
   if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
 }
 
-  // create GUI element for end game
-  async function getGameOverMenu (scene,score,user=undefined) {
-    console.log(gameOverMenuURL);
-    const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene);
-    gameOverMenu.parseSerializedObject(gameOverMenuURL,true)
-    .then((adt)=>{
-      console.log("adt",adt);
-      // const endGamePanel = adt.getControlByName('endGamePanel');
-      // const endGameButton = adt.getControlByName('endGameButton');
-      // endGameButton.onPointerClickObservable.add(()=>{
-      //   endGamePanel.isVisible = false;
-      //   scene.dispose();
-      //   scene.getEngine().dispose();
-      //   createScene();
-      // })
-    })
-    return gameOverMenu;
-  }
+// create GUI element for end game
+async function getGameOverMenu(scene, score, user = undefined) {
+  console.log(gameOverMenuURL);
+  const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
+  gameOverMenu.parseSerializedObject(gameOverMenuURL, true).then((adt) => {
+    console.log('adt', adt);
+    // const endGamePanel = adt.getControlByName('endGamePanel');
+    // const endGameButton = adt.getControlByName('endGameButton');
+    // endGameButton.onPointerClickObservable.add(()=>{
+    //   endGamePanel.isVisible = false;
+    //   scene.dispose();
+    //   scene.getEngine().dispose();
+    //   createScene();
+    // })
+  });
+  return gameOverMenu;
+}
 export default HomePage;
