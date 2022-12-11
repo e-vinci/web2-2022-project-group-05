@@ -56,6 +56,7 @@ import money from '../../assets/3Dmodels/fishMoney.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
 import gameOverMenuURL from '../../assets/img/GameOver.json';
+import pauseMenuURL from '../../assets/img/menuPause.json';
 
 // eslint-disable-next-line camelcase
 import sky_px from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_px.bmp';
@@ -467,12 +468,14 @@ const createScene = async (scene) => {
     }
      //  Sphere mouvement
      let isMoving = false;
+     // Create the pause GUI menu
+     const pauseCanva = getPausedMenu(scene,score);
      scene.onKeyboardObservable.add((kbInfo) => {
        if (isMoving) return;
        switch (kbInfo.type) {
          case KeyboardEventTypes.KEYDOWN:
            switch (kbInfo.event.key) {
-             case 'Escape':
+             case 'Escape'
               if(!paused){
                 paused = true;
                 for (let i = 0; i < currentAnimsRunning.length; i++) {
@@ -667,4 +670,23 @@ async function getGameOverMenu(scene, score, user = undefined) {
   });
   return gameOverMenu;
 }
+
+// create GUI element for pause game
+async function getPausedMenu(scene, score) {
+  console.log(pauseMenuURL);
+  const pauseMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
+  pauseMenu.parseSerializedObject(pauseMenuURL, true).then((adt) => {
+    console.log('adt', adt);
+    // const endGamePanel = adt.getControlByName('endGamePanel');
+    // const endGameButton = adt.getControlByName('endGameButton');
+    // endGameButton.onPointerClickObservable.add(()=>{
+    //   endGamePanel.isVisible = false;
+    //   scene.dispose();
+    //   scene.getEngine().dispose();
+    //   createScene();
+    // })
+  });
+  return pauseMenu;
+}
+
 export default HomePage;
