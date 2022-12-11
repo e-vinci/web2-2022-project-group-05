@@ -55,7 +55,7 @@ import seal from '../../assets/3Dmodels/seal_animated.glb';
 import money from '../../assets/3Dmodels/fishMoney.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
-import gameOverMenuURL from '../../assets/img/GameOver.json';
+import gameOverMenuURL from '../../assets/img/gameOver.json';
 import pauseMenuURL from '../../assets/img/menuPause.json';
 
 // eslint-disable-next-line camelcase
@@ -475,16 +475,15 @@ const createScene = async (scene) => {
        switch (kbInfo.type) {
          case KeyboardEventTypes.KEYDOWN:
            switch (kbInfo.event.key) {
-             case 'Escape'
-              if(!paused){
+             case 'Escape':
+              if (!paused){
                 paused = true;
                 for (let i = 0; i < currentAnimsRunning.length; i++) {
                   currentAnimsRunning[i]?.pause();
                 }
                 clearInterval(obstaclesSpawn);
                 clearInterval(moneySpawn);
-              }
-              else{
+              } else{
                 paused = false;
                 for (let i = 0; i < currentAnimsRunning.length; i++) {
                   currentAnimsRunning[i]?.restart();
