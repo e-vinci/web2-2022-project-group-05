@@ -56,6 +56,7 @@ import money from '../../assets/3Dmodels/fishMoney.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
 import gameOverMenuURL from '../../assets/img/GameOver.json';
+import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
 
 // eslint-disable-next-line camelcase
 import sky_px from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_px.bmp';
@@ -109,12 +110,18 @@ const createScene = async (scene) => {
   // const waterMaterial = NodeMaterial.Parse(vague,scene);
   // console.log("waterMaterial",waterMaterial);
   // waterMesh.material=waterMaterial;
-
   const sealMeshImport = await SceneLoader.ImportMeshAsync(null, seal, null, scene);
   const sealMesh = sealMeshImport.meshes[1];
-  sealMesh.parent = null;
   sealMesh.scaling = new Vector3(0.5, 0.5, 0.5);
+  sealMesh.parent = null;
   console.log(sealMesh);
+
+  const sealSkin = new StandardMaterial('panda', scene);
+  sealSkin.backFaceCulling = false;
+  const sealTexture = new Texture(tigerTextureURL, scene);
+  sealTexture.uAng = Math.PI;
+  sealSkin.emissiveTexture = sealTexture;
+  sealMesh.material = sealSkin;
 
   const moneyImport = await SceneLoader.ImportMeshAsync(null, money, null, scene);
   const moneyMesh = moneyImport.meshes[1];
