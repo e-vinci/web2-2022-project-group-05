@@ -37,6 +37,7 @@ import {
 import * as GUI from '@babylonjs/gui';
 import '@babylonjs/loaders';
 
+import Navigate from '../Router/Navigate';
 import { clearPage } from '../../utils/render';
 import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
@@ -55,7 +56,7 @@ import seal from '../../assets/3Dmodels/seal_animated.glb';
 import money from '../../assets/3Dmodels/fishMoney.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
-import gameOverMenuURL from '../../assets/img/GameOver.json';
+import gameOverMenuURL from '../../assets/img/gameOver.json';
 import playIcon from '../../assets/img/play-icon.png';
 import restartIcon from '../../assets/img/restart-icon.png';
 import homeIcon from '../../assets/img/home-icon.png';
@@ -164,6 +165,7 @@ const createScene = async (scene) => {
   const maxJumpHeight = 4;
   let moneyCollected = 0;
   let paused = false;
+  let dead = false;
   // Create GUI Elements dor score
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('scoreUi');
 
@@ -252,7 +254,6 @@ const createScene = async (scene) => {
       Animation.ANIMATIONLOOPMODE_CONSTANT,
     );
 
-    
     const kf1 = {
       frame: 0.1 * frameRate,
       value: -1 / 2,
@@ -272,8 +273,6 @@ const createScene = async (scene) => {
     // AnimationGroup
     const jump = new AnimationGroup('jump');
     jump.addTargetedAnimation(ySlide, sealMesh);
-
-   
 
     // Spawns
     const spawns = [];
@@ -313,7 +312,7 @@ const createScene = async (scene) => {
     const money = new Mesh();
     const moneyTargets = [];
     let moneySpawn = setInterval(spawnMoney, 1000, money);
-    
+
     function spawnMoney(target) {
       // set a random spawn position as startPosition
       let startPosition = spawns[tools.getRandomInt(spawns.length)];
@@ -362,7 +361,7 @@ const createScene = async (scene) => {
           // detruit le target
           target.dispose();
         },
-      )
+      );
       currentAnimsRunning.push(animMoney);
       // on Seal collide
       target.actionManager = new ActionManager();
@@ -397,7 +396,7 @@ const createScene = async (scene) => {
       target.visibility = true;
       // add to targets
       obstacleTargets.push(target);
-    
+
       // animation spawn
       const obstacleAnim = Animation.CreateAndStartAnimation(
         'anim',
@@ -428,6 +427,7 @@ const createScene = async (scene) => {
           },
           () => {
             // stop obstacles spawn
+            dead = true;
             clearInterval(obstaclesSpawn);
             clearInterval(moneySpawn);
             // destroy every other obstacle
@@ -469,113 +469,106 @@ const createScene = async (scene) => {
         ),
       );
     }
-     //  Sphere mouvement
-     let isMoving = false;
-     // Create the pause GUI menu
-     const pauseCanvas = getPausedMenu(scene,score);
+    //  Sphere mouvement
+    let isMoving = false;
+    // Create the pause GUI menu
+    let pauseCanvas;
 
-     pauseCanvas.then((a) => {    
-      const restartBtn = a.getControlByName('ButtonRestart');
-      restartBtn.children[0].source = restartIcon;
-      const homeBtn = a.getControlByName('ButtonHome');
-      homeBtn.children[0].source = homeIcon;
-      const resumeBtn = a.getControlByName('ButtonResume');
-      resumeBtn.children[0].source = playIcon;
-
-     })
-    
-
-     scene.onKeyboardObservable.add((kbInfo) => {
-       if (isMoving) return;
-       switch (kbInfo.type) {
-         case KeyboardEventTypes.KEYDOWN:
-           switch (kbInfo.event.key) {
-             case 'Escape':
-              if (!paused){
-                paused = true;
-                for (let i = 0; i < currentAnimsRunning.length; i++) {
-                  currentAnimsRunning[i]?.pause();
+    scene.onKeyboardObservable.add((kbInfo) => {
+      if (isMoving) return;
+      if (!dead) {
+        switch (kbInfo.type) {
+          case KeyboardEventTypes.KEYDOWN:
+            switch (kbInfo.event.key) {
+              case 'Escape':
+                if (!paused) {
+                  paused = true;
+                  pauseCanvas = getPausedMenu(scene);
+                  for (let i = 0; i < currentAnimsRunning.length; i++) {
+                    currentAnimsRunning[i]?.pause();
+                  }
+                  clearInterval(obstaclesSpawn);
+                  clearInterval(moneySpawn);
+                } else {
+                  paused = false;
+                  pauseCanvas.dispose();
+                  for (let i = 0; i < currentAnimsRunning.length; i++) {
+                    currentAnimsRunning[i]?.restart();
+                  }
+                  console.log(obstaclesSpawn);
+                  console.log(moneySpawn);
+                  obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
+                  moneySpawn = setInterval(spawnMoney, 1000, money);
                 }
-                clearInterval(obstaclesSpawn);
-                clearInterval(moneySpawn);
-              } else{
-                paused = false;
-                for (let i = 0; i < currentAnimsRunning.length; i++) {
-                  currentAnimsRunning[i]?.restart();
-                }
-                console.log(obstaclesSpawn);
-                console.log(moneySpawn);
-                obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
-                moneySpawn = setInterval(spawnMoney, 1000, money);
+
+                console.log(paused);
+                break;
+              default:
+                break;
+            }
+            if (!paused) {
+              switch (kbInfo.event.key) {
+                case 'd':
+                case 'D':
+                case 'ArrowRight':
+                  if (sealMesh.position.x !== widthCols) {
+                    isMoving = true;
+                    Animation.CreateAndStartAnimation(
+                      'slideRight',
+                      sealMesh,
+                      'position.x',
+                      10,
+                      2,
+                      sealMesh.position.x,
+                      sealMesh.position.x + widthCols,
+                      Animation.ANIMATIONLOOPMODE_CONSTANT,
+                      null,
+                      () => (isMoving = false),
+                    );
+                  }
+                  break;
+                case 'q':
+                case 'Q':
+                case 'ArrowLeft':
+                  if (sealMesh.position.x !== -widthCols) {
+                    isMoving = true;
+                    Animation.CreateAndStartAnimation(
+                      'slideLeft',
+                      sealMesh,
+                      'position.x',
+                      10,
+                      2,
+                      sealMesh.position.x,
+                      sealMesh.position.x - widthCols,
+                      Animation.ANIMATIONLOOPMODE_CONSTANT,
+                      null,
+                      () => (isMoving = false),
+                    );
+                  }
+                  break;
+                case 'z':
+                case 'Z':
+                case 'ArrowUp':
+                  if (sealMesh.position.y < maxJumpHeight) {
+                    waterParticles.stop();
+                    isMoving = true;
+                    // start animation
+                    jump.play().onAnimationGroupEndObservable.add(() => {
+                      isMoving = false;
+                      waterParticles.start();
+                    });
+                  }
+                  break;
+                default:
+                  break;
               }
-           
-               console.log(paused);
-               break;
-             default:
-               break;
-           }
-           if (!paused) {
-             switch (kbInfo.event.key) {
-               case 'd':
-               case 'D':
-               case 'ArrowRight':
-                 if (sealMesh.position.x !== widthCols) {
-                   isMoving = true;
-                   Animation.CreateAndStartAnimation(
-                     'slideRight',
-                     sealMesh,
-                     'position.x',
-                     10,
-                     2,
-                     sealMesh.position.x,
-                     sealMesh.position.x + widthCols,
-                     Animation.ANIMATIONLOOPMODE_CONSTANT,
-                     null,
-                     () => (isMoving = false),
-                   );
-                 }
-                 break;
-               case 'q':
-               case 'Q':
-               case 'ArrowLeft':
-                 if (sealMesh.position.x !== -widthCols) {
-                   isMoving = true;
-                   Animation.CreateAndStartAnimation(
-                     'slideLeft',
-                     sealMesh,
-                     'position.x',
-                     10,
-                     2,
-                     sealMesh.position.x,
-                     sealMesh.position.x - widthCols,
-                     Animation.ANIMATIONLOOPMODE_CONSTANT,
-                     null,
-                     () => (isMoving = false),
-                   );
-                 }
-                 break;
-               case 'z':
-               case 'Z':
-               case 'ArrowUp':
-                 if (sealMesh.position.y < maxJumpHeight) {
-                   waterParticles.stop();
-                   isMoving = true;
-                   // start animation
-                   jump.play().onAnimationGroupEndObservable.add(() => {
-                     isMoving = false;
-                     waterParticles.start();
-                   });
-                 }
-                 break;
-               default:
-                 break;
-             }
-           }
-           break;
-         default:
-           break;
-       }
-     });
+            }
+            break;
+          default:
+            break;
+        }
+      }
+    });
     //   setTimeout(() => {
     //     scene.freezeActiveMeshes(true);
     //     const f = new Scene();
@@ -668,34 +661,52 @@ async function addMoneyToBalance(money) {
 }
 
 // create GUI element for end game
-async function getGameOverMenu(scene, score, user = undefined) {
+function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
   gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
-    // const endGamePanel = adt.getControlByName('endGamePanel');
-    // const endGameButton = adt.getControlByName('endGameButton');
-    // endGameButton.onPointerClickObservable.add(()=>{
-    //   endGamePanel.isVisible = false;
-    //   scene.dispose();
-    //   scene.getEngine().dispose();
-    //   createScene();
-    // })
+  // const endGamePanel = adt.getControlByName('endGamePanel');
+  // const endGameButton = adt.getControlByName('endGameButton');
+  // endGameButton.onPointerClickObservable.add(()=>{
+  //   endGamePanel.isVisible = false;
+  //   scene.dispose();
+  //   scene.getEngine().dispose();
+  //   createScene();
+  // })
   return gameOverMenu;
 }
 
 // create GUI element for pause game
-async function getPausedMenu(scene, score) {
+function getPausedMenu(scene) {
   console.log(pauseMenuURL);
   const pauseMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
+ 
   pauseMenu.parseSerializedObject(pauseMenuURL, true);
-    // const endGamePanel = adt.getControlByName('endGamePanel');
-    // const endGameButton = adt.getControlByName('endGameButton');
-    // endGameButton.onPointerClickObservable.add(()=>{
-    //   endGamePanel.isVisible = false;
-    //   scene.dispose();
-    //   scene.getEngine().dispose();
-    //   createScene();
-    // })
+  const restartBtn = pauseMenu.getControlByName('ButtonRestart');
+  restartBtn.children[0].source = restartIcon;
+  restartBtn.onPointerClickObservable.add(()=>{
+    HomePage();
+});
+   
+
+    const homeBtn = pauseMenu.getControlByName('ButtonHome');
+    homeBtn.children[0].source = homeIcon;
+    homeBtn.onPointerClickObservable.add(()=>{
+      Navigate('/');
+  });
+
+    const resumeBtn = pauseMenu.getControlByName('ButtonResume');
+    resumeBtn.children[0].source = playIcon;
+  
+  
+  // const endGamePanel = adt.getControlByName('endGamePanel');
+  // const endGameButton = adt.getControlByName('endGameButton');
+  // endGameButton.onPointerClickObservable.add(()=>{
+  //   endGamePanel.isVisible = false;
+  //   scene.dispose();
+  //   scene.getEngine().dispose();
+  //   createScene();
+  // })
   return pauseMenu;
 }
 
