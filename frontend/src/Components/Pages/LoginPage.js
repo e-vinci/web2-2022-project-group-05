@@ -9,7 +9,7 @@ import rope03 from '../../assets/img/rope_03.png';
 
 const LoginPage = () => {
   clearPage();
-  renderPageTitle("Login");
+  renderPageTitle('Login');
 
   const main = document.querySelector('main');
   main.innerHTML += renderLoginForm();
@@ -21,10 +21,10 @@ const LoginPage = () => {
   registerButton.addEventListener('click', redirectToRegisterPage);
 
   Footer();
-  };
+};
 
-  function renderLoginForm(){
-    const form = `
+function renderLoginForm() {
+  const form = `
     <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
       <form class="relative bg-custom-blue px-10 pt-6 pb-8 mb-4 rounded-3xl">
       <div class="absolute left-0 px-0 py-0 flex flex-row">
@@ -47,12 +47,12 @@ const LoginPage = () => {
         </div>
       </form>
     </div>
-    `
+    `;
 
-    return form;
-  }
+  return form;
+}
 
-  async function onLogin(e) {
+async function onLogin(e) {
   e.preventDefault();
 
   const username = document.querySelector('#username').value;
@@ -87,5 +87,5 @@ const LoginPage = () => {
 function redirectToRegisterPage(){
   Navigate('/register');
 }
-  
-  export default LoginPage;
+
+export default LoginPage;

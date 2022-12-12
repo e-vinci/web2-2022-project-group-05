@@ -39,6 +39,7 @@ import '@babylonjs/loaders';
 
 import { clearPage } from '../../utils/render';
 import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
+import * as tools from '../../utils/tools';
 
 import '@babylonjs/inspector';
 import '@babylonjs/materials';
@@ -46,7 +47,6 @@ import '@babylonjs/post-processes';
 import '@babylonjs/serializers';
 import '@babylonjs/procedural-textures';
 
-import * as tools from '../../utils/tools';
 
 // assets
 import water from '../../assets/3Dmodels/test3.glb';
