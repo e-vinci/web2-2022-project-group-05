@@ -161,6 +161,7 @@ const createScene = async (scene) => {
   const maxJumpHeight = 4;
   let moneyCollected = 0;
   let paused = false;
+  let dead = false;
   // Create GUI Elements dor score
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('scoreUi');
 
@@ -425,6 +426,7 @@ const createScene = async (scene) => {
           },
           () => {
             // stop obstacles spawn
+            dead = true;
             clearInterval(obstaclesSpawn);
             clearInterval(moneySpawn);
             // destroy every other obstacle
@@ -469,15 +471,17 @@ const createScene = async (scene) => {
      //  Sphere mouvement
      let isMoving = false;
      // Create the pause GUI menu
-     const pauseCanva = getPausedMenu(scene,score);
+     let pauseCanva;
      scene.onKeyboardObservable.add((kbInfo) => {
        if (isMoving) return;
+       if(!dead){
        switch (kbInfo.type) {
          case KeyboardEventTypes.KEYDOWN:
            switch (kbInfo.event.key) {
              case 'Escape':
               if (!paused){
                 paused = true;
+                pauseCanva = getPausedMenu();
                 for (let i = 0; i < currentAnimsRunning.length; i++) {
                   currentAnimsRunning[i]?.pause();
                 }
@@ -485,6 +489,8 @@ const createScene = async (scene) => {
                 clearInterval(moneySpawn);
               } else{
                 paused = false;
+                // pauseCanva.then((a)=>a.dispose());
+                pauseCanva.dispose();
                 for (let i = 0; i < currentAnimsRunning.length; i++) {
                   currentAnimsRunning[i]?.restart();
                 }
@@ -559,7 +565,7 @@ const createScene = async (scene) => {
            break;
          default:
            break;
-       }
+       }}
      });
     //   setTimeout(() => {
     //     scene.freezeActiveMeshes(true);
@@ -653,11 +659,10 @@ async function addMoneyToBalance(money) {
 }
 
 // create GUI element for end game
-async function getGameOverMenu(scene, score, user = undefined) {
+function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
-  gameOverMenu.parseSerializedObject(gameOverMenuURL, true).then((adt) => {
-    console.log('adt', adt);
+  gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
     // const endGamePanel = adt.getControlByName('endGamePanel');
     // const endGameButton = adt.getControlByName('endGameButton');
     // endGameButton.onPointerClickObservable.add(()=>{
@@ -666,16 +671,17 @@ async function getGameOverMenu(scene, score, user = undefined) {
     //   scene.getEngine().dispose();
     //   createScene();
     // })
-  });
+ 
   return gameOverMenu;
 }
 
 // create GUI element for pause game
-async function getPausedMenu(scene, score) {
+function getPausedMenu(scene, score) {
   console.log(pauseMenuURL);
   const pauseMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
-  pauseMenu.parseSerializedObject(pauseMenuURL, true).then((adt) => {
-    console.log('adt', adt);
+
+  pauseMenu.parseSerializedObject(pauseMenuURL, true);
+
     // const endGamePanel = adt.getControlByName('endGamePanel');
     // const endGameButton = adt.getControlByName('endGameButton');
     // endGameButton.onPointerClickObservable.add(()=>{
@@ -683,8 +689,9 @@ async function getPausedMenu(scene, score) {
     //   scene.dispose();
     //   scene.getEngine().dispose();
     //   createScene();
-    // })
-  });
+
+  
+
   return pauseMenu;
 }
 
