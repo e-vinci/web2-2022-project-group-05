@@ -55,7 +55,10 @@ import seal from '../../assets/3Dmodels/seal_animated.glb';
 import money from '../../assets/3Dmodels/fishMoney.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
-import gameOverMenuURL from '../../assets/img/gameOver.json';
+import gameOverMenuURL from '../../assets/img/GameOver.json';
+import playIcon from '../../assets/img/play-icon.png';
+import restartIcon from '../../assets/img/restart-icon.png';
+import homeIcon from '../../assets/img/home-icon.png';
 import pauseMenuURL from '../../assets/img/menuPause.json';
 
 // eslint-disable-next-line camelcase
@@ -469,7 +472,19 @@ const createScene = async (scene) => {
      //  Sphere mouvement
      let isMoving = false;
      // Create the pause GUI menu
-     const pauseCanva = getPausedMenu(scene,score);
+     const pauseCanvas = getPausedMenu(scene,score);
+
+     pauseCanvas.then((a) => {    
+      const restartBtn = a.getControlByName('ButtonRestart');
+      restartBtn.children[0].source = restartIcon;
+      const homeBtn = a.getControlByName('ButtonHome');
+      homeBtn.children[0].source = homeIcon;
+      const resumeBtn = a.getControlByName('ButtonResume');
+      resumeBtn.children[0].source = playIcon;
+
+     })
+    
+
      scene.onKeyboardObservable.add((kbInfo) => {
        if (isMoving) return;
        switch (kbInfo.type) {
@@ -656,8 +671,7 @@ async function addMoneyToBalance(money) {
 async function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
-  gameOverMenu.parseSerializedObject(gameOverMenuURL, true).then((adt) => {
-    console.log('adt', adt);
+  gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
     // const endGamePanel = adt.getControlByName('endGamePanel');
     // const endGameButton = adt.getControlByName('endGameButton');
     // endGameButton.onPointerClickObservable.add(()=>{
@@ -666,7 +680,6 @@ async function getGameOverMenu(scene, score, user = undefined) {
     //   scene.getEngine().dispose();
     //   createScene();
     // })
-  });
   return gameOverMenu;
 }
 
@@ -674,8 +687,7 @@ async function getGameOverMenu(scene, score, user = undefined) {
 async function getPausedMenu(scene, score) {
   console.log(pauseMenuURL);
   const pauseMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
-  pauseMenu.parseSerializedObject(pauseMenuURL, true).then((adt) => {
-    console.log('adt', adt);
+  pauseMenu.parseSerializedObject(pauseMenuURL, true);
     // const endGamePanel = adt.getControlByName('endGamePanel');
     // const endGameButton = adt.getControlByName('endGameButton');
     // endGameButton.onPointerClickObservable.add(()=>{
@@ -684,7 +696,6 @@ async function getPausedMenu(scene, score) {
     //   scene.getEngine().dispose();
     //   createScene();
     // })
-  });
   return pauseMenu;
 }
 
