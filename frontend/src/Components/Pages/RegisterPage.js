@@ -20,12 +20,6 @@ const RegisterPage = () => {
     const form = `
     <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
       <form class="flex flex-row justify-around bg-custom-blue px-10 pt-6 pb-8 mb-4 rounded-3xl">
-          <div>
-          <label class="bg-wood-board-01 bg-cover bg-center block text-white text-center text-xl font-mono mt-10" for="last-name">last name :</label>
-          <input  id="lname" class="bg-custom-lightyellow shadow appearance-none rounded" name="last-name" type="text">
-          <label class="bg-wood-board-01 bg-cover bg-center block text-white text-center text-xl font-mono mt-10" for="first-name">first name :</label>
-          <input id="fname" class="bg-custom-lightyellow shadow appearance-none rounded" name="first-name" type="text">
-        </div>
         <div class="flex flex-col justify-start">
           <label class="bg-wood-board-01 bg-cover bg-center block text-white text-center text-xl font-mono mt-10" for="username">username :</label>
           <input  id="username" class="bg-custom-lightyellow shadow appearance-none rounded" name="username" type="text">
@@ -47,14 +41,11 @@ const RegisterPage = () => {
 
   const username = document.querySelector('#username').value;
   const password = document.querySelector('#password').value;
-  const lname = document.querySelector('#lname').value;
-  const fname = document.querySelector('#fname').value;
+
 
   const options = {
     method: 'POST',
     body: JSON.stringify({
-      lname,
-      fname,
       username,
       password,
     }),

@@ -13,10 +13,8 @@ const jsonDbPath = path.join(__dirname, '/../data/users.json');
 
 const defaultUsers = [
   {
-    lname: 'lname',
-    fname: 'fname',
-    username: 'user1',
-    password: bcrypt.hashSync('user1', saltRounds),
+    username: 'user',
+    password: bcrypt.hashSync('user', saltRounds),
     balance: 1000,
     highscore: 2000,
   },
@@ -43,11 +41,11 @@ async function login(username, password) {
   return authenticatedUser;
 }
 
-async function register(lname, fname, username, password) {
+async function register(username, password) {
   const userFound = readOneUserFromUsername(username);
   if (userFound) return undefined;
 
-  await createOneUser(lname, fname, username, password);
+  await createOneUser(username, password);
 
 
   const token = jwt.sign(
@@ -72,14 +70,12 @@ function readOneUserFromUsername(username) {
   return users[indexOfUserFound];
 }
 
-async function createOneUser(lname, fname, username, password) {
+async function createOneUser(username, password) {
   const users = parse(jsonDbPath, defaultUsers);
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
   const createdUser = {
-    lname,
-    fname,
     username,
     password: hashedPassword,
     balance: 0,
@@ -132,10 +128,8 @@ function updateHighscore(highscore, username){
   const updatedUser = {...users[index], highscore: parseInt(highscore,10)};
   users[index] = updatedUser;
   serialize(jsonDbPath, users);
-
   return updatedUser;
 }
-
 
 module.exports = {
   login,

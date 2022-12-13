@@ -11,7 +11,7 @@ import helm from '../../assets/img/helm.png';
 
 const LoginPage = () => {
   clearPage();
-  renderPageTitle("Login");
+  renderPageTitle('Login');
 
   const main = document.querySelector('main');
   main.innerHTML += renderLoginForm();
@@ -23,10 +23,10 @@ const LoginPage = () => {
   registerButton.addEventListener('click', redirectToRegisterPage);
 
   Footer();
-  };
+};
 
-  function renderLoginForm(){
-    const form = `
+function renderLoginForm() {
+  const form = `
     <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
       <form>
         <div class="px-10 pt-6 pb-8 mb-4 flex flex-row relative bg-custom-blue rounded-3xl">
@@ -85,13 +85,13 @@ const LoginPage = () => {
     </div>
   </div>
 
-    `
+    `;
 
-    return form;
-  }
+  return form;
+}
 
+async function onLogin(e) {
 
-  async function onLogin(e) {
   e.preventDefault();
 
   const username = document.querySelector('#username').value;
@@ -143,5 +143,5 @@ const LoginPage = () => {
 function redirectToRegisterPage(){
   Navigate('/register');
 }
-  
-  export default LoginPage;
+
+export default LoginPage;

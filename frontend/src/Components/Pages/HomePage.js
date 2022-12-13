@@ -37,8 +37,11 @@ import {
 import * as GUI from '@babylonjs/gui';
 import '@babylonjs/loaders';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+import lottie from 'lottie-web';
 import { clearPage } from '../../utils/render';
 import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
+import * as tools from '../../utils/tools';
 
 import '@babylonjs/inspector';
 import '@babylonjs/materials';
@@ -46,7 +49,6 @@ import '@babylonjs/post-processes';
 import '@babylonjs/serializers';
 import '@babylonjs/procedural-textures';
 
-import * as tools from '../../utils/tools';
 
 // assets
 import water from '../../assets/3Dmodels/test3.glb';
@@ -57,6 +59,11 @@ import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
 import gameOverMenuURL from '../../assets/img/GameOver.json';
 import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
+import loadSealURL from '../../assets/img/seal load.json';
+import loadSealURL2 from '../../assets/img/sealLoad.lottie';
+import bottleImportUrl from '../../assets/3Dmodels/waterBottle.glb';
+import barelImportUrl from '../../assets/3Dmodels/metalBarel.glb';
+import iceImportUrl from '../../assets/3Dmodels/ice.glb';
 
 // eslint-disable-next-line camelcase
 import sky_px from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_px.bmp';
@@ -76,7 +83,7 @@ let startGame;
 const createScene = async (scene) => {
   // TODO: rearrange mesh axes
   // Game Assets
-  const waterMeshImport = await SceneLoader.ImportMeshAsync(null, water, null, scene);
+  const waterMeshImport = await SceneLoader.ImportMeshAsync(null, water);
   console.log('waterMeshImport', waterMeshImport);
   // waterMeshImport.meshes[2].dispose();
   const waterMesh = waterMeshImport.meshes[1];
@@ -110,7 +117,7 @@ const createScene = async (scene) => {
   // const waterMaterial = NodeMaterial.Parse(vague,scene);
   // console.log("waterMaterial",waterMaterial);
   // waterMesh.material=waterMaterial;
-  const sealMeshImport = await SceneLoader.ImportMeshAsync(null, seal, null, scene);
+  const sealMeshImport = await SceneLoader.ImportMeshAsync(null, seal);
   const sealMesh = sealMeshImport.meshes[1];
   sealMesh.scaling = new Vector3(0.5, 0.5, 0.5);
   sealMesh.parent = null;
@@ -133,6 +140,28 @@ const createScene = async (scene) => {
   waterParticles.particleTexture = new Texture(waterTexture);
   waterParticles.emitter = sealMesh;
 
+  const bottleImport = await SceneLoader.ImportMeshAsync(null, bottleImportUrl);
+  console.log("bottleImport",bottleImport);
+  const bottle = bottleImport.meshes[1];
+  bottle.parent = null;
+  // bottle.isVisible = false;
+  bottle.position.y = 100;
+
+  const barrelImport = await SceneLoader.ImportMeshAsync(null, barelImportUrl);
+  console.log("barrelImport",barrelImport);
+  const barrel = barrelImport.meshes[1];
+  
+  barrel.parent = null;
+  // barrel.isVisible = false;
+  barrel.position.y = 100;
+
+  const iceImport = await SceneLoader.ImportMeshAsync(null, iceImportUrl);
+  console.log("iceImport",iceImport);
+  const ice = iceImport.meshes[1];
+  ice.scaling = new Vector3(2,2,1.8)
+  ice.parent = null;
+  // ice.isVisible = false;
+  ice.position.y = 100;
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
   // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
@@ -353,17 +382,7 @@ const createScene = async (scene) => {
 
     // Obstacles
     const obstacles = [];
-    const obs1 = MeshBuilder.CreateBox('box', { size: 1 }, scene);
-    obs1.visibility = false;
-    obs1.position.y = 100;
-    const obs2 = MeshBuilder.CreateGeodesic('poly', { size: 1 }, scene);
-    obs2.visibility = false;
-    obs2.position.y = 100;
-    const obs3 = MeshBuilder.CreateTorusKnot('torus', { radius: 0.3 }, scene);
-    obs3.visibility = false;
-    obs3.position.y = 100;
-
-    obstacles.push(obs1, obs2, obs3);
+    obstacles.push(barrel, bottle, ice);
 
     // Money
     moneyMesh.visibility = false;
@@ -453,9 +472,11 @@ const createScene = async (scene) => {
       endPosition.z = spawnEndZ;
 
       // create a clone of a random obstacle as target
-      target = obstacles[tools.getRandomInt(spawns.length)].clone('target');
+      target = obstacles[tools.getRandomInt(obstacles.length)].clone('target');
 
       // adjust target parameters
+      // let x = new Scene();
+      
       target.position = startPosition;
       target.visibility = true;
       // add to targets
@@ -531,34 +552,30 @@ const createScene = async (scene) => {
         ),
       );
     }
-    //   setTimeout(() => {
-    //     scene.freezeActiveMeshes(true);
-    //     const f = new Scene();
-    //     f.animationsEnabled=false;
-
-    //   }, 3000);
-    // };
   };
   return scene;
 };
 
 const HomePage = async () => {
   clearPage();
-  const game = document.querySelector('#game');
+  const game = document.getElementById('game');
   const newCanvas = document.createElement('canvas');
   newCanvas.id = 'renderCanvas';
   game.appendChild(newCanvas);
-  const canvas = document.getElementById('renderCanvas');
-  let engine = new Engine(canvas, true, null, true);
+  const loadingCanvas = document.createElement('div');
+  loadingCanvas.id = 'loadingCanvas';
+  let engine = new Engine(newCanvas, true, null, true);
+  // let text =
+  const bgColor = `rgb(${tools.getRandomIntBetween(0, 255)},${tools.getRandomIntBetween(0,255,)},${tools.getRandomIntBetween(0, 255)})`;
+  const loadingScreen = new CustomLoadingScreen(loadingCanvas, 'Loading...', bgColor);
+  // const loadingScreen = new DefaultLoadingScreen(loadingCanvas, 'Loading...', bgColor);
   let scene = new Scene(engine);
   scene.detachControl();
-  const loadingScreen = new DefaultLoadingScreen(newCanvas, 'Loading ...');
   // TODO chercher info sur ca ...bon pour perf?
-  scene.useDelayedTextureLoading = true;
+  // scene.useDelayedTextureLoading = true;
   loadingScreen.displayLoadingUI();
   scene = await createScene(scene);
   SceneOptimizer.OptimizeAsync(scene, SceneOptimizerOptions.ModerateDegradationAllowed());
-
   scene.executeWhenReady(() => {
     loadingScreen.hideLoadingUI();
     scene.attachControl();
@@ -626,17 +643,59 @@ async function addMoneyToBalance(money) {
 async function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
-  gameOverMenu.parseSerializedObject(gameOverMenuURL, true).then((adt) => {
-    console.log('adt', adt);
-    // const endGamePanel = adt.getControlByName('endGamePanel');
-    // const endGameButton = adt.getControlByName('endGameButton');
-    // endGameButton.onPointerClickObservable.add(()=>{
-    //   endGamePanel.isVisible = false;
-    //   scene.dispose();
-    //   scene.getEngine().dispose();
-    //   createScene();
-    // })
-  });
+  gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
+
   return gameOverMenu;
 }
+
+function CustomLoadingScreen(container, text, color) {
+  this.loadingUIText = text;
+  this.loadingUIBackgroundColor = color;
+  this.loadingUIContainer = container;
+}
+// CustomLoadingScreen.prototype.displayLoadingUI = () => {
+//   alert(this.loadingUIText);
+// };
+
+CustomLoadingScreen.prototype.displayLoadingUI = function() {
+  this.loadingUIContainer.innerHTML = `
+  <div id="loadingAnimationDiv">
+  </div> 
+  <div id="loadingText">
+  ${this.loadingUIText}
+  </div>`;
+// TODO change to tailwind
+  this.loadingUIContainer.style = `
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: ${this.loadingUIBackgroundColor};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  font-size: 50px;
+  font-family: Arial;
+`;
+  document.body.appendChild(this.loadingUIContainer);
+  const loadingAnimation = lottie.loadAnimation({
+    container: document.getElementById('loadingAnimationDiv'),
+    renderer: 'svg',
+    animationData:loadSealURL
+  });
+  // start the animation after the DOM correctly charged
+  loadingAnimation.play();
+
+  // eslint-disable-next-line func-names
+  // alert("add")
+};
+
+// eslint-disable-next-line func-names
+CustomLoadingScreen.prototype.hideLoadingUI = function() {
+  // alert("remove")
+  document.getElementById(this.loadingUIContainer.id).remove();
+};
 export default HomePage;
