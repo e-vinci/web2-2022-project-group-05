@@ -39,6 +39,9 @@ import '@babylonjs/loaders';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import lottie from 'lottie-web';
+import Navigate from '../Router/Navigate';
+
+
 import { clearPage } from '../../utils/render';
 import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 import * as tools from '../../utils/tools';
@@ -57,7 +60,13 @@ import seal from '../../assets/3Dmodels/seal_animated.glb';
 import money from '../../assets/3Dmodels/fishMoney.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
-import gameOverMenuURL from '../../assets/img/GameOver.json';
+import gameOverMenuURL from '../../assets/img/gameOver.json';
+import playIcon from '../../assets/img/play-icon.png';
+import restartIcon from '../../assets/img/restart-icon.png';
+import homeIcon from '../../assets/img/home-icon.png';
+import pauseMenuURL from '../../assets/img/menuPause.json';
+import sadSeal from '../../assets/img/try_again.png';
+import moneyIcon from '../../assets/img/money-icon.png';
 import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
 import loadSealURL from '../../assets/img/seal load.json';
 import loadSealURL2 from '../../assets/img/sealLoad.lottie';
@@ -195,7 +204,8 @@ const createScene = async (scene) => {
   let score = 0;
   const maxJumpHeight = 4;
   let moneyCollected = 0;
-
+  let paused = false;
+  let dead = false;
   // Create GUI Elements dor score
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('scoreUi');
 
@@ -304,73 +314,6 @@ const createScene = async (scene) => {
     const jump = new AnimationGroup('jump');
     jump.addTargetedAnimation(ySlide, sealMesh);
 
-    //  Sphere mouvement
-    let isMoving = false;
-    scene.onKeyboardObservable.add((kbInfo) => {
-      if (isMoving) return;
-      switch (kbInfo.type) {
-        case KeyboardEventTypes.KEYDOWN:
-          switch (kbInfo.event.key) {
-            case 'd':
-            case 'D':
-            case 'ArrowRight':
-              if (sealMesh.position.x !== widthCols) {
-                isMoving = true;
-                Animation.CreateAndStartAnimation(
-                  'slideRight',
-                  sealMesh,
-                  'position.x',
-                  10,
-                  2,
-                  sealMesh.position.x,
-                  sealMesh.position.x + widthCols,
-                  Animation.ANIMATIONLOOPMODE_CONSTANT,
-                  null,
-                  () => (isMoving = false),
-                );
-              }
-              break;
-            case 'q':
-            case 'Q':
-            case 'ArrowLeft':
-              if (sealMesh.position.x !== -widthCols) {
-                isMoving = true;
-                Animation.CreateAndStartAnimation(
-                  'slideLeft',
-                  sealMesh,
-                  'position.x',
-                  10,
-                  2,
-                  sealMesh.position.x,
-                  sealMesh.position.x - widthCols,
-                  Animation.ANIMATIONLOOPMODE_CONSTANT,
-                  null,
-                  () => (isMoving = false),
-                );
-              }
-              break;
-            case 's':
-            case 'S':
-            case 'ArrowDown':
-              if (sealMesh.position.y < maxJumpHeight) {
-                waterParticles.stop();
-                isMoving = true;
-                // start animation
-                jump.play().onAnimationGroupEndObservable.add(() => {
-                  isMoving = false;
-                  waterParticles.start();
-                });
-              }
-              break;
-            default:
-              break;
-          }
-          break;
-        default:
-          break;
-      }
-    });
-
     // Spawns
     const spawns = [];
     const spawn1 = new Vector3(-widthCols, 1, spawnStartZ);
@@ -382,21 +325,24 @@ const createScene = async (scene) => {
 
     // Obstacles
     const obstacles = [];
+   
     obstacles.push(barrel, bottle, ice);
 
     // Money
     moneyMesh.visibility = false;
     moneyMesh.position.y = 100;
 
+    const currentAnimsRunning = [];
+
     // Handle obstacles spawn
     let obstacle;
     const obstacleTargets = [];
-    const obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
+    let obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
 
     // Handle money spawn
     const money = new Mesh();
     const moneyTargets = [];
-    const moneySpawn = setInterval(spawnMoney, 1000, money);
+    let moneySpawn = setInterval(spawnMoney, 1000, money);
 
     function spawnMoney(target) {
       // set a random spawn position as startPosition
@@ -418,7 +364,8 @@ const createScene = async (scene) => {
       // add to targets
 
       // animation rotation aleatoire
-      Animation.CreateAndStartAnimation(
+
+      const animRotate = Animation.CreateAndStartAnimation(
         'ani',
         target,
         'rotation',
@@ -428,9 +375,11 @@ const createScene = async (scene) => {
         new Vector3(0, 2 * Math.PI, 0),
         Animation.ANIMATIONLOOPMODE_CONSTANT,
       );
+      
+      currentAnimsRunning.push(animRotate);
       // animation spawn
-      Animation.CreateAndStartAnimation(
-        'ani',
+      const animMoney = Animation.CreateAndStartAnimation(
+        'anim',
         target,
         'position',
         30,
@@ -445,7 +394,7 @@ const createScene = async (scene) => {
           target.dispose();
         },
       );
-
+      currentAnimsRunning.push(animMoney);
       // on Seal collide
       target.actionManager = new ActionManager();
       target.actionManager.registerAction(
@@ -483,7 +432,7 @@ const createScene = async (scene) => {
       obstacleTargets.push(target);
 
       // animation spawn
-      Animation.CreateAndStartAnimation(
+      const obstacleAnim = Animation.CreateAndStartAnimation(
         'anim',
         target,
         'position',
@@ -499,6 +448,7 @@ const createScene = async (scene) => {
           target.dispose();
         },
       );
+      currentAnimsRunning.push(obstacleAnim);
 
       // on seal collide
       target.actionManager = new ActionManager();
@@ -511,6 +461,7 @@ const createScene = async (scene) => {
           },
           () => {
             // stop obstacles spawn
+            dead = true;
             clearInterval(obstaclesSpawn);
             clearInterval(moneySpawn);
             // destroy every other obstacle
@@ -552,6 +503,106 @@ const createScene = async (scene) => {
         ),
       );
     }
+    //  Sphere mouvement
+    let isMoving = false;
+    // Create the pause GUI menu
+    let pauseCanvas;
+
+    scene.onKeyboardObservable.add((kbInfo) => {
+      if (isMoving) return;
+      if (!dead) {
+        switch (kbInfo.type) {
+          case KeyboardEventTypes.KEYDOWN:
+            switch (kbInfo.event.key) {
+              case 'Escape':
+                if (!paused) {
+                  paused = true;
+                  pauseCanvas = getPausedMenu(scene);
+                  for (let i = 0; i < currentAnimsRunning.length; i++) {
+                    currentAnimsRunning[i]?.pause();
+                  }
+                  clearInterval(obstaclesSpawn);
+                  clearInterval(moneySpawn);
+                } else {
+                  paused = false;
+                  pauseCanvas.dispose();
+                  for (let i = 0; i < currentAnimsRunning.length; i++) {
+                    currentAnimsRunning[i]?.restart();
+                  }
+                  console.log(obstaclesSpawn);
+                  console.log(moneySpawn);
+                  obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
+                  moneySpawn = setInterval(spawnMoney, 1000, money);
+                }
+
+                console.log(paused);
+                break;
+              default:
+                break;
+            }
+            if (!paused) {
+              switch (kbInfo.event.key) {
+                case 'd':
+                case 'D':
+                case 'ArrowRight':
+                  if (sealMesh.position.x !== widthCols) {
+                    isMoving = true;
+                    Animation.CreateAndStartAnimation(
+                      'slideRight',
+                      sealMesh,
+                      'position.x',
+                      10,
+                      2,
+                      sealMesh.position.x,
+                      sealMesh.position.x + widthCols,
+                      Animation.ANIMATIONLOOPMODE_CONSTANT,
+                      null,
+                      () => (isMoving = false),
+                    );
+                  }
+                  break;
+                case 'q':
+                case 'Q':
+                case 'ArrowLeft':
+                  if (sealMesh.position.x !== -widthCols) {
+                    isMoving = true;
+                    Animation.CreateAndStartAnimation(
+                      'slideLeft',
+                      sealMesh,
+                      'position.x',
+                      10,
+                      2,
+                      sealMesh.position.x,
+                      sealMesh.position.x - widthCols,
+                      Animation.ANIMATIONLOOPMODE_CONSTANT,
+                      null,
+                      () => (isMoving = false),
+                    );
+                  }
+                  break;
+                  case 's':
+                  case 'S':
+                  case 'ArrowDown':
+                  if (sealMesh.position.y < maxJumpHeight) {
+                    waterParticles.stop();
+                    isMoving = true;
+                    // start animation
+                    jump.play().onAnimationGroupEndObservable.add(() => {
+                      isMoving = false;
+                      waterParticles.start();
+                    });
+                  }
+                  break;
+                default:
+                  break;
+              }
+            }
+            break;
+          default:
+            break;
+        }
+      }
+    });
   };
   return scene;
 };
@@ -562,20 +613,23 @@ const HomePage = async () => {
   const newCanvas = document.createElement('canvas');
   newCanvas.id = 'renderCanvas';
   game.appendChild(newCanvas);
+  const canvas = document.getElementById('renderCanvas');
+  let engine = new Engine(canvas, true, null, true);
+  let scene = new Scene(engine);
+  scene.detachControl();
   const loadingCanvas = document.createElement('div');
   loadingCanvas.id = 'loadingCanvas';
-  let engine = new Engine(newCanvas, true, null, true);
   // let text =
   const bgColor = `rgb(${tools.getRandomIntBetween(0, 255)},${tools.getRandomIntBetween(0,255,)},${tools.getRandomIntBetween(0, 255)})`;
   const loadingScreen = new CustomLoadingScreen(loadingCanvas, 'Loading...', bgColor);
   // const loadingScreen = new DefaultLoadingScreen(loadingCanvas, 'Loading...', bgColor);
-  let scene = new Scene(engine);
   scene.detachControl();
   // TODO chercher info sur ca ...bon pour perf?
   // scene.useDelayedTextureLoading = true;
   loadingScreen.displayLoadingUI();
   scene = await createScene(scene);
   SceneOptimizer.OptimizeAsync(scene, SceneOptimizerOptions.ModerateDegradationAllowed());
+
   scene.executeWhenReady(() => {
     loadingScreen.hideLoadingUI();
     scene.attachControl();
@@ -640,13 +694,76 @@ async function addMoneyToBalance(money) {
 }
 
 // create GUI element for end game
-async function getGameOverMenu(scene, score, user = undefined) {
+function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
   gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
+  
+  const storeImg = gameOverMenu.getControlByName('Image');
+  storeImg.source = moneyIcon;
+  storeImg.parent.onPointerClickObservable.add(() => {
+    Navigate('/ranking'); // store doesn't exist ?
+  });
 
+  const tryAgain = gameOverMenu.getControlByName('TryAgain');
+  tryAgain.onPointerClickObservable.add(() => {
+    HomePage();
+  });
+
+  const goBackHome = gameOverMenu.getControlByName('GoBackHome');
+  goBackHome.onPointerClickObservable.add(() => {
+    Navigate('/');
+  });
+
+  // const endGamePanel = adt.getControlByName('endGamePanel');
+  // const endGameButton = adt.getControlByName('endGameButton');
+  // endGameButton.onPointerClickObservable.add(()=>{
+  //   endGamePanel.isVisible = false;
+  //   scene.dispose();
+  //   scene.getEngine().dispose();
+  //   createScene();
+  // })
   return gameOverMenu;
 }
+
+// create GUI element for pause game
+function getPausedMenu(scene) {
+  console.log(pauseMenuURL);
+  const pauseMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
+ 
+  pauseMenu.parseSerializedObject(pauseMenuURL, true);
+  const restartBtn = pauseMenu.getControlByName('ButtonRestart');
+  restartBtn.children[0].source = restartIcon;
+  restartBtn.onPointerClickObservable.add(()=> {
+    HomePage();
+});
+   
+
+    const homeBtn = pauseMenu.getControlByName('ButtonHome');
+    homeBtn.children[0].source = homeIcon;
+    homeBtn.onPointerClickObservable.add(()=> {
+      Navigate('/');
+  });
+
+    const resumeBtn = pauseMenu.getControlByName('ButtonResume');
+    resumeBtn.children[0].source = playIcon;
+    resumeBtn.onPointerClickObservable.add(()=> {
+      // cringe
+  });
+  
+  
+  // const endGamePanel = adt.getControlByName('endGamePanel');
+  // const endGameButton = adt.getControlByName('endGameButton');
+  // endGameButton.onPointerClickObservable.add(()=>{
+  //   endGamePanel.isVisible = false;
+  //   scene.dispose();
+  //   scene.getEngine().dispose();
+  //   createScene();
+  // })
+  return pauseMenu;
+}
+
+
 
 function CustomLoadingScreen(container, text, color) {
   this.loadingUIText = text;
