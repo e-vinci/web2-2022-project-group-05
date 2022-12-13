@@ -61,6 +61,8 @@ import playIcon from '../../assets/img/play-icon.png';
 import restartIcon from '../../assets/img/restart-icon.png';
 import homeIcon from '../../assets/img/home-icon.png';
 import pauseMenuURL from '../../assets/img/menuPause.json';
+import sadSeal from '../../assets/img/try_again.png';
+import moneyIcon from '../../assets/img/money-icon.png';
 
 // eslint-disable-next-line camelcase
 import sky_px from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_px.bmp';
@@ -665,6 +667,23 @@ function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
   gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
+  
+  const storeImg = gameOverMenu.getControlByName('Image');
+  storeImg.source = moneyIcon;
+  storeImg.parent.onPointerClickObservable.add(() => {
+    Navigate('/ranking'); // store doesn't exist ?
+  });
+
+  const tryAgain = gameOverMenu.getControlByName('TryAgain');
+  tryAgain.onPointerClickObservable.add(() => {
+    HomePage();
+  });
+
+  const goBackHome = gameOverMenu.getControlByName('GoBackHome');
+  goBackHome.onPointerClickObservable.add(() => {
+    Navigate('/');
+  });
+
   // const endGamePanel = adt.getControlByName('endGamePanel');
   // const endGameButton = adt.getControlByName('endGameButton');
   // endGameButton.onPointerClickObservable.add(()=>{
@@ -684,19 +703,22 @@ function getPausedMenu(scene) {
   pauseMenu.parseSerializedObject(pauseMenuURL, true);
   const restartBtn = pauseMenu.getControlByName('ButtonRestart');
   restartBtn.children[0].source = restartIcon;
-  restartBtn.onPointerClickObservable.add(()=>{
+  restartBtn.onPointerClickObservable.add(()=> {
     HomePage();
 });
    
 
     const homeBtn = pauseMenu.getControlByName('ButtonHome');
     homeBtn.children[0].source = homeIcon;
-    homeBtn.onPointerClickObservable.add(()=>{
+    homeBtn.onPointerClickObservable.add(()=> {
       Navigate('/');
   });
 
     const resumeBtn = pauseMenu.getControlByName('ButtonResume');
     resumeBtn.children[0].source = playIcon;
+    resumeBtn.onPointerClickObservable.add(()=> {
+      // cringe
+  });
   
   
   // const endGamePanel = adt.getControlByName('endGamePanel');
