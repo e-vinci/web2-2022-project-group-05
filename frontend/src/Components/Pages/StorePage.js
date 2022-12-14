@@ -12,12 +12,26 @@ import { clearPage } from '../../utils/render';
 
 // assets imports
 import sealAsset from '../../assets/3Dmodels/seal_animated.glb';
+import pandaImport from '../../assets/texture/Seal_ColorMap_Panda.png';
+import tigerImport from '../../assets/texture/fur.jpg';
 import guiButtonsStore from '../../assets/guiStoreButtons.json';
 
+const textureArray = [pandaImport, tigerImport];
+
 const createScene = async () => {
-  const game = document.querySelector('#game');
+  const game = document.getElementById('game');
   const newCanvas = document.createElement('canvas');
   newCanvas.id = 'renderCanvas';
+  newCanvas.style = `
+    width: 50%;
+    height:50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    `;
+  // newCanvas.innerHTML = `
+  // <div id="guiStore" ">`
   game.appendChild(newCanvas);
   const canvas = document.getElementById('renderCanvas');
   const engine = new BABYLON.Engine(canvas, true);
@@ -53,6 +67,32 @@ const createScene = async () => {
 
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
   const loadedGui = await advancedTexture.parseSerializedObject(guiButtonsStore, true);
+  advancedTexture.addControl(loadedGui);
+  console.log('descendant', advancedTexture.getDescendants());
+  const nextSkin = advancedTexture.getControlByName('nextSkin');
+  nextSkin.onPointerClickObservable.add(
+    () => {
+      console.log('nextSkin');
+      const currentTexture = seal.material.getActiveTextures;
+      const currentTextureIndex = textureArray.indexOf(currentTexture);
+      const nextTextureIndex = (currentTextureIndex + 1) % textureArray.length;
+      seal.material.albedoTexture = textureArray[nextTextureIndex];
+    },
+    { buttonIndex: 0 },
+  );
+
+  const previousSkin = advancedTexture.getControlByName('previouSkin');
+  previousSkin.onPointerClickObservable.add(
+    () => {
+      console.log('previousSkin');
+      const currentTexture = seal.material.getActiveTextures();
+      console.log("currentTexture", currentTexture);
+      const currentTextureIndex = textureArray.indexOf(currentTexture);
+      const nextTextureIndex = (currentTextureIndex - 1) % textureArray.length;
+      seal.material.albedoTexture = textureArray[nextTextureIndex];
+    }
+  )
+  
   // Shift to enable inspector
   window.addEventListener('keydown', (ev) => {
     console.log(ev);
