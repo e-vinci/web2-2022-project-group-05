@@ -24,10 +24,19 @@ POST {{baseUrl}}/auths/register
 Content-Type: application/json
 
 {
-    "lname": "two",
-    "fname": "user",
+    "lname": "2",
+    "fname": "2",
     "username":"user2",
     "password":"user2"
+}
+
+### Create random user
+POST {{baseUrl}}/auths/register
+Content-Type: application/json
+
+{
+    "username":"user3",
+    "password":"user3"
 }
 
 ### Login random user

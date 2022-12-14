@@ -1,0 +1,8 @@
+@baseUrl = http://localhost:3000
+
+### Try to login an unknow user
+GET {{baseUrl}}/skins
+Content-Type: application/json
+
+### Get one skin by its id 
+GET {{baseUrl}}/skins/skinId?id=2

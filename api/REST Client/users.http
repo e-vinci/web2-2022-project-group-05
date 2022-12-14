@@ -19,10 +19,35 @@ Content-Type: application/json
 }
 
 ### Update user's highscore
-PATCH {{baseUrl}}/users/highscore?username=user1
+PATCH {{baseUrl}}/users/highscore?username=user
 Content-Type: application/json
 
 {
     "highscore": 32222
+}
+
+### add one skin to the user
+PATCH {{baseUrl}}/users/skins?username=user2
+Content-Type: application/json
+
+{
+    "id":"3",
+}
+
+
+### Update current skin of the user2
+PATCH {{baseUrl}}/users/currentSkin?username=user2
+Content-Type: application/json
+
+{
+    "id":"3",
+}
+
+### Update curent skin of the user
+PATCH {{baseUrl}}/users/currentSkin?username=user
+Content-Type: application/json
+
+{
+    "id":"2",
 }
 
