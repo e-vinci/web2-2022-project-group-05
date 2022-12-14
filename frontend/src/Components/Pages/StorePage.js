@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 // Babylon imports
 import * as BABYLON from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
@@ -9,6 +8,8 @@ import '@babylonjs/materials';
 // utils imports
 import { AdvancedDynamicTexture } from '@babylonjs/gui';
 import { clearPage } from '../../utils/render';
+import leftArrow from '../../assets/img/left_arrow.png';
+import rightArrow from '../../assets/img/right_arrow.png';
 
 // assets imports
 import sealAsset from '../../assets/3Dmodels/seal_animated.glb';
