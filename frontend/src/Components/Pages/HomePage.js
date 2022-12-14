@@ -1,825 +1,133 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-return-assign */
-/* eslint-disable no-shadow */
-// import * as BABYLON from '@babylonjs/core';
-import {
-  Engine,
-  Scene,
-  Vector3,
-  Color3,
-  Color4,
-  Mesh,
-  Texture,
-  ArcRotateCamera,
-  TransformNode,
-  Space,
-  Animation,
-  AnimationGroup,
-  SceneLoader,
-  Axis,
-  StandardMaterial,
-  HemisphericLight,
-  MeshBuilder,
-  ParticleSystem,
-  CubeTexture,
-  KeyboardEventTypes,
-  KeyboardInfo,
-  ActionManager,
-  ExecuteCodeAction,
-  PointerEventTypes,
-  PointerInfo,
-  ActionEvent,
-  DefaultLoadingScreen,
-  SceneOptimizer,
-  SceneOptimizerOptions,
-  NodeMaterial,
-} from '@babylonjs/core';
-import * as GUI from '@babylonjs/gui';
-import '@babylonjs/loaders';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-import lottie from 'lottie-web';
+import { setAuthenticatedUser,isAuthenticated,clearAuthenticatedUser } from '../../utils/auths';
+import { clearPage, renderPageTitle, renderMenuTitle } from '../../utils/render';
+import Footer from '../Footer/Footer';
+import Navbar from '../Navbar/Navbar';
 import Navigate from '../Router/Navigate';
+import rope01 from '../../assets/img/rope_01.png';
+import rope02 from '../../assets/img/rope_02.png';
+import rope03 from '../../assets/img/rope_03.png';
+import helm from '../../assets/img/helm.png';
+import ice01 from '../../assets/img/iceberg_01.png';
+import ice02 from '../../assets/img/iceberg_02.png';
+import seal from '../../assets/img/seal_cartoon.png';
 
-import { clearPage } from '../../utils/render';
-import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
-import * as tools from '../../utils/tools';
 
-import '@babylonjs/inspector';
-import '@babylonjs/materials';
-import '@babylonjs/post-processes';
-import '@babylonjs/serializers';
-import '@babylonjs/procedural-textures';
+const MenuPage = () => {
+    clearPage();
+    renderMenuTitle("SealRescue");
+  
+    const main = document.querySelector('main');
+    main.innerHTML += renderMenu();
 
-// assets
-import water from '../../assets/3Dmodels/test3.glb';
-import vague from '../../assets/vague.json';
-import seal from '../../assets/3Dmodels/seal_animated.glb';
-import money from '../../assets/3Dmodels/fishMoney.glb';
-import importedWaterParticles from '../../assets/waterParticles.json';
-import waterTexture from '../../assets/texture/flare.png';
-import gameOverMenuURL from '../../assets/img/gameOver.json';
-import playIcon from '../../assets/img/play-icon.png';
-import restartIcon from '../../assets/img/restart-icon.png';
-import homeIcon from '../../assets/img/home-icon.png';
-import pauseMenuURL from '../../assets/img/menuPause.json';
-import sadSeal from '../../assets/img/try_again.png';
-import moneyIcon from '../../assets/img/money-icon.png';
-import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
-import loadSealURL from '../../assets/img/seal load.json';
-import loadSealURL2 from '../../assets/img/sealLoad.lottie';
-import bottleImportUrl from '../../assets/3Dmodels/waterBottle.glb';
-import barelImportUrl from '../../assets/3Dmodels/metalBarel.glb';
-import iceImportUrl from '../../assets/3Dmodels/ice.glb';
+    const startButton = document.querySelector('#start-button');
+    const rankingButton = document.querySelector('#ranking-button');
 
-// eslint-disable-next-line camelcase
-import sky_px from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_px.bmp';
-// eslint-disable-next-line camelcase
-import sky_py from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_py.bmp';
-// eslint-disable-next-line camelcase
-import sky_pz from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_pz.bmp';
-// eslint-disable-next-line camelcase
-import sky_nx from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_nx.bmp';
-// eslint-disable-next-line camelcase
-import sky_ny from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_ny.bmp';
-// eslint-disable-next-line camelcase
-import sky_nz from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_nz.bmp';
-
-let startGame;
-
-const createScene = async (scene) => {
-  // TODO: rearrange mesh axes
-  // Game Assets
-  const waterMeshImport = await SceneLoader.ImportMeshAsync(null, water);
-  console.log('waterMeshImport', waterMeshImport);
-  // waterMeshImport.meshes[2].dispose();
-  const waterMesh = waterMeshImport.meshes[1];
-  waterMesh.scaling = new Vector3(3, 3, 1.2);
-
-  // waterMeshImport.dispose()
-
-  console.log('here', waterMesh);
-  // waterMesh.position = new BABYLON.Vector3(0, 0, 0);
-  // waterMesh.rotate(Axis.Y, -Math.PI / 2, Space.WORLD);
-  // waterMesh.isVisible = true;
-  // waterMesh.isPickable = true;
-  // waterMesh.checkCollisions = true;
-  // waterMesh.receiveShadows = true;
-  // waterMesh.name = 'water';
-  // waterMesh.material = new BABYLON.StandardMaterial('water', scene);
-  // waterMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 1);
-  // waterMesh.material.specularColor = new BABYLON.Color3(0, 0, 1);
-  // waterMesh.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
-  // waterMesh.material.ambientColor = new BABYLON.Color3(0, 0, 1);
-  // waterMesh.material.alpha = 0.3;
-  // waterMesh.material.backFaceCulling = false;
-  // waterMesh.material.freeze();
-  // waterMesh.freezeWorldMatrix();
-  // waterMesh.freezeNormals();
-  // waterMesh.freeze();
-  // waterMesh.isPickable = true;
-  // const direction=waterMesh.getDirection()
-  // console.log("direction",direction);
-
-  // const waterMaterial = NodeMaterial.Parse(vague,scene);
-  // console.log("waterMaterial",waterMaterial);
-  // waterMesh.material=waterMaterial;
-  const sealMeshImport = await SceneLoader.ImportMeshAsync(null, seal);
-  const sealMesh = sealMeshImport.meshes[1];
-  sealMesh.scaling = new Vector3(0.5, 0.5, 0.5);
-  sealMesh.parent = null;
-  console.log(sealMesh);
-
-  const sealSkin = new StandardMaterial('panda', scene);
-  sealSkin.backFaceCulling = false;
-  const sealTexture = new Texture(tigerTextureURL, scene);
-  sealTexture.uAng = Math.PI;
-  sealSkin.emissiveTexture = sealTexture;
-  sealMesh.material = sealSkin;
-
-  const moneyImport = await SceneLoader.ImportMeshAsync(null, money, null, scene);
-  const moneyMesh = moneyImport.meshes[1];
-  moneyMesh.parent = null;
-  moneyMesh.scaling = new Vector3(0.5, 0.5, 0.5);
-  console.log(moneyMesh);
-
-  const waterParticles = ParticleSystem.Parse(importedWaterParticles, scene, '');
-  waterParticles.particleTexture = new Texture(waterTexture);
-  waterParticles.emitter = sealMesh;
-
-  const bottleImport = await SceneLoader.ImportMeshAsync(null, bottleImportUrl);
-  console.log('bottleImport', bottleImport);
-  const bottle = bottleImport.meshes[1];
-  bottle.parent = null;
-  // bottle.isVisible = false;
-  bottle.position.y = 100;
-
-  const barrelImport = await SceneLoader.ImportMeshAsync(null, barelImportUrl);
-  console.log('barrelImport', barrelImport);
-  const barrel = barrelImport.meshes[1];
-
-  barrel.parent = null;
-  // barrel.isVisible = false;
-  barrel.position.y = 100;
-
-  const iceImport = await SceneLoader.ImportMeshAsync(null, iceImportUrl);
-  console.log('iceImport', iceImport);
-  const ice = iceImport.meshes[1];
-  ice.scaling = new Vector3(2, 2, 1.8);
-  ice.parent = null;
-  ice.position.y = 100;
-  // ice.isVisible = false;
-  // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
-  // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
-  // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
-  // sealMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-  // sealMesh.rotation = new BABYLON.Vector3(0, 0, 0);
-  // sealMesh.isVisible = true;
-  // sealMesh.isPickable = true;
-  // sealMesh.checkCollisions = true;
-  // sealMesh.receiveShadows = true;
-  // sealMesh.name = 'seal';
-  // sealMesh.material = new BABYLON.StandardMaterial('seal', scene);
-  // sealMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 1);
-  // sealMesh.material.specularColor = new BABYLON.Color3(0, 0, 1);
-  // sealMesh.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
-  // sealMesh.material.ambientColor = new BABYLON.Color3(0, 0, 1);
-  // sealMesh.material.alpha = 0.5;
-  // sealMesh.material.backFaceCulling = false;
-  // sealMesh.material.freeze();
-  // sealMesh.freezeWorldMatrix();
-  // sealMesh.freezeNormals();
-  // sealMesh.freeze();
-  // sealMesh.isPickable = true;
-
-  // Game Variables
-  const numberCols = 3;
-  const widthCols = 10;
-  const sceneWidth = numberCols * widthCols;
-  const cameraOffset = 30;
-  const spawnStartZ = 20;
-  const spawnEndZ = -10;
-  let score = 0;
-  const maxJumpHeight = 4;
-  let moneyCollected = 0;
-  let paused = false;
-  let dead = false;
-  // Create GUI Elements dor score
-  const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('scoreUi');
-
-  const UiPanel = new GUI.StackPanel();
-  UiPanel.width = '220px';
-  UiPanel.fontSize = '14px';
-  UiPanel.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-  UiPanel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-  advancedTexture.addControl(UiPanel);
-
-  // button
-  const buttonScore = GUI.Button.CreateSimpleButton('scoreButton');
-  buttonScore.textBlock.text = `Score : ${score}`;
-  buttonScore.paddingTop = '10px';
-  buttonScore.width = '100px';
-  buttonScore.height = '50px';
-  buttonScore.color = 'white';
-  buttonScore.background = 'grey';
-  UiPanel.addControl(buttonScore);
-
-  // Camera
-  // eslint-disable-next-line no-unused-vars
-  const camera = new ArcRotateCamera(
-    'Camera',
-    -Math.PI / 2,
-    (2 * Math.PI) / 5,
-    cameraOffset,
-    new Vector3(0, 0, 0),
-    scene,
-  );
-  camera.attachControl('canvas', true);
-
-  // Light
-  const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene);
-  light.intensity = 0.7;
-  // fonction starting the game
-
-  // skybox
-  const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
-  const skyboxMaterial = new StandardMaterial('skyBox', scene);
-  skyboxMaterial.backFaceCulling = false;
-  // eslint-disable-next-line camelcase
-  skyboxMaterial.reflectionTexture = new CubeTexture('', scene, null, null, [
-    // eslint-disable-next-line camelcase
-    sky_px,
-    // eslint-disable-next-line camelcase
-    sky_py,
-    // eslint-disable-next-line camelcase
-    sky_pz,
-    // eslint-disable-next-line camelcase
-    sky_nx,
-    // eslint-disable-next-line camelcase
-    sky_ny,
-    // eslint-disable-next-line camelcase
-    sky_nz,
-  ]);
-  skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-  skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
-  skyboxMaterial.specularColor = new Color3(0, 0, 0);
-  skybox.material = skyboxMaterial;
-
-  // Move the seal upward 1/2 its height
-  console.log(sealMesh);
-  sealMesh.position.y = 1 / 2;
-
-  // ScoreZone
-  const scoreZone = MeshBuilder.CreatePlane('scoreZone', {
-    size: sceneWidth,
-    updatable: false,
-    sideOrientation: Mesh.DOUBLESIDE,
-  });
-  scoreZone.position.z -= sealMesh.absoluteScaling.z;
-  scoreZone.isVisible = false;
-  startGame = () => {
-    // TODO extract animation from StartGame function
-    // TODO extract input logic from StartGame function
-    // Spawn Animations
-    // Jump
-    const frameRate = 10;
-
-    const ySlide = new Animation(
-      'ySlide',
-      'position.y',
-      frameRate,
-      Animation.ANIMATIONTYPE_FLOAT,
-      Animation.ANIMATIONLOOPMODE_CONSTANT,
-    );
-
-    const kf1 = {
-      frame: 0.1 * frameRate,
-      value: -1 / 2,
-    };
-    const kf2 = {
-      frame: 0.4 * frameRate,
-      value: -7,
-    };
-    const kf3 = {
-      frame: 1.5 * frameRate,
-      value: 1 / 2,
-    };
-    const keyFrames = [kf1, kf2, kf3];
-
-    ySlide.setKeys(keyFrames);
-
-    // AnimationGroup
-    const jump = new AnimationGroup('jump');
-    jump.addTargetedAnimation(ySlide, sealMesh);
-
-    // Spawns
-    const spawns = [];
-    const spawn1 = new Vector3(-widthCols, 1, spawnStartZ);
-    const spawn2 = new Vector3(0, 1, spawnStartZ);
-    const spawn3 = new Vector3(widthCols, 1, spawnStartZ);
-    // used to avoid money and target to spaxn at the same place
-    let lastUsedSpawn;
-    spawns.push(spawn1, spawn2, spawn3);
-
-    // Obstacles
-    const obstacles = [];
-
-    obstacles.push(barrel, bottle, ice);
-
-    // Money
-    moneyMesh.visibility = false;
-    moneyMesh.position.y = 100;
-
-    const currentAnimsRunning = [];
-
-    // Handle obstacles spawn
-    let obstacle;
-    const obstacleTargets = [];
-    let obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
-
-    // Handle money spawn
-    const money = new Mesh();
-    const moneyTargets = [];
-    let moneySpawn = setInterval(spawnMoney, 1000, money);
-
-    function spawnMoney(target) {
-      // set a random spawn position as startPosition
-      let startPosition = spawns[tools.getRandomInt(spawns.length)];
-      // avoid money to spawn at the same place as the last obstacle
-      while (startPosition === lastUsedSpawn) {
-        startPosition = spawns[tools.getRandomInt(spawns.length)];
-      }
-      // endPosition = startPoition with different z index
-      const endPosition = startPosition.clone();
-      endPosition.z = spawnEndZ;
-
-      // create a clone of a the moneyMesh as target
-      target = moneyMesh.clone('target');
-      moneyTargets.push(target);
-      // adjust target parameters
-      target.position = startPosition;
-      target.visibility = true;
-      // add to targets
-
-      // animation rotation aleatoire
-
-      const animRotate = Animation.CreateAndStartAnimation(
-        'ani',
-        target,
-        'rotation',
-        30,
-        100,
-        Vector3.Zero(),
-        new Vector3(0, 2 * Math.PI, 0),
-        Animation.ANIMATIONLOOPMODE_CONSTANT,
-      );
-
-      currentAnimsRunning.push(animRotate);
-      // animation spawn
-      const animMoney = Animation.CreateAndStartAnimation(
-        'anim',
-        target,
-        'position',
-        30,
-        100,
-        startPosition,
-        endPosition,
-        Animation.ANIMATIONLOOPMODE_CONSTANT,
-        null,
-        // on animation end
-        () => {
-          // detruit le target
-          target.dispose();
-        },
-      );
-      currentAnimsRunning.push(animMoney);
-      // on Seal collide
-      target.actionManager = new ActionManager();
-      target.actionManager.registerAction(
-        new ExecuteCodeAction(
-          {
-            trigger: ActionManager.OnIntersectionEnterTrigger,
-            parameter: sealMesh,
-            usePreciseIntersection: false,
-          },
-          () => {
-            moneyCollected++;
-            target.dispose();
-          },
-        ),
-      );
+    if(isAuthenticated()){
+        const logoutButton = document.querySelector('#logout-button');
+        logoutButton.addEventListener('click', logout);
+    }else{
+        const loginButton = document.querySelector('#login-button');
+        loginButton.addEventListener('click', redirectToLogin);
     }
 
-    function spawnObstacle(target) {
-      // set a random spawn position as startPosition
-      const startPosition = spawns[tools.getRandomInt(spawns.length)];
-      lastUsedSpawn = startPosition;
-      // endPosition = startPoition with different z index
-      const endPosition = startPosition.clone();
-      endPosition.z = spawnEndZ;
+    startButton.addEventListener('click', startGame);
+    rankingButton.addEventListener('click', redirectToRanking);
 
-      // create a clone of a random obstacle as target
-      target = obstacles[tools.getRandomInt(obstacles.length)].clone('target');
+    Footer();
+};
 
-      // adjust target parameters
-      // let x = new Scene();
-
-      target.position = startPosition;
-      target.visibility = true;
-      // add to targets
-      obstacleTargets.push(target);
-
-      // animation spawn
-      const obstacleAnim = Animation.CreateAndStartAnimation(
-        'anim',
-        target,
-        'position',
-        30,
-        100,
-        startPosition,
-        endPosition,
-        Animation.ANIMATIONLOOPMODE_CONSTANT,
-        null,
-        // on animation end
-        () => {
-          // detruit le target
-          target.dispose();
-        },
-      );
-      currentAnimsRunning.push(obstacleAnim);
-
-      // on seal collide
-      target.actionManager = new ActionManager();
-      target.actionManager.registerAction(
-        new ExecuteCodeAction(
-          {
-            trigger: ActionManager.OnIntersectionEnterTrigger,
-            parameter: sealMesh,
-            usePreciseIntersection: true,
-          },
-          () => {
-            // stop obstacles spawn
-            dead = true;
-            clearInterval(obstaclesSpawn);
-            clearInterval(moneySpawn);
-            // destroy every other obstacle
-            for (let i = 0; i < obstacleTargets.length; i++) {
-              obstacleTargets[i]?.dispose();
-            }
-            for (let i = 0; i < moneyTargets.length; i++) {
-              moneyTargets[i]?.dispose();
-            }
-            // seal dispose
-            sealMesh.dispose();
-
-            if (isAuthenticated()) {
-              // update user score
-              console.log('user logged');
-              scoreLoggedPlayer(score);
-              // add money to user balance
-              addMoneyToBalance(moneyCollected);
-            } else console.log('no user logged in');
-
-            // display game over menu
-            getGameOverMenu(scene, score, getAuthenticatedUser());
-          },
-        ),
-      );
-
-      // quand scoreZone toucher...
-      target.actionManager.registerAction(
-        new ExecuteCodeAction(
-          {
-            trigger: ActionManager.OnIntersectionExitTrigger,
-            parameter: scoreZone,
-            usePreciseIntersection: true,
-          },
-          () => {
-            score++;
-            buttonScore.textBlock.text = `Score : ${score}`;
-          },
-        ),
-      );
+function renderMenu(){
+    let loginButton = '';
+    if(isAuthenticated()){
+        loginButton = `
+        <button id="logout-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
+        Logout
+        </button> 
+    `
+    } else{
+        loginButton = `
+        <button id="login-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
+        Login
+        </button> 
+    `
     }
-    //  Sphere mouvement
-    let isMoving = false;
-    // Create the pause GUI menu
-    let pauseCanvas;
+    const menu = `
+    <div class="flex flex-col min-w-full lg:px-60  mb-48">
+        <div class="flex flex-col items-center mt-10">
+            <div class="w-10 h-10">
+                <img src="${rope02}" class="object-scale-down">
+            </div>
+            <div class="bg-wood-board-02 bg-cover bg-center w-1/2 grid content-center p-3 mt-10">
+                <button id="start-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
+                    Start
+                </button>
+            </div>
+        </div>
+        <div class="flex flex-row justify-around">
+            <div class="flex flex-col items-center w-full">
+                <div class="w-10 h-10">
+                    <img src="${rope02}" class="object-scale-down">
+                </div>
+                <div class="bg-wood-board-01 bg-cover bg-center grid content-center p-3 mt-10 w-full">
+                    ${loginButton}
+                </div>
+            </div>
+            <div class="flex flex-col items-center w-full">
+                <div class="w-10 h-10">
+                    <img src="${rope02}" class="object-scale-down">
+                </div>
+            <div class="bg-wood-board-03 bg-cover bg-center grid content-center p-3 mt-10 w-full">
+                    <button id="ranking-button" class=" text-white hover:text-custom-blue text-center text-xl font-mono">
+                        Ranking
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    scene.onKeyboardObservable.add((kbInfo) => {
-      if (isMoving) return;
-      if (!dead) {
-        switch (kbInfo.type) {
-          case KeyboardEventTypes.KEYDOWN:
-            switch (kbInfo.event.key) {
-              case 'Escape':
-                if (!paused) {
-                  paused = true;
-                  pauseCanvas = getPausedMenu(scene);
-                  for (let i = 0; i < currentAnimsRunning.length; i++) {
-                    currentAnimsRunning[i]?.pause();
-                  }
-                  clearInterval(obstaclesSpawn);
-                  clearInterval(moneySpawn);
-                  waterParticles.stop();
-                } else {
-                  paused = false;
-                  pauseCanvas.dispose();
-                  for (let i = 0; i < currentAnimsRunning.length; i++) {
-                    scene?.dispose();
-                    currentAnimsRunning[i]?.restart();
-                  }
-                  waterParticles.start();
-                  console.log(obstaclesSpawn);
-                  console.log(moneySpawn);
-                  obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
-                  moneySpawn = setInterval(spawnMoney, 1000, money);
-                }
+    <div class="absolute -z-10 left-48 top-11">
+      <div class="h-48 w-48">
+        <img src="${helm}" class="object-scale-down">
+      </div>
+    </div>
 
-                console.log(paused);
-                break;
-              default:
-                break;
-            }
-            if (!paused) {
-              switch (kbInfo.event.key) {
-                case 'd':
-                case 'D':
-                case 'ArrowRight':
-                  if (sealMesh.position.x !== widthCols) {
-                    isMoving = true;
-                    Animation.CreateAndStartAnimation(
-                      'slideRight',
-                      sealMesh,
-                      'position.x',
-                      10,
-                      2,
-                      sealMesh.position.x,
-                      sealMesh.position.x + widthCols,
-                      Animation.ANIMATIONLOOPMODE_CONSTANT,
-                      null,
-                      () => (isMoving = false),
-                    );
-                  }
-                  break;
-                case 'q':
-                case 'Q':
-                case 'ArrowLeft':
-                  if (sealMesh.position.x !== -widthCols) {
-                    isMoving = true;
-                    Animation.CreateAndStartAnimation(
-                      'slideLeft',
-                      sealMesh,
-                      'position.x',
-                      10,
-                      2,
-                      sealMesh.position.x,
-                      sealMesh.position.x - widthCols,
-                      Animation.ANIMATIONLOOPMODE_CONSTANT,
-                      null,
-                      () => (isMoving = false),
-                    );
-                  }
-                  break;
-                case 's':
-                case 'S':
-                case 'ArrowDown':
-                  if (sealMesh.position.y < maxJumpHeight) {
-                    waterParticles.stop();
-                    isMoving = true;
-                    // start animation
-                    jump.play().onAnimationGroupEndObservable.add(() => {
-                      isMoving = false;
-                      waterParticles.start();
-                    });
-                  }
-                  break;
-                default:
-                  break;
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    });
-  };
-  return scene;
-};
+    <div class="absolute -z-10 right-0 bottom-10 w-1/2">
+      <div>
+        <img src="${ice01}" class="object-scale-down">
+      </div>
+    </div>
 
-const HomePage = async () => {
-  clearPage();
-  const game = document.getElementById('game');
-  const newCanvas = document.createElement('canvas');
-  newCanvas.id = 'renderCanvas';
-  game.appendChild(newCanvas);
-  const canvas = document.getElementById('renderCanvas');
-  let engine = new Engine(canvas, true, null, true);
-  let scene = new Scene(engine);
-  scene.detachControl();
-  const loadingCanvas = document.createElement('div');
-  loadingCanvas.id = 'loadingCanvas';
-  const text ='Loading...'
-  const bgColor = `rgb(${tools.getRandomIntBetween(0, 255)},${tools.getRandomIntBetween(
-    0,
-    255,
-  )},${tools.getRandomIntBetween(0, 255)})`;
-  const loadingScreen = new CustomLoadingScreen(loadingCanvas, text, bgColor);
-  // const loadingScreen = new DefaultLoadingScreen(loadingCanvas, 'Loading...', bgColor);
-  scene.detachControl();
-  // TODO chercher info sur ca ...bon pour perf?
-  // scene.useDelayedTextureLoading = true;
-  loadingScreen.displayLoadingUI();
-  scene = await createScene(scene);
-  SceneOptimizer.OptimizeAsync(scene, SceneOptimizerOptions.ModerateDegradationAllowed());
+    <div class="absolute -z-10 left-0 bottom-10 w-1/2">
+      <div>
+        <img src="${ice02}" class="object-scale-down">
+      </div>
+    </div>
 
-  scene.executeWhenReady(() => {
-    loadingScreen.hideLoadingUI();
-    scene.attachControl();
-    startGame();
-  }, true);
+    <div class="absolute z-10 right-0 bottom-0">
+      <div class="w-48 h-48">
+        <img src="${seal}" class="object-scale-down">
+      </div>
+    </div>
+    `
 
-  engine = scene.getEngine();
-
-  engine.runRenderLoop(() => {
-    scene.render();
-  });
-
-  // Shift to enable inspector
-  window.addEventListener('keydown', (ev) => {
-    console.log(ev);
-    if (ev.shiftKey) {
-      if (scene.debugLayer.isVisible()) {
-        scene.debugLayer.hide();
-      } else {
-        scene.debugLayer.show();
-      }
-    }
-  });
-  window.addEventListener('resize', () => {
-    engine.resize();
-  });
-};
-
-async function scoreLoggedPlayer(score) {
-  const user = getAuthenticatedUser();
-  console.log(`Updating score for ${user.username}:${score} (if higher than highscore)`);
-
-  const res = await fetch(`/api/users/highscore?username=${user.username}`, {
-    method: 'PATCH',
-    body: JSON.stringify({
-      highscore: score,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
+    return menu;
 }
 
-async function addMoneyToBalance(money) {
-  const user = getAuthenticatedUser();
-  console.log(`adding money to ${user.username}'s balance :${money}`);
-
-  const res = await fetch(`/api/users/balance?username=${user.username}`, {
-    method: 'PATCH',
-    body: JSON.stringify({
-      balance: money,
-      operator: '+',
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
+function startGame(){
+    Navigate('/game');
 }
 
-// create GUI element for end game
-function getGameOverMenu(scene, score, user = undefined) {
-  console.log(gameOverMenuURL);
-  const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
-  gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
-
-  const storeImg = gameOverMenu.getControlByName('Image');
-  storeImg.source = moneyIcon;
-  storeImg.parent.onPointerClickObservable.add(() => {
-    scene?.dispose();
-    Navigate('/ranking'); // store doesn't exist ?
-  });
-
-  const tryAgain = gameOverMenu.getControlByName('TryAgain');
-  tryAgain.onPointerClickObservable.add(() => {
-    scene?.dispose();
-    HomePage();
-  });
-
-  const goBackHome = gameOverMenu.getControlByName('GoBackHome');
-  goBackHome.onPointerClickObservable.add(() => {
-    scene?.dispose();
-    Navigate('/');
-  });
-
-  // const endGamePanel = adt.getControlByName('endGamePanel');
-  // const endGameButton = adt.getControlByName('endGameButton');
-  // endGameButton.onPointerClickObservable.add(()=>{
-  //   endGamePanel.isVisible = false;
-  //   scene.dispose();
-  //   scene.getEngine().dispose();
-  //   createScene();
-  // })
-  return gameOverMenu;
+function redirectToLogin(){
+    Navigate('/login');
 }
 
-// create GUI element for pause game
-function getPausedMenu(scene) {
-  console.log(pauseMenuURL);
-  const pauseMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
-
-  pauseMenu.parseSerializedObject(pauseMenuURL, true);
-  const restartBtn = pauseMenu.getControlByName('ButtonRestart');
-  restartBtn.children[0].source = restartIcon;
-  restartBtn.onPointerClickObservable.add(() => {
-    scene?.dispose();
-    HomePage();
-  });
-
-  const homeBtn = pauseMenu.getControlByName('ButtonHome');
-  homeBtn.children[0].source = homeIcon;
-  homeBtn.onPointerClickObservable.add(() => {
-    scene.dispose()
-    Navigate('/');
-  });
-
-  const resumeBtn = pauseMenu.getControlByName('ButtonResume');
-  resumeBtn.children[0].source = playIcon;
-  resumeBtn.onPointerClickObservable.add(() => {
-    // cringe
-  });
-
-  // const endGamePanel = adt.getControlByName('endGamePanel');
-  // const endGameButton = adt.getControlByName('endGameButton');
-  // endGameButton.onPointerClickObservable.add(()=>{
-  //   endGamePanel.isVisible = false;
-  //   scene.dispose();
-  //   scene.getEngine().dispose();
-  //   createScene();
-  // })
-  return pauseMenu;
+function redirectToRanking(){
+    Navigate('/ranking');
 }
 
-function CustomLoadingScreen(container, text, color) {
-  this.loadingUIText = text;
-  this.loadingUIBackgroundColor = color;
-  this.loadingUIContainer = container;
+function logout(){
+    Navigate('/logout');
+    MenuPage();
 }
-// CustomLoadingScreen.prototype.displayLoadingUI = () => {
-//   alert(this.loadingUIText);
-// };
 
-CustomLoadingScreen.prototype.displayLoadingUI = function() {
-  this.loadingUIContainer.innerHTML = `
-  <div id="loadingAnimationDiv">
-  </div> 
-  <div id="loadingText">
-  ${this.loadingUIText}
-  </div>`;
-  // TODO change to tailwind
-  this.loadingUIContainer.style = `
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: ${this.loadingUIBackgroundColor};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  color: white;
-  font-size: 50px;
-  font-family: Arial;
-`;
-  document.body.appendChild(this.loadingUIContainer);
-  const loadingAnimation = lottie.loadAnimation({
-    container: document.getElementById('loadingAnimationDiv'),
-    renderer: 'svg',
-    animationData: loadSealURL,
-  });
-  // start the animation after the DOM correctly charged
-  loadingAnimation.addEventListener('DOMLoaded', () => {
-  loadingAnimation.play();
-  });
-
-  // eslint-disable-next-line func-names
-  // alert("add")
-};
-
-// eslint-disable-next-line func-names
-CustomLoadingScreen.prototype.hideLoadingUI = function() {
-  // alert("remove")
-  document.getElementById(this.loadingUIContainer.id).remove();
-};
-export default HomePage;
+export default MenuPage;
