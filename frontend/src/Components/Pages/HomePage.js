@@ -41,7 +41,6 @@ import '@babylonjs/loaders';
 import lottie from 'lottie-web';
 import Navigate from '../Router/Navigate';
 
-
 import { clearPage } from '../../utils/render';
 import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 import * as tools from '../../utils/tools';
@@ -51,7 +50,6 @@ import '@babylonjs/materials';
 import '@babylonjs/post-processes';
 import '@babylonjs/serializers';
 import '@babylonjs/procedural-textures';
-
 
 // assets
 import water from '../../assets/3Dmodels/test3.glb';
@@ -150,27 +148,27 @@ const createScene = async (scene) => {
   waterParticles.emitter = sealMesh;
 
   const bottleImport = await SceneLoader.ImportMeshAsync(null, bottleImportUrl);
-  console.log("bottleImport",bottleImport);
+  console.log('bottleImport', bottleImport);
   const bottle = bottleImport.meshes[1];
   bottle.parent = null;
   // bottle.isVisible = false;
   bottle.position.y = 100;
 
   const barrelImport = await SceneLoader.ImportMeshAsync(null, barelImportUrl);
-  console.log("barrelImport",barrelImport);
+  console.log('barrelImport', barrelImport);
   const barrel = barrelImport.meshes[1];
-  
+
   barrel.parent = null;
   // barrel.isVisible = false;
   barrel.position.y = 100;
 
   const iceImport = await SceneLoader.ImportMeshAsync(null, iceImportUrl);
-  console.log("iceImport",iceImport);
+  console.log('iceImport', iceImport);
   const ice = iceImport.meshes[1];
-  ice.scaling = new Vector3(2,2,1.8)
+  ice.scaling = new Vector3(2, 2, 1.8);
   ice.parent = null;
-  // ice.isVisible = false;
   ice.position.y = 100;
+  // ice.isVisible = false;
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
   // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
@@ -325,7 +323,7 @@ const createScene = async (scene) => {
 
     // Obstacles
     const obstacles = [];
-   
+
     obstacles.push(barrel, bottle, ice);
 
     // Money
@@ -375,7 +373,7 @@ const createScene = async (scene) => {
         new Vector3(0, 2 * Math.PI, 0),
         Animation.ANIMATIONLOOPMODE_CONSTANT,
       );
-      
+
       currentAnimsRunning.push(animRotate);
       // animation spawn
       const animMoney = Animation.CreateAndStartAnimation(
@@ -425,7 +423,7 @@ const createScene = async (scene) => {
 
       // adjust target parameters
       // let x = new Scene();
-      
+
       target.position = startPosition;
       target.visibility = true;
       // add to targets
@@ -527,6 +525,7 @@ const createScene = async (scene) => {
                   paused = false;
                   pauseCanvas.dispose();
                   for (let i = 0; i < currentAnimsRunning.length; i++) {
+                    scene?.dispose();
                     currentAnimsRunning[i]?.restart();
                   }
                   console.log(obstaclesSpawn);
@@ -580,9 +579,9 @@ const createScene = async (scene) => {
                     );
                   }
                   break;
-                  case 's':
-                  case 'S':
-                  case 'ArrowDown':
+                case 's':
+                case 'S':
+                case 'ArrowDown':
                   if (sealMesh.position.y < maxJumpHeight) {
                     waterParticles.stop();
                     isMoving = true;
@@ -620,7 +619,10 @@ const HomePage = async () => {
   const loadingCanvas = document.createElement('div');
   loadingCanvas.id = 'loadingCanvas';
   // let text =
-  const bgColor = `rgb(${tools.getRandomIntBetween(0, 255)},${tools.getRandomIntBetween(0,255,)},${tools.getRandomIntBetween(0, 255)})`;
+  const bgColor = `rgb(${tools.getRandomIntBetween(0, 255)},${tools.getRandomIntBetween(
+    0,
+    255,
+  )},${tools.getRandomIntBetween(0, 255)})`;
   const loadingScreen = new CustomLoadingScreen(loadingCanvas, 'Loading...', bgColor);
   // const loadingScreen = new DefaultLoadingScreen(loadingCanvas, 'Loading...', bgColor);
   scene.detachControl();
@@ -698,20 +700,23 @@ function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
   gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
-  
+
   const storeImg = gameOverMenu.getControlByName('Image');
   storeImg.source = moneyIcon;
   storeImg.parent.onPointerClickObservable.add(() => {
+    scene?.dispose();
     Navigate('/ranking'); // store doesn't exist ?
   });
 
   const tryAgain = gameOverMenu.getControlByName('TryAgain');
   tryAgain.onPointerClickObservable.add(() => {
+    scene?.dispose();
     HomePage();
   });
 
   const goBackHome = gameOverMenu.getControlByName('GoBackHome');
   goBackHome.onPointerClickObservable.add(() => {
+    scene?.dispose();
     Navigate('/');
   });
 
@@ -730,28 +735,27 @@ function getGameOverMenu(scene, score, user = undefined) {
 function getPausedMenu(scene) {
   console.log(pauseMenuURL);
   const pauseMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
- 
+
   pauseMenu.parseSerializedObject(pauseMenuURL, true);
   const restartBtn = pauseMenu.getControlByName('ButtonRestart');
   restartBtn.children[0].source = restartIcon;
-  restartBtn.onPointerClickObservable.add(()=> {
+  restartBtn.onPointerClickObservable.add(() => {
+    scene?.dispose();
     HomePage();
-});
-   
-
-    const homeBtn = pauseMenu.getControlByName('ButtonHome');
-    homeBtn.children[0].source = homeIcon;
-    homeBtn.onPointerClickObservable.add(()=> {
-      Navigate('/');
   });
 
-    const resumeBtn = pauseMenu.getControlByName('ButtonResume');
-    resumeBtn.children[0].source = playIcon;
-    resumeBtn.onPointerClickObservable.add(()=> {
-      // cringe
+  const homeBtn = pauseMenu.getControlByName('ButtonHome');
+  homeBtn.children[0].source = homeIcon;
+  homeBtn.onPointerClickObservable.add(() => {
+    Navigate('/');
   });
-  
-  
+
+  const resumeBtn = pauseMenu.getControlByName('ButtonResume');
+  resumeBtn.children[0].source = playIcon;
+  resumeBtn.onPointerClickObservable.add(() => {
+    // cringe
+  });
+
   // const endGamePanel = adt.getControlByName('endGamePanel');
   // const endGameButton = adt.getControlByName('endGameButton');
   // endGameButton.onPointerClickObservable.add(()=>{
@@ -762,8 +766,6 @@ function getPausedMenu(scene) {
   // })
   return pauseMenu;
 }
-
-
 
 function CustomLoadingScreen(container, text, color) {
   this.loadingUIText = text;
@@ -781,7 +783,7 @@ CustomLoadingScreen.prototype.displayLoadingUI = function() {
   <div id="loadingText">
   ${this.loadingUIText}
   </div>`;
-// TODO change to tailwind
+  // TODO change to tailwind
   this.loadingUIContainer.style = `
   position: absolute;
   top: 0;
@@ -801,7 +803,7 @@ CustomLoadingScreen.prototype.displayLoadingUI = function() {
   const loadingAnimation = lottie.loadAnimation({
     container: document.getElementById('loadingAnimationDiv'),
     renderer: 'svg',
-    animationData:loadSealURL
+    animationData: loadSealURL,
   });
   // start the animation after the DOM correctly charged
   loadingAnimation.play();
