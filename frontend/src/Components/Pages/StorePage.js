@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 // Babylon imports
 import * as BABYLON from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
@@ -6,10 +7,12 @@ import '@babylonjs/inspector';
 import '@babylonjs/materials';
 
 // utils imports
+import { AdvancedDynamicTexture } from '@babylonjs/gui';
 import { clearPage } from '../../utils/render';
 
 // assets imports
 import sealAsset from '../../assets/3Dmodels/seal_animated.glb';
+import guiButtonsStore from '../../assets/texture/guiStoreButtons.json';
 
 const createScene = async () => {
   const game = document.querySelector('#game');
@@ -47,6 +50,20 @@ const createScene = async () => {
   seal.parent = null;
   seal.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
   console.log(seal);
+
+  const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
+  const loadedGui = await advancedTexture.parseSerializedObject(guiButtonsStore, true);
+  // Shift to enable inspector
+  window.addEventListener('keydown', (ev) => {
+    console.log(ev);
+    if (ev.shiftKey) {
+      if (scene.debugLayer.isVisible()) {
+        scene.debugLayer.hide();
+      } else {
+        scene.debugLayer.show();
+      }
+    }
+  });
 
   return scene;
 };

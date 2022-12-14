@@ -8,6 +8,7 @@ import Leaderboard from '../Pages/Leaderboard';
 import Logout from '../Logout/Logout';
 import MenuPage from '../Pages/MenuPage';
 import StorePage from '../Pages/StorePage';
+import ShoePage from '../Pages/Shoe';
 
 const routes = {
   '/': MenuPage,
