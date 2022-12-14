@@ -12,7 +12,7 @@ import { clearPage } from '../../utils/render';
 
 // assets imports
 import sealAsset from '../../assets/3Dmodels/seal_animated.glb';
-import guiButtonsStore from '../../assets/texture/guiStoreButtons.json';
+import guiButtonsStore from '../../assets/guiStoreButtons.json';
 
 const createScene = async () => {
   const game = document.querySelector('#game');
