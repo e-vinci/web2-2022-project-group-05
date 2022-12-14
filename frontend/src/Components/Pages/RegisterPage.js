@@ -30,19 +30,10 @@ const RegisterPage = () => {
   function renderRegisterForm(){
     const form = `
     <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
+
       <form>
         <div class="bg-custom-blue px-10 pt-6 pb-8 mb-4 rounded-3xl" >
         <div class="flex flex-row justify-around border-4 border-white rounded-3xl py-10">
-            <div>
-              <div class="bg-wood-board-01 bg-cover bg-left block">
-                <label class="text-white text-xl font-mono" for="last-name">last name :</label>
-              </div>
-              <input  id="lname" class="bg-custom-lightyellow shadow appearance-none rounded" name="last-name" type="text">
-              <div class="bg-wood-board-01 bg-cover bg-left block mt-10">
-                <label class="text-white text-xl font-mono" for="first-name">first name :</label>
-              </div>
-              <input id="fname" class="bg-custom-lightyellow shadow appearance-none rounded" name="first-name" type="text">
-            </div>
             <div class="flex flex-col justify-start">
               <div class="bg-wood-board-01 bg-cover bg-left block">
                 <label class="text-white text-center text-xl font-mono" for="username">username :</label>
@@ -84,14 +75,11 @@ const RegisterPage = () => {
 
   const username = document.querySelector('#username').value;
   const password = document.querySelector('#password').value;
-  const lname = document.querySelector('#lname').value;
-  const fname = document.querySelector('#fname').value;
+
 
   const options = {
     method: 'POST',
     body: JSON.stringify({
-      lname,
-      fname,
       username,
       password,
     }),
