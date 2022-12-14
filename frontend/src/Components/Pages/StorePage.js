@@ -1,3 +1,4 @@
+/* eslint-disable no-const-assign */
 // Babylon imports
 import * as BABYLON from '@babylonjs/core';
 import * as GUI from '@babylonjs/gui';
@@ -6,19 +7,19 @@ import '@babylonjs/inspector';
 import '@babylonjs/materials';
 
 // utils imports
+import { Material, Texture } from '@babylonjs/core';
 import { AdvancedDynamicTexture } from '@babylonjs/gui';
 import { clearPage } from '../../utils/render';
-import leftArrow from '../../assets/img/left_arrow.png';
-import rightArrow from '../../assets/img/right_arrow.png';
 
 // assets imports
+import leftArrow from '../../assets/img/left_arrow.png';
+import rightArrow from '../../assets/img/right_arrow.png';
 import sealAsset from '../../assets/3Dmodels/seal_animated.glb';
 import pandaImport from '../../assets/texture/Seal_ColorMap_Panda.png';
 import tigerImport from '../../assets/texture/fur.jpg';
 import guiButtonsStore from '../../assets/guiStoreButtons.json';
 
 const textureArray = [pandaImport, tigerImport];
-
 const createScene = async () => {
   const game = document.getElementById('game');
   const newCanvas = document.createElement('canvas');
@@ -30,7 +31,7 @@ const createScene = async () => {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    `;
+  `;
   // newCanvas.innerHTML = `
   // <div id="guiStore" ">`
   game.appendChild(newCanvas);
@@ -67,33 +68,40 @@ const createScene = async () => {
   console.log(seal);
 
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
-  const loadedGui = await advancedTexture.parseSerializedObject(guiButtonsStore, true);
+  const loadedGui = advancedTexture.parseSerializedObject(guiButtonsStore, true);
   advancedTexture.addControl(loadedGui);
   console.log('descendant', advancedTexture.getDescendants());
   const nextSkin = advancedTexture.getControlByName('nextSkin');
-  nextSkin.onPointerClickObservable.add(
-    () => {
+  nextSkin.onPointerClickObservable.add(()=>{
       console.log('nextSkin');
-      const currentTexture = seal.material.getActiveTextures;
+      const currentTexture = seal.material.getActiveTextures();
+      console.log('currentTexture', currentTexture);
       const currentTextureIndex = textureArray.indexOf(currentTexture);
+      console.log('currentTextureIndex', currentTextureIndex);
       const nextTextureIndex = (currentTextureIndex + 1) % textureArray.length;
-      seal.material.albedoTexture = textureArray[nextTextureIndex];
-    },
-    { buttonIndex: 0 },
+      console.log('nextTextureIndex', nextTextureIndex);
+      seal.material = textureArray[nextTextureIndex];
+    }
   );
 
-  const previousSkin = advancedTexture.getControlByName('previouSkin');
-  previousSkin.onPointerClickObservable.add(
-    () => {
+  const previousSkin = advancedTexture.getControlByName('previousSkin');
+  previousSkin.onPointerClickObservable.add(() => {
       console.log('previousSkin');
       const currentTexture = seal.material.getActiveTextures();
-      console.log("currentTexture", currentTexture);
+      console.log('currentTexture', currentTexture);
+      console.log('currentTexture0', currentTexture[0]);
+      console.log('currentTexture0.name', currentTexture[0].name);
       const currentTextureIndex = textureArray.indexOf(currentTexture);
-      const nextTextureIndex = (currentTextureIndex - 1) % textureArray.length;
-      seal.material.albedoTexture = textureArray[nextTextureIndex];
-    }
-  )
-  
+      console.log('currentTextureIndex', currentTextureIndex);
+      const previousTextureIndex =
+        (currentTextureIndex - 1 < 0 ? textureArray.length-1 : currentTexture-1) % textureArray.length;
+      console.log('nextTextureIndex', previousTextureIndex);
+      const prevSkin = new Material("prevSkin",scene)
+      const nextTexture = new Texture(textureArray[previousTextureIndex],scene)
+      prevSkin.diffuseTexture = nextTexture
+      seal.material = prevSkin;
+  });
+
   // Shift to enable inspector
   window.addEventListener('keydown', (ev) => {
     console.log(ev);
@@ -105,7 +113,6 @@ const createScene = async () => {
       }
     }
   });
-
   return scene;
 };
 

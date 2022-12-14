@@ -13,12 +13,12 @@ const jsonDbPath = path.join(__dirname, '/../data/users.json');
 
 const defaultUsers = [
   {
-    lname: 'lname',
-    fname: 'fname',
-    username: 'user1',
-    password: bcrypt.hashSync('user1', saltRounds),
+    username: 'user',
+    password: bcrypt.hashSync('user', saltRounds),
     balance: 1000,
     highscore: 2000,
+    skins: [1,2],
+    currentSkins: 1,
   },
 ];
 
@@ -43,11 +43,11 @@ async function login(username, password) {
   return authenticatedUser;
 }
 
-async function register(lname, fname, username, password) {
+async function register(username, password) {
   const userFound = readOneUserFromUsername(username);
   if (userFound) return undefined;
 
-  await createOneUser(lname, fname, username, password);
+  await createOneUser(username, password);
 
 
   const token = jwt.sign(
@@ -72,18 +72,18 @@ function readOneUserFromUsername(username) {
   return users[indexOfUserFound];
 }
 
-async function createOneUser(lname, fname, username, password) {
+async function createOneUser(username, password) {
   const users = parse(jsonDbPath, defaultUsers);
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
   const createdUser = {
-    lname,
-    fname,
     username,
     password: hashedPassword,
     balance: 0,
-    highscore: 0
+    highscore: 0,
+    skins: [1],
+    currentSkin: 1,
   };
 
   users.push(createdUser);
@@ -132,10 +132,35 @@ function updateHighscore(highscore, username){
   const updatedUser = {...users[index], highscore: parseInt(highscore,10)};
   users[index] = updatedUser;
   serialize(jsonDbPath, users);
-
   return updatedUser;
 }
 
+function addSkinToUser(skinId, username){
+  const users = parse(jsonDbPath, defaultUsers);
+  const index = users.findIndex((user) => user.username === username);
+  if (index < 0) return undefined;
+  
+  if (users[index].skins.includes(skinId)) return undefined; 
+
+  const newLenght = users[index].skins.push(skinId);
+
+  serialize(jsonDbPath, users);
+  return newLenght;
+}
+
+function changeCurrentSkin(skinId, username){
+  const users = parse(jsonDbPath, defaultUsers);
+  const index = users.findIndex((user) => user.username === username);
+  if (index < 0) return undefined;
+  
+  const newSkin = parseInt(skinId,10);
+  if (parseInt(users[index].currentSkin,10) === newSkin || !users[index].skins.findIndex((skin) => skin === newSkin)) return undefined; 
+  
+  users[index].currentSkin = newSkin;
+
+  serialize(jsonDbPath, users);
+  return users[index].currentSkin;
+}
 
 module.exports = {
   login,
@@ -143,6 +168,8 @@ module.exports = {
   readOneUserFromUsername,
   getAllUsers,
   updateBalance,
-  updateHighscore
+  updateHighscore,
+  addSkinToUser,
+  changeCurrentSkin
 };
 

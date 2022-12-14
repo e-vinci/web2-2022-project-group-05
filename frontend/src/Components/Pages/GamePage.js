@@ -63,7 +63,6 @@ import playIcon from '../../assets/img/play-icon.png';
 import restartIcon from '../../assets/img/restart-icon.png';
 import homeIcon from '../../assets/img/home-icon.png';
 import pauseMenuURL from '../../assets/img/menuPause.json';
-import sadSeal from '../../assets/img/try_again.png';
 import moneyIcon from '../../assets/img/money-icon.png';
 import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
 import loadSealURL from '../../assets/img/seal load.json';
@@ -84,8 +83,6 @@ import sky_nx from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_nx.
 import sky_ny from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_ny.bmp';
 // eslint-disable-next-line camelcase
 import sky_nz from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_nz.bmp';
-
-import skyboxx from '../../assets/img/Skybox/NicePng_sky-background-png_868192.png'
 
 let startGame;
 
@@ -247,23 +244,21 @@ const createScene = async (scene) => {
   const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
   const skyboxMaterial = new StandardMaterial('skyBox', scene);
   skyboxMaterial.backFaceCulling = false;
-  // // eslint-disable-next-line camelcase
-  // skyboxMaterial.reflectionTexture = new CubeTexture('', scene, null, null, [
-  //   // eslint-disable-next-line camelcase
-  //   sky_px,
-  //   // eslint-disable-next-line camelcase
-  //   sky_py,
-  //   // eslint-disable-next-line camelcase
-  //   sky_pz,
-  //   // eslint-disable-next-line camelcase
-  //   sky_nx,
-  //   // eslint-disable-next-line camelcase
-  //   sky_ny,
-  //   // eslint-disable-next-line camelcase
-  //   sky_nz,
-  // ]);
-  // const skyboxTexture = new Texture(skybox,scene)
-  skyboxMaterial.reflectionTexture = new CubeTexture(skyboxx,scene);
+  // eslint-disable-next-line camelcase
+  skyboxMaterial.reflectionTexture = new CubeTexture('', scene, null, null, [
+    // eslint-disable-next-line camelcase
+    sky_px,
+    // eslint-disable-next-line camelcase
+    sky_py,
+    // eslint-disable-next-line camelcase
+    sky_pz,
+    // eslint-disable-next-line camelcase
+    sky_nx,
+    // eslint-disable-next-line camelcase
+    sky_ny,
+    // eslint-disable-next-line camelcase
+    sky_nz,
+  ]);
   skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
   skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
   skyboxMaterial.specularColor = new Color3(0, 0, 0);
@@ -530,6 +525,7 @@ const createScene = async (scene) => {
                   paused = false;
                   pauseCanvas.dispose();
                   for (let i = 0; i < currentAnimsRunning.length; i++) {
+                    scene?.dispose();
                     currentAnimsRunning[i]?.restart();
                   }
                   waterParticles.start();
@@ -538,6 +534,7 @@ const createScene = async (scene) => {
                   obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
                   moneySpawn = setInterval(spawnMoney, 1000, money);
                 }
+
                 console.log(paused);
                 break;
               default:
@@ -622,7 +619,7 @@ const HomePage = async () => {
   scene.detachControl();
   const loadingCanvas = document.createElement('div');
   loadingCanvas.id = 'loadingCanvas';
-  const text = 'Loading...';
+  const text ='Loading...'
   const bgColor = `rgb(${tools.getRandomIntBetween(0, 255)},${tools.getRandomIntBetween(
     0,
     255,
@@ -700,10 +697,33 @@ async function addMoneyToBalance(money) {
 }
 
 // create GUI element for end game
-function getGameOverMenu(scene, score, user = undefined) {
+async function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
   gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
+
+  const currentScore = gameOverMenu.getControlByName('YourScoreData');
+  currentScore.text = `${score}`;
+
+  const highscore = gameOverMenu.getControlByName('Highscore');
+  const highscoreData = gameOverMenu.getControlByName('HighscoreData');
+
+  if (isAuthenticated()){
+    try {
+    highscore.text = 'Highest score :';
+    const res = await fetch(`/api/users/user?username=${getAuthenticatedUser().username}`);
+    if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
+    const user = res.json();
+    
+    user.then((a) => highscoreData.text = a.highscore);
+    } catch (err) {
+      console.error('GET Highscore error :', err);
+    }
+  } else {
+    highscore.text = 'Log in to get your highest score !';
+    highscoreData.text = '';
+  }
+  
 
   const storeImg = gameOverMenu.getControlByName('Image');
   storeImg.source = moneyIcon;
@@ -751,7 +771,7 @@ function getPausedMenu(scene) {
   const homeBtn = pauseMenu.getControlByName('ButtonHome');
   homeBtn.children[0].source = homeIcon;
   homeBtn.onPointerClickObservable.add(() => {
-    scene?.dispose();
+    scene.dispose()
     Navigate('/');
   });
 
@@ -812,7 +832,7 @@ CustomLoadingScreen.prototype.displayLoadingUI = function() {
   });
   // start the animation after the DOM correctly charged
   loadingAnimation.addEventListener('DOMLoaded', () => {
-    loadingAnimation.play();
+  loadingAnimation.play();
   });
 
   // eslint-disable-next-line func-names

@@ -41,4 +41,28 @@ router.patch('/highscore', (req, res) => {
   if (!updatedHighscore) return res.json(); // empty json
   return res.json(updatedHighscore);
 }); 
+
+/* PATCH add one skin to the user's skins */
+router.patch('/skins', (req, res) => {
+  let user;
+  if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
+  const skinId = req?.body?.id;
+  if (!skinId) return res.sendStatus(404);
+  
+  const newLenght = userData.addSkinToUser(skinId, user.username);
+  if (!newLenght) return res.json(); // empty json
+  return res.json(newLenght);
+}); 
+
+/* PATCH replace the user's current skin */
+router.patch('/currentSkin', (req,res) => {
+  let user;
+  if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
+  const newSkin = req?.body?.id;
+  if (!newSkin) return res.sendStatus(404);
+
+  const newCurrentSkin = userData.changeCurrentSkin(parseInt(newSkin,10),user);
+  return res.json(newCurrentSkin);
+});
+
 module.exports = router;
