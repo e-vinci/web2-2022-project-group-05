@@ -494,7 +494,7 @@
         "isEnabled": true,
         "disabledColor": "#9a9a9a",
         "disabledColorItem": "#6a6a6a",
-        "name": "Textblock",
+        "name": "YourScoreData",
         "className": "TextBlock",
         "fontFamily": "Verdana",
         "fontSize": "20px",
@@ -575,7 +575,7 @@
         "isEnabled": true,
         "disabledColor": "#9a9a9a",
         "disabledColorItem": "#6a6a6a",
-        "name": "Textblock",
+        "name": "HighscoreData",
         "className": "TextBlock",
         "fontFamily": "Verdana",
         "fontSize": "20px",
@@ -851,7 +851,7 @@
         "populateNinePatchSlicesFromImage": false,
         "autoScale": false,
         "stretch": 1,
-        "source": "./imageControlDefault.jpg",
+        "source": "",
         "cellWidth": 0,
         "cellHeight": 0,
         "cellId": -1,
@@ -893,7 +893,7 @@
         "isEnabled": true,
         "disabledColor": "#9a9a9a",
         "disabledColorItem": "#6a6a6a",
-        "name": "Image",
+        "name": "tryAgain",
         "className": "Image"
       }
     ]

@@ -63,7 +63,6 @@ import playIcon from '../../assets/img/play-icon.png';
 import restartIcon from '../../assets/img/restart-icon.png';
 import homeIcon from '../../assets/img/home-icon.png';
 import pauseMenuURL from '../../assets/img/menuPause.json';
-import sadSeal from '../../assets/img/try_again.png';
 import moneyIcon from '../../assets/img/money-icon.png';
 import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
 import loadSealURL from '../../assets/img/seal load.json';
@@ -698,10 +697,33 @@ async function addMoneyToBalance(money) {
 }
 
 // create GUI element for end game
-function getGameOverMenu(scene, score, user = undefined) {
+async function getGameOverMenu(scene, score, user = undefined) {
   console.log(gameOverMenuURL);
   const gameOverMenu = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, scene);
   gameOverMenu.parseSerializedObject(gameOverMenuURL, true);
+
+  const currentScore = gameOverMenu.getControlByName('YourScoreData');
+  currentScore.text = `${score}`;
+
+  const highscore = gameOverMenu.getControlByName('Highscore');
+  const highscoreData = gameOverMenu.getControlByName('HighscoreData');
+
+  if (isAuthenticated()){
+    try {
+    highscore.text = 'Highest score :';
+    const res = await fetch(`/api/users/user?username=${getAuthenticatedUser().username}`);
+    if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
+    const user = res.json();
+    
+    user.then((a) => highscoreData.text = a.highscore);
+    } catch (err) {
+      console.error('GET Highscore error :', err);
+    }
+  } else {
+    highscore.text = 'Log in to get your highest score !';
+    highscoreData.text = '';
+  }
+  
 
   const storeImg = gameOverMenu.getControlByName('Image');
   storeImg.source = moneyIcon;
