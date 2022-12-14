@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:3000
+@baseUrl = https://sealrescue-api2.azurewebsites.net/
 ### get random animal
 GET {{baseUrl}}/animals
 
