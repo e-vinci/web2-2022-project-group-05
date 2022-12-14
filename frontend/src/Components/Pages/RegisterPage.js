@@ -47,7 +47,11 @@ const RegisterPage = () => {
                 <label class="text-white text-center text-xl font-mono" for="password-verification">verify password :</label>
               </div>
               <input  class="bg-custom-lightyellow shadow appearance-none rounded" name="password-verification" type="password">
-            </div>
+              <a href="https://policies.google.com/privacy?hl=en-US">
+                <input type="checkbox" name="policy">
+                <label for="policy" class="hover:text-white" >Accept our policy</label><br>
+              </a>
+              </div>
           </div>
         </div>
         <input class="bg-wood-board-02 hover:text-custom-blue bg-cover bg-left mt-10 text-white text-xl font-mono py-5 px-10 right-10" type="submit" value="register">
