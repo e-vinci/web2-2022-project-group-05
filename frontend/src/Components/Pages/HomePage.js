@@ -167,8 +167,8 @@ const createScene = async (scene) => {
   const ice = iceImport.meshes[1];
   ice.scaling = new Vector3(2, 2, 1.8);
   ice.parent = null;
-  // ice.isVisible = false;
   ice.position.y = 100;
+  // ice.isVisible = false;
   // scene.beginAnimation(sealMesh.skeleton, 0, 100, true, 1.0);
   // sealMesh.rotate(BABYLON.Axis.Y, -Math.PI/2, BABYLON.Space.WORLD);
   // sealMesh.position = new BABYLON.Vector3(0, 0, 0);
@@ -526,6 +526,7 @@ const createScene = async (scene) => {
                   paused = false;
                   pauseCanvas.dispose();
                   for (let i = 0; i < currentAnimsRunning.length; i++) {
+                    scene?.dispose();
                     currentAnimsRunning[i]?.restart();
                   }
                   waterParticles.start();
@@ -705,16 +706,19 @@ function getGameOverMenu(scene, score, user = undefined) {
   const storeImg = gameOverMenu.getControlByName('Image');
   storeImg.source = moneyIcon;
   storeImg.parent.onPointerClickObservable.add(() => {
+    scene?.dispose();
     Navigate('/ranking'); // store doesn't exist ?
   });
 
   const tryAgain = gameOverMenu.getControlByName('TryAgain');
   tryAgain.onPointerClickObservable.add(() => {
+    scene?.dispose();
     HomePage();
   });
 
   const goBackHome = gameOverMenu.getControlByName('GoBackHome');
   goBackHome.onPointerClickObservable.add(() => {
+    scene?.dispose();
     Navigate('/');
   });
 
@@ -738,7 +742,7 @@ function getPausedMenu(scene) {
   const restartBtn = pauseMenu.getControlByName('ButtonRestart');
   restartBtn.children[0].source = restartIcon;
   restartBtn.onPointerClickObservable.add(() => {
-    scene.dispose()
+    scene?.dispose();
     HomePage();
   });
 
