@@ -1,4 +1,4 @@
-import { setAuthenticatedUser } from '../../utils/auths';
+import { setAuthenticatedUser,isAuthenticated } from '../../utils/auths';
 import { clearPage, renderPageTitle } from '../../utils/render';
 import Footer from '../Footer/Footer';
 import Navbar from '../Navbar/Navbar';
@@ -8,12 +8,18 @@ import rope02 from '../../assets/img/rope_02.png';
 import rope03 from '../../assets/img/rope_03.png';
 import helm from '../../assets/img/helm.png';
 
-
 const LoginPage = () => {
   clearPage();
+  const main = document.querySelector('main');
+
+  if(isAuthenticated()){
+    console.log('access denied');
+    main.innerHTML+='<div class="max-h-screen max-w-screen"> You are already login </div>'
+    return;
+  }
+
   renderPageTitle("Login");
 
-  const main = document.querySelector('main');
   main.innerHTML += renderLoginForm();
 
   const form = document.querySelector('form');
@@ -34,7 +40,7 @@ const LoginPage = () => {
             <div class="h-20 w-28">
               <img src="${rope01}" class="object-scale-down">
             </div>
-            <div class="w-20 h-32">
+            <div class="w-10 h-10">
               <img src="${rope02}" class="object-scale-down">
             </div>
           </div>
@@ -79,11 +85,17 @@ const LoginPage = () => {
         </div>
     </div>
 
-    <div class="absolute -z-10 left-0 top-0">
-    <div class="h-20 w-20">
-      <img src="${rope03}" class="object-scale-down">
+    <div class="absolute -z-10 right-0 top-10 rotate-180">
+      <div class="h-20 w-20">
+        <img src="${rope03}" class="object-scale-down">
+      </div>
     </div>
-  </div>
+
+    <div class="absolute -z-10 left-0 top-0">
+      <div class="h-20 w-20">
+        <img src="${rope02}" class="object-scale-down">
+      </div>
+    </div>
 
     `
 
@@ -113,18 +125,23 @@ const LoginPage = () => {
 
   if(response.status === 400 ){
     console.log('error 400');
-    const main = document.querySelector('main');
-    const errorMessage400 = document.createElement('div');
-    errorMessage400.innerHTML += 'Your inromations are missing';
-    main.appendChild(errorMessage400);
+    const form = document.querySelector('form');
+    const errorMessage400 = `
+      <div class="text-white font-mono"> 
+        Your informations are missing 
+      </div>
+      `;
+    form.innerHTML += errorMessage400;
+    LoginPage();
   }
 
   if(response.status === 401 ){
-    console.log('erreur 401');
-    const main = document.querySelector('main');
+    console.log('error 401');
+    const form = document.querySelector('form');
     const errorMessage401 = document.createElement('div');
-    errorMessage401.innerHTML += 'Your account does not exist';
-    main.appendChild(errorMessage401);
+    errorMessage401.innerText = 'Your account does not exist';
+    form.appendChild(errorMessage401);
+    LoginPage();
   }
 
   if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
