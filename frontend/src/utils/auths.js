@@ -1,4 +1,3 @@
-// TODO tout ca vas a la poubelle car le user se trouve dans sessionStorage ou res.session
 let currentUser;
 
 const getAuthenticatedUser = () => currentUser;
