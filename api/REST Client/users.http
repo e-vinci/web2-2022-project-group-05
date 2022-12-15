@@ -1,5 +1,5 @@
+//@baseUrl = https://sealrescue-api2.azurewebsites.net/
 @baseUrl = https://sealrescue-api2.azurewebsites.net/
-
 ### Read all users
 GET {{baseUrl}}/users
 ### Read all users ordered by highscore
