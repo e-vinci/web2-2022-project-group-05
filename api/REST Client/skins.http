@@ -1,8 +1,13 @@
 @baseUrl = http://localhost:3000
 
-### Try to login an unknow user
+### Get all skins
 GET {{baseUrl}}/skins
+Content-Type: application/json
+
+### Get all skins ordered by price
+GET {{baseUrl}}/skins?order=price
 Content-Type: application/json
 
 ### Get one skin by its id 
 GET {{baseUrl}}/skins/skinId?id=2
+Content-Type: application/json
