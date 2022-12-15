@@ -66,7 +66,6 @@ import pauseMenuURL from '../../assets/img/menuPause.json';
 import moneyIcon from '../../assets/img/money-icon.png';
 import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
 import loadSealURL from '../../assets/img/seal load.json';
-import loadSealURL2 from '../../assets/img/sealLoad.lottie';
 import bottleImportUrl from '../../assets/3Dmodels/waterBottle.glb';
 import barelImportUrl from '../../assets/3Dmodels/metalBarel.glb';
 import iceImportUrl from '../../assets/3Dmodels/ice.glb';

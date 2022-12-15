@@ -24,8 +24,6 @@ POST {{baseUrl}}/auths/register
 Content-Type: application/json
 
 {
-    "lname": "2",
-    "fname": "2",
     "username":"user2",
     "password":"user2"
 }
