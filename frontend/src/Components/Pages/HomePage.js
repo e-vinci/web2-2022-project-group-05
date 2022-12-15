@@ -127,7 +127,7 @@ function redirectToRanking(){
 
 function logout(){
     Navigate('/logout');
-    MenuPage();
+    Navigate('/');
 }
 
 export default MenuPage;

@@ -31,7 +31,7 @@ PATCH {{baseUrl}}/users/skins?username=user2
 Content-Type: application/json
 
 {
-    "id":"3",
+    "id":3
 }
 
 
@@ -40,7 +40,7 @@ PATCH {{baseUrl}}/users/currentSkin?username=user2
 Content-Type: application/json
 
 {
-    "id":"3",
+    "id":3
 }
 
 ### Update curent skin of the user
@@ -48,6 +48,6 @@ PATCH {{baseUrl}}/users/currentSkin?username=user
 Content-Type: application/json
 
 {
-    "id":"2",
+    "id":2
 }
 
