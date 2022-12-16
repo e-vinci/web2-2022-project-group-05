@@ -8,11 +8,11 @@
  */
 
 const Navbar = () => {
-  // const navbarWrapper = document.querySelector('#navbarWrapper');
-  // const navbar = `
+   const navbarWrapper = document.querySelector('#navbarWrapper');
+    const navbar = `
   
-  // `;
-  // navbarWrapper.innerHTML = navbar;
+   `;
+  navbarWrapper.innerHTML = navbar;
 };
 
 export default Navbar;
