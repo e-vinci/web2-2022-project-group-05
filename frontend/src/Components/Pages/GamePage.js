@@ -662,6 +662,8 @@ const HomePage = async () => {
 
 async function scoreLoggedPlayer(score) {
   const user = getAuthenticatedUser();
+  console.log("IM HERE");
+  console.log(user);
   console.log(`Updating score for ${user.username}:${score} (if higher than highscore)`);
 
   const res = await fetch(`/api/users/highscore?username=${user.username}`, {

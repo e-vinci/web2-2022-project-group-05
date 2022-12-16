@@ -40,6 +40,7 @@ router.post('/login', async (req, res) => {
 /* Logout a user */
 router.get('/logout', (req, res) => {
   req.session = null;
+  console.log(req.session);
   return res.sendStatus(200);
 });
 module.exports = router;
