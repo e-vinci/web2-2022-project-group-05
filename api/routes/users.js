@@ -1,6 +1,8 @@
 const express = require('express');
 const userData = require('../models/users');
 
+const {authorize} = require('../utils/auth');
+
 const router = express.Router();
 
 /* GET users listing. */ 
@@ -17,8 +19,8 @@ router.get('/user', (req, res) => {
   return res.json(user);
 }); 
 
-/* GET user balance */
-router.patch('/balance', (req, res) => {
+/* PATCH user balance */
+router.patch('/balance', authorize,(req, res) => {
   let user;
   if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
   const balance = req?.body?.balance;
@@ -30,8 +32,8 @@ router.patch('/balance', (req, res) => {
   return res.json(updatedBalance);
 }); 
 
-/* GET user highest score */
-router.patch('/highscore', (req, res) => {
+/* PATCH user highest score */
+router.patch('/highscore', authorize,(req, res) => {
   let user;
   if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
   const highscore = req?.body?.highscore;
@@ -43,7 +45,7 @@ router.patch('/highscore', (req, res) => {
 }); 
 
 /* PATCH add one skin to the user's skins */
-router.patch('/skins', (req, res) => {
+router.patch('/skins', authorize, (req, res) => {
   let user;
   if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
   const skinId = req?.body?.id;
@@ -55,7 +57,7 @@ router.patch('/skins', (req, res) => {
 }); 
 
 /* PATCH replace the user's current skin */
-router.patch('/currentSkin', (req,res) => {
+router.patch('/currentSkin', authorize, (req,res) => {
   let user;
   if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
   const newSkin = req?.body?.id;

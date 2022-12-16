@@ -9,7 +9,6 @@ import '@babylonjs/materials';
 
 // utils imports
 import { Material, StandardMaterial, Texture } from '@babylonjs/core';
-import { AdvancedDynamicTexture } from '@babylonjs/gui';
 import { clearPage } from '../../utils/render';
 import { getAuthenticatedUser } from '../../utils/auths';
 
@@ -20,7 +19,8 @@ import sealAsset from '../../assets/3Dmodels/seal_animated.glb';
 import pandaImport from '../../assets/texture/Seal_ColorMap_Panda.png';
 import tigerImport from '../../assets/texture/Seal_ColorMap_Tiger.png';
 import baseImport from '../../assets/texture/Seal_ColorMap_Base.png'
-import guiButtonsStore from '../../assets/guiStoreButtons.json';
+import guiButtonsStore from '../../assets/img/storeGUI.json';
+import moneyBag from '../../assets/img/moneybagstore.png'
 
 // get current user
 const currentUser = getCurrentUser();
@@ -102,36 +102,39 @@ const materialArray = [seal, panda, tiger];
   sealMesh.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
   // set skin to current skin
   sealMesh.material = materialArray[materialArray.findIndex((material)=>material.name===currentTexture)] 
-  console.log('seal 1',sealMesh);
 
 
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, newScene);
   const loadedGui = advancedTexture.parseSerializedObject(guiButtonsStore, true);
   advancedTexture.addControl(loadedGui);
-  
+
+  // buy button
+  const buyBtn = advancedTexture.getControlByName('buyButton');
+  buyBtn.children[0].source = moneyBag;
+  buyBtn.onPointerClickObservable.add(() => {
+    // todo user transaction to buy skin
+  });
+
   // next skin 
   console.log('descendant', advancedTexture.getDescendants());
   const nextSkin = advancedTexture.getControlByName('nextSkin');
   nextSkin.onPointerClickObservable.add(()=>{
-      console.log('nextSkin');
-      console.log('currentTexture', currentTexture);
       const currentTextureIndex = materialArray.findIndex((material)=>material.name===currentTexture);
-      console.log('currentTextureIndex', currentTextureIndex);
       const nextTextureIndex = (currentTextureIndex + 1) % materialArray.length;
-      console.log('nextTextureIndex', nextTextureIndex);
+      
       sealMesh.material = materialArray[nextTextureIndex];
       currentTexture = sealMesh.material.name;
+      buyBtn.children[1].text = '1000'; // replace with skin price (or 'Owned' if user got the skin)
     }
   );
 
   // previous skin
   const previousSkin = advancedTexture.getControlByName('previousSkin');
   previousSkin.onPointerClickObservable.add(() => {
-      console.log('previousSkin');
       const currentTextureIndex = materialArray.findIndex((material)=>material.name===currentTexture);
-      console.log('currentTextureIndex', currentTextureIndex);
-      const previousTextureIndex =(currentTextureIndex - 1 < 0 ? materialArray.length-1 : currentTextureIndex-1);
-      console.log('prevTextureIndex', previousTextureIndex);
+      
+      const previousTextureIndex = (currentTextureIndex - 1 < 0 ? materialArray.length-1 : currentTextureIndex-1);
+      
       sealMesh.material = materialArray[previousTextureIndex];
       currentTexture = sealMesh.material.name;
   });
