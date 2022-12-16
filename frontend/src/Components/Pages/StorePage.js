@@ -9,8 +9,8 @@ import '@babylonjs/materials';
 
 // utils imports
 import { Material, StandardMaterial, Texture } from '@babylonjs/core';
+import { AdvancedDynamicTexture } from '@babylonjs/gui';
 import { clearPage } from '../../utils/render';
-import { getAuthenticatedUser } from '../../utils/auths';
 
 // assets imports
 import leftArrow from '../../assets/img/left_arrow.png';
@@ -18,14 +18,14 @@ import rightArrow from '../../assets/img/right_arrow.png';
 import sealAsset from '../../assets/3Dmodels/seal_animated.glb';
 import pandaImport from '../../assets/texture/Seal_ColorMap_Panda.png';
 import tigerImport from '../../assets/texture/Seal_ColorMap_Tiger.png';
-import baseImport from '../../assets/texture/Seal_ColorMap_Base.png'
-import guiButtonsStore from '../../assets/img/storeGUI.json';
+import baseImport from '../../assets/texture/Seal_ColorMap_Base.png';
+import guiButtonsStore from '../../assets/guiStoreButtons.json';
 import moneyBag from '../../assets/img/moneybagstore.png'
 
 // get current user
 const currentUser = getCurrentUser();
 
-// get current skin from the connected user 
+// get current skin from the connected user
 const currentSkinFromCurrentUser = getCurrentSkinNameFromCurrentUser();
 console.log('CURRENT SKIN',currentSkinFromCurrentUser);
 let currentTexture = currentSkinFromCurrentUser.name;
@@ -62,16 +62,16 @@ tigerSkin.uAng= Math.PI
 pandaSkin.uAng= Math.PI
 baseSkin.uAng= Math.PI
 
-const tiger = new StandardMaterial('tiger',newScene)
-const panda = new StandardMaterial('panda',newScene)
-const seal = new StandardMaterial('seal',newScene)
-tiger.backFaceCulling =false;
-panda.backFaceCulling =false;
-seal.backFaceCulling =false;
-tiger.lightmapTexture = tigerSkin
-panda.lightmapTexture = pandaSkin
-seal.lightmapTexture = baseSkin
-const materialArray = [seal, panda, tiger];
+  const tiger = new StandardMaterial('tiger', newScene);
+  const panda = new StandardMaterial('panda', newScene);
+  const seal = new StandardMaterial('seal', newScene);
+  tiger.backFaceCulling = false;
+  panda.backFaceCulling = false;
+  seal.backFaceCulling = false;
+  tiger.lightmapTexture = tigerSkin;
+  panda.lightmapTexture = pandaSkin;
+  seal.lightmapTexture = baseSkin;
+  const materialArray = [seal, panda, tiger];
 
   // This creates and positions a free camera (non-mesh)
   const camera = new BABYLON.ArcRotateCamera(
@@ -101,7 +101,7 @@ const materialArray = [seal, panda, tiger];
   sealMesh.parent = null;
   sealMesh.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
   // set skin to current skin
-  sealMesh.material = materialArray[materialArray.findIndex((material)=>material.name===currentTexture)] 
+  sealMesh.material = materialArray[materialArray.findIndex((material)=>material.name===currentTexture)]
 
 
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, newScene);
@@ -115,13 +115,13 @@ const materialArray = [seal, panda, tiger];
     // todo user transaction to buy skin
   });
 
-  // next skin 
+  // next skin
   console.log('descendant', advancedTexture.getDescendants());
   const nextSkin = advancedTexture.getControlByName('nextSkin');
   nextSkin.onPointerClickObservable.add(()=>{
       const currentTextureIndex = materialArray.findIndex((material)=>material.name===currentTexture);
       const nextTextureIndex = (currentTextureIndex + 1) % materialArray.length;
-      
+
       sealMesh.material = materialArray[nextTextureIndex];
       currentTexture = sealMesh.material.name;
       buyBtn.children[1].text = '1000'; // replace with skin price (or 'Owned' if user got the skin)
@@ -132,9 +132,9 @@ const materialArray = [seal, panda, tiger];
   const previousSkin = advancedTexture.getControlByName('previousSkin');
   previousSkin.onPointerClickObservable.add(() => {
       const currentTextureIndex = materialArray.findIndex((material)=>material.name===currentTexture);
-      
+
       const previousTextureIndex = (currentTextureIndex - 1 < 0 ? materialArray.length-1 : currentTextureIndex-1);
-      
+
       sealMesh.material = materialArray[previousTextureIndex];
       currentTexture = sealMesh.material.name;
   });
@@ -175,7 +175,7 @@ async function getCurrentSkinNameFromCurrentUser(){
   return skins;
 }
 
-/* 
+/*
 async function getSkins() {
   const response = await fetch('/api/skins');
   if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
@@ -200,7 +200,7 @@ async function getSkins() {
 async function buySkin(skinName){
   const responseSkinToBuy = await fetch(`/api/skins/skinName?name=${skinName}`);
   if (!responseSkinToBuy.ok) throw new Error(`fetch error : ${responseSkinToBuy.status} : ${responseSkinToBuy.statusText}`);
-  
+
   const skinToBuy = await responseSkin.json();
 
   const options = {
@@ -216,13 +216,12 @@ async function buySkin(skinName){
   const responseAddingSkinToUser = await fetch(`/api/users/skins?username=${currentUser}`, options);
   if (!responseAddingSkinToUser.ok) throw new Error(`fetch error : ${responseAddingSkinToUser.status} : ${responseAddingSkinToUser.statusText}`);
 
-} 
+}
 */
 
 
 
 const StorePage = async () => {
-
   const scene = await createScene();
   const engine = scene.getEngine();
 
