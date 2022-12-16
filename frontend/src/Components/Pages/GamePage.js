@@ -155,7 +155,6 @@ const createScene = async (scene) => {
   const barrelImport = await SceneLoader.ImportMeshAsync(null, barelImportUrl);
   console.log('barrelImport', barrelImport);
   const barrel = barrelImport.meshes[1];
-
   barrel.parent = null;
   // barrel.isVisible = false;
   barrel.position.y = 100;
@@ -232,7 +231,7 @@ const createScene = async (scene) => {
     new Vector3(0, 0, 0),
     scene,
   );
-  camera.attachControl('canvas', true);
+  // camera.attachControl('canvas', true);
 
   // Light
   const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene);
@@ -606,7 +605,7 @@ const createScene = async (scene) => {
   return scene;
 };
 
-const HomePage = async () => {
+  const GamePage = async () => {
   clearPage();
   const game = document.getElementById('game');
   const newCanvas = document.createElement('canvas');
@@ -618,7 +617,7 @@ const HomePage = async () => {
   scene.detachControl();
   const loadingCanvas = document.createElement('div');
   loadingCanvas.id = 'loadingCanvas';
-  const text ='Loading...'
+  const text = 'Loading...';
   const bgColor = `rgb(${tools.getRandomIntBetween(0, 255)},${tools.getRandomIntBetween(
     0,
     255,
@@ -709,12 +708,12 @@ async function getGameOverMenu(scene, score, user = undefined) {
 
   if (isAuthenticated()){
     try {
-    highscore.text = 'Highest score :';
-    const res = await fetch(`/api/users/user?username=${getAuthenticatedUser().username}`);
-    if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
-    const user = res.json();
-    
-    user.then((a) => highscoreData.text = a.highscore);
+      highscore.text = 'Highest score :';
+      const res = await fetch(`/api/users/user?username=${getAuthenticatedUser().username}`);
+      if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
+      const user = res.json();
+
+      user.then((a) => (highscoreData.text = a.highscore));
     } catch (err) {
       console.error('GET Highscore error :', err);
     }
@@ -722,7 +721,6 @@ async function getGameOverMenu(scene, score, user = undefined) {
     highscore.text = 'Log in to get your highest score !';
     highscoreData.text = '';
   }
-  
 
   const storeImg = gameOverMenu.getControlByName('Image');
   storeImg.source = moneyIcon;
@@ -734,7 +732,7 @@ async function getGameOverMenu(scene, score, user = undefined) {
   const tryAgain = gameOverMenu.getControlByName('TryAgain');
   tryAgain.onPointerClickObservable.add(() => {
     scene?.dispose();
-    HomePage();
+    GamePage();
   });
 
   const goBackHome = gameOverMenu.getControlByName('GoBackHome');
@@ -764,13 +762,13 @@ function getPausedMenu(scene) {
   restartBtn.children[0].source = restartIcon;
   restartBtn.onPointerClickObservable.add(() => {
     scene?.dispose();
-    HomePage();
+    GamePage();
   });
 
   const homeBtn = pauseMenu.getControlByName('ButtonHome');
   homeBtn.children[0].source = homeIcon;
   homeBtn.onPointerClickObservable.add(() => {
-    scene.dispose()
+    scene.dispose();
     Navigate('/');
   });
 
@@ -831,7 +829,7 @@ CustomLoadingScreen.prototype.displayLoadingUI = function() {
   });
   // start the animation after the DOM correctly charged
   loadingAnimation.addEventListener('DOMLoaded', () => {
-  loadingAnimation.play();
+    loadingAnimation.play();
   });
 
   // eslint-disable-next-line func-names
@@ -843,4 +841,4 @@ CustomLoadingScreen.prototype.hideLoadingUI = function() {
   // alert("remove")
   document.getElementById(this.loadingUIContainer.id).remove();
 };
-export default HomePage;
+export default GamePage;

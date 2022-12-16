@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const path = require('node:path');
 const { parse, serialize } = require('../utils/json');
 
-const jwtSecret = 'myRealNameIsOTTO';
+const jwtSecret = 'myRealNameIsOTTO!';
 const lifetimeJwt = 24 * 60 * 60 * 1000; // in ms : 24 * 60 * 60 * 1000 = 24h
 
 const saltRounds = 10;
@@ -17,8 +17,8 @@ const defaultUsers = [
     password: bcrypt.hashSync('user', saltRounds),
     balance: 1000,
     highscore: 2000,
-    skins: [1,2],
-    currentSkins: 1,
+    skins: ['seal','panda'],
+    currentSkin: 'seal',
   },
 ];
 
@@ -82,8 +82,8 @@ async function createOneUser(username, password) {
     password: hashedPassword,
     balance: 0,
     highscore: 0,
-    skins: [1],
-    currentSkin: 1,
+    skins: ['seal'],
+    currentSkin: 'seal',
   };
 
   users.push(createdUser);
@@ -135,26 +135,25 @@ function updateHighscore(highscore, username){
   return updatedUser;
 }
 
-function addSkinToUser(skinId, username){
+function addSkinToUser(skinName, username){
   const users = parse(jsonDbPath, defaultUsers);
   const index = users.findIndex((user) => user.username === username);
   if (index < 0) return undefined;
   
-  if (users[index].skins.includes(skinId)) return undefined; 
+  if (users[index].skins.includes(skinName)) return undefined; 
 
-  const newLenght = users[index].skins.push(skinId);
+  const newLength = users[index].skins.push(skinName);
 
   serialize(jsonDbPath, users);
-  return newLenght;
+  return newLength;
 }
 
-function changeCurrentSkin(skinId, username){
+function changeCurrentSkin(skinName, username){
   const users = parse(jsonDbPath, defaultUsers);
   const index = users.findIndex((user) => user.username === username);
   if (index < 0) return undefined;
   
-  const newSkin = parseInt(skinId,10);
-  if (parseInt(users[index].currentSkin,10) === newSkin || !users[index].skins.findIndex((skin) => skin === newSkin)) return undefined; 
+  if (users[index].currentSkin === skinName || !users[index].skins.findIndex((skin) => skin === newSkin)) return undefined; 
   
   users[index].currentSkin = newSkin;
 

@@ -10,6 +10,7 @@ module.exports = {
       'custom-brown' : '#76461c',
       'custom-lightbrown' : '#c88f55',
       'white' : '#ffffff',
+      'red' : '#dc2626',
     }, 
     extend: {
       backgroundImage: {
@@ -21,6 +22,8 @@ module.exports = {
         'rope-02': "url('../assets/img/rope_02.png')",
         'rope-03': "url('../assets/img/rope_03.png')",
         'helm': "url('../assets/img/helm.png')",
+        'seal': "url('../assets/img/seal_cartoon.png')",
+        'shopping-icon': "url('../assets/img/shopping-cart.png')",
 
       }
     },

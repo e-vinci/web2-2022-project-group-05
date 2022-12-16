@@ -1,5 +1,5 @@
 import { setAuthenticatedUser,isAuthenticated } from '../../utils/auths';
-import { clearPage, renderPageTitle } from '../../utils/render';
+import { clearPage, renderPageTitle, renderHomeButton} from '../../utils/render';
 import Footer from '../Footer/Footer';
 import Navbar from '../Navbar/Navbar';
 import Navigate from '../Router/Navigate';
@@ -10,8 +10,11 @@ import helm from '../../assets/img/helm.png';
 
 const LoginPage = () => {
   clearPage();
+
+  // get main
   const main = document.querySelector('main');
 
+  // verify if the user is already connected 
   if(isAuthenticated()){
     console.log('access denied');
     main.innerHTML+='<div class="max-h-screen max-w-screen"> You are already login </div>'
@@ -20,13 +23,22 @@ const LoginPage = () => {
 
   renderPageTitle("Login");
 
+  // adding home button and register form to main
+  main.innerHTML += renderHomeButton();
   main.innerHTML += renderLoginForm();
 
+  // get form and add listener
   const form = document.querySelector('form');
   form.addEventListener('submit', onLogin);
 
+  // get register button and add listener
   const registerButton = document.querySelector('#register-redirection');
   registerButton.addEventListener('click', redirectToRegisterPage);
+
+  
+  // get home button and adding listener
+  const homeButton = document.querySelector('#home-button');
+  homeButton.addEventListener('click', redirectToHomePage);
 
   Footer();
 };
@@ -44,7 +56,7 @@ function renderLoginForm() {
               <img src="${rope02}" class="object-scale-down">
             </div>
           </div>
-          <div class="border-4 border-white rounded-3xl w-full flex flex-col justify-center items-center py-10">
+          <div id="error-area" class="border-4 border-white rounded-3xl w-full flex flex-col justify-center items-center py-10">
             <div class="bg-wood-board-01 bg-cover bg-center block mt-0">
               <label class="text-white text-center text-xl font-mono p-10" for="username">username :</label>
             </div>
@@ -61,28 +73,22 @@ function renderLoginForm() {
             <div class="absolute h-1 w-10 left-10 -z-10 -top-8">
               <img src="${rope02}" class="object-scale-down">
             </div>
-            <div class="bg-wood-board-02 bg-cover bg-center block w-full">
-              <input class="hover:text-custom-blue bg-cover bg-left text-white text-xl font-mono p-10" type="submit" value="login">
+            <div class="bg-wood-board-02 bg-cover bg-center block w-full p-10">
+              <input class="hover:text-custom-blue text-white text-xl font-mono" type="submit" value="login">
             </div>
           </div>
           <div class="relative flex flex-col justify-between">
               <div class="absolute h-1 w-10 left-10 -z-10 -top-8">
                 <img src="${rope02}" class="object-scale-down">
               </div>
-            <div class="bg-wood-board-02 bg-cover bg-center block w-full h-full">
-              <button id="register-redirection" class="hover:text-custom-blue bg-cover bg-left text-white text-xl font-mono p-10">
+            <div class="bg-wood-board-02 bg-cover bg-center block w-full h-full p-10">
+              <button id="register-redirection" class="hover:text-custom-blue text-white text-xl font-mono">
               register
               </button>
             </div>
           </div>
         </div>
       </form>
-    </div>
-
-    <div class="absolute -z-10 left-1/3 top-11">
-        <div class="h-48 w-48">
-          <img src="${helm}" class="object-scale-down">
-        </div>
     </div>
 
     <div class="absolute -z-10 right-0 top-10 rotate-180">
@@ -102,10 +108,12 @@ function renderLoginForm() {
   return form;
 }
 
+// login the user
 async function onLogin(e) {
 
   e.preventDefault();
 
+  // get user info
   const username = document.querySelector('#username').value;
   const password = document.querySelector('#password').value;
 
@@ -123,25 +131,15 @@ async function onLogin(e) {
   const response = await fetch('/api/auths/login', options);
   console.log(response);
 
-  if(response.status === 400 ){
-    console.log('error 400');
-    const form = document.querySelector('form');
-    const errorMessage400 = `
-      <div class="text-white font-mono"> 
-        Your informations are missing 
-      </div>
-      `;
-    form.innerHTML += errorMessage400;
-    LoginPage();
-  }
-
+  // send error message if the information to login are incorect
   if(response.status === 401 ){
-    console.log('error 401');
-    const form = document.querySelector('form');
-    const errorMessage401 = document.createElement('div');
-    errorMessage401.innerText = 'Your account does not exist';
-    form.appendChild(errorMessage401);
     LoginPage();
+    console.log('error 401');
+    const errorArea = document.querySelector('#error-area');
+    const errorMessage401 = document.createElement('div');
+    errorMessage401.innerText = 'Your password or username is incorrect';
+    errorMessage401.className = 'font-mono text-red'
+    errorArea.appendChild(errorMessage401);
   }
 
   if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
@@ -152,13 +150,15 @@ async function onLogin(e) {
 
   setAuthenticatedUser(authenticatedUser);
 
-  Navbar();
-
-  Navigate('/');
+  redirectToHomePage();
 }
 
 function redirectToRegisterPage(){
   Navigate('/register');
+}
+
+function redirectToHomePage(){
+  Navigate('/');
 }
 
 export default LoginPage;
