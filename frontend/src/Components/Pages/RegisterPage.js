@@ -12,11 +12,12 @@ const RegisterPage = () => {
   clearPage();
   const main = document.querySelector('main');
 
-  if(isAuthenticated()){
-    console.log('access denied') ;
-    main.innerHTML += '<div class="max-h-screen max-w-screen"> You are already register and login </div>';
+  if (isAuthenticated()) {
+    console.log('access denied');
+    main.innerHTML +=
+      '<div class="max-h-screen max-w-screen"> You are already register and login </div>';
     return;
- }
+  }
 
   renderPageTitle('Register');
   main.innerHTML += renderRegisterForm();
@@ -25,10 +26,10 @@ const RegisterPage = () => {
   form.addEventListener('submit', onRegister);
 
   Footer();
-  };
+};
 
-  function renderRegisterForm(){
-    const form = `
+function renderRegisterForm() {
+  const form = `
     <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
 
       <form>
@@ -69,17 +70,16 @@ const RegisterPage = () => {
         <img src="${rope03}" class="object-scale-down">
       </div>
     </div>
-    `
+    `;
 
-    return form;
-  }
+  return form;
+}
 
-  async function onRegister(e) {
+async function onRegister(e) {
   e.preventDefault();
 
   const username = document.querySelector('#username').value;
   const password = document.querySelector('#password').value;
-
 
   const options = {
     method: 'POST',
@@ -105,7 +105,6 @@ const RegisterPage = () => {
   Navbar();
 
   Navigate('/login');
-
 }
 
-export default RegisterPage; 
+export default RegisterPage;

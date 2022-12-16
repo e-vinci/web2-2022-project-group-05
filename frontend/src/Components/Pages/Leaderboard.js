@@ -11,7 +11,6 @@ const Leaderboard = async () => {
 
     const users = await response.json();
     renderUsersFromString(users);
-    
   } catch (err) {
     console.error('Leaderboard error ', err);
   }
@@ -46,7 +45,7 @@ function getAllTableLinesAsString(listUsers) {
             </tr>
           </thead>
         <tbody>
-       `;
+  `;
 
   listUsers?.forEach((user) => {
     counter++;
@@ -60,7 +59,7 @@ function getAllTableLinesAsString(listUsers) {
   });
 
   usersLines += `
-   </tbody>
+  </tbody>
   </table>
 </div>
 </div>
