@@ -220,7 +220,7 @@ async function getSkins() {
     },
   };
 
-  const responseAddingSkinToUser = await fetch(`/api/users/skins?username=${currentUser.username}`, options);
+  const responseAddingSkinToUser = await fetch(`/api/users/skins?username=${user.username}`, options);
   if (!responseAddingSkinToUser.ok) throw new Error(`fetch error : ${responseAddingSkinToUser.status} : ${responseAddingSkinToUser.statusText}`);
 
 } 
