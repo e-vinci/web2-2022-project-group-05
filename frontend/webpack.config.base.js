@@ -36,7 +36,7 @@ module.exports = {
     historyApiFallback: true, // serve index.html instead of routes leading to no specific ressource
     proxy: {
       '/api': {
-        target: API_BASE_URL, // 'http://localhost:3000', in case you want to use a local API
+        target: 'http://localhost:3000', // 'http://localhost:3000', in case you want to use a local API
         pathRewrite: { '^/api': '' },
       },
     },

@@ -11,6 +11,7 @@ import '@babylonjs/materials';
 import { Material, StandardMaterial, Texture } from '@babylonjs/core';
 import { AdvancedDynamicTexture } from '@babylonjs/gui';
 import { clearPage } from '../../utils/render';
+import { getAuthenticatedUser } from '../../utils/auths';
 
 // assets imports
 import leftArrow from '../../assets/img/left_arrow.png';
@@ -21,7 +22,19 @@ import tigerImport from '../../assets/texture/Seal_ColorMap_Tiger.png';
 import baseImport from '../../assets/texture/Seal_ColorMap_Base.png'
 import guiButtonsStore from '../../assets/guiStoreButtons.json';
 
-// TODO get current user texture
+// get current user
+const currentUser = getCurrentUser();
+
+// get current skin from the connected user 
+const currentSkinFromCurrentUser = getCurrentSkinNameFromCurrentUser();
+console.log('CURRENT SKIN',currentSkinFromCurrentUser);
+let currentTexture = currentSkinFromCurrentUser.name;
+
+// get all the skins from the connected user
+const skinsOwnedByUser = currentUser.skins;
+
+// get connected user's balance
+const userBalance = currentUser.balance;
 
 const createScene = async () => {
   const game = document.getElementById('game');
@@ -42,8 +55,6 @@ const createScene = async () => {
   const engine = new BABYLON.Engine(newCanvas, true);
   const newScene = new BABYLON.Scene(engine);
 
-
-let currentTexture = 'seal'
 const tigerSkin = new Texture(tigerImport,newScene)
 const pandaSkin = new Texture(pandaImport,newScene)
 const baseSkin = new Texture(baseImport,newScene)
@@ -61,7 +72,6 @@ tiger.lightmapTexture = tigerSkin
 panda.lightmapTexture = pandaSkin
 seal.lightmapTexture = baseSkin
 const materialArray = [seal, panda, tiger];
-
 
   // This creates and positions a free camera (non-mesh)
   const camera = new BABYLON.ArcRotateCamera(
@@ -145,7 +155,24 @@ const materialArray = [seal, panda, tiger];
   return newScene;
 };
 
+// get connected user
+async function getCurrentUser(){
+const responseUser = await fetch('/api/users/user?username=user2');
+const user = await responseUser.json();
+// const currentUser = getAuthenticatedUser();
 
+return user;
+}
+
+async function getCurrentSkinNameFromCurrentUser(){
+  const responseSkin = fetch(`/api/skins/skinId?id=${currentUser.currentSkin}`);
+  if (!responseSkin.ok) throw new Error(`fetch error : ${responseSkin.status} : ${responseSkin.statusText}`);
+  const skins = responseSkin.json();
+
+  return skins;
+}
+
+/* 
 async function getSkins() {
   const response = await fetch('/api/skins');
   if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
@@ -166,6 +193,28 @@ async function getSkins() {
   // };
 
 
+
+async function buySkin(skinName){
+  const responseSkinToBuy = await fetch(`/api/skins/skinName?name=${skinName}`);
+  if (!responseSkinToBuy.ok) throw new Error(`fetch error : ${responseSkinToBuy.status} : ${responseSkinToBuy.statusText}`);
+  
+  const skinToBuy = await responseSkin.json();
+
+  const options = {
+    method: 'PATCH',
+    body: JSON.stringify({
+      id: skinToBuy.id
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const responseAddingSkinToUser = await fetch(`/api/users/skins?username=${currentUser}`, options);
+  if (!responseAddingSkinToUser.ok) throw new Error(`fetch error : ${responseAddingSkinToUser.status} : ${responseAddingSkinToUser.statusText}`);
+
+} 
+*/
 
 
 

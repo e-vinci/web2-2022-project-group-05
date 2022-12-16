@@ -41,7 +41,17 @@ function readOneSkinFromSkinId(id) {
   return skins[indexOfSkinFound];
 }
 
+
+function readOneSkinFromSkinName(name) {
+  const skins = parse(jsonDbPath, defaultSkins);
+  const indexOfSkinFound = skins.findIndex((skin) => skin.name === name);
+  if (indexOfSkinFound < 0) return undefined;
+
+  return skins[indexOfSkinFound];
+}
+
 module.exports = {
   getAllSkins,
   readOneSkinFromSkinId,
+  readOneSkinFromSkinName,
 };
