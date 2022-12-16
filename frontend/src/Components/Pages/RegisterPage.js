@@ -22,7 +22,7 @@ const RegisterPage = () => {
     console.log('access denied') ;
     main.innerHTML += '<div class="max-h-screen max-w-screen"> You are already register and login </div>';
     return;
- }
+  }
 
   renderPageTitle('Register');
   // adding home button and register form to main
@@ -38,10 +38,10 @@ const RegisterPage = () => {
   homeButton.addEventListener('click', redirectToHomePage);
 
   Footer();
-  };
+};
 
-  function renderRegisterForm(){
-    const form = `
+function renderRegisterForm() {
+  const form = `
     <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
       <form>
         <div class="bg-custom-blue px-10 pt-6 pb-8 mb-4 rounded-3xl" >
@@ -88,10 +88,10 @@ const RegisterPage = () => {
         <img src="${rope03}" class="object-scale-down">
       </div>
     </div>
-    `
+    `;
 
-    return form;
-  }
+  return form;
+}
 
   // register the user
   async function onRegister(e) {

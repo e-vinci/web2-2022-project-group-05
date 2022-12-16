@@ -1,13 +1,13 @@
-const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const webpack = require('webpack');
 
-const DEVELOPMENT_API_BASE_URL = '/http://localhost:3000'; // base URL of your local API. Use /api if you want to use webpack proxy, else use http://localhost:3000 (frontend origin http://localhost:8080 shall then be authorized by the API cors)
+const DEVELOPMENT_API_BASE_URL = 'http://localhost:3000'; // base URL of your local API. Use /api if you want to use webpack proxy, else use http://localhost:3000 (frontend origin http://localhost:8080 shall then be authorized by the API cors)
 const PRODUCTION_API_BASE_URL = 'https://sealrescue-api2.azurewebsites.net'; // to be changed to point to the URL of your API
 const DEVELOPMENT_PATH_PREFIX = '/'; // normally not to be changed, your assets should be provided directly within /dist/ (and not /dist/mymovies/ e.g.)
-const PRODUCTION_PATH_PREFIX = '/'; // e.g. '/mymovies/' if you deploy to GitHub Pages as a Project site : mymovies would be the repo name
+const PRODUCTION_PATH_PREFIX = '/SealRescue-Frontend/'; // e.g. '/mymovies/' if you deploy to GitHub Pages as a Project site : mymovies would be the repo name
+
 
 const buildMode = process.argv[process.argv.indexOf('--mode') + 1];
 const isProductionBuild = buildMode === 'production';
@@ -21,12 +21,18 @@ module.exports = {
   output: {
     path: `${__dirname}/dist`,
     filename: 'bundle.js',
-    publicPath: '/',
+    publicPath: PATH_PREFIX,
   },
   devtool: 'eval-source-map',
   devServer: {
     static: {
       directory: path.join(__dirname, 'dist'),
+    },
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
     },
     port: 8080,
     host: 'localhost',
@@ -36,7 +42,7 @@ module.exports = {
     historyApiFallback: true, // serve index.html instead of routes leading to no specific ressource
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', // 'http://localhost:3000', in case you want to use a local API
+        target: 'http://localhost:3000',/* API_BASE_URL ??? */
         pathRewrite: { '^/api': '' },
       },
     },

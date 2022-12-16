@@ -18,7 +18,7 @@ const defaultUsers = [
     balance: 1000,
     highscore: 2000,
     skins: [1,2],
-    currentSkins: 1,
+    currentSkin: 1,
   },
 ];
 

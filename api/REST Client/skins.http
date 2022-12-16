@@ -9,5 +9,5 @@ GET {{baseUrl}}/skins?order=price
 Content-Type: application/json
 
 ### Get one skin by its id 
-GET {{baseUrl}}/skins/skinId?id=2
+GET {{baseUrl}}/skins/skinId?id=1
 Content-Type: application/json
