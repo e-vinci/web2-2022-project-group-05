@@ -23,11 +23,12 @@ import guiButtonsStore from '../../assets/img/storeGUI.json';
 import moneyBag from '../../assets/img/moneybagstore.png';
 import Navigate from '../Router/Navigate';
 
+let currentUser;
 
 
 const createScene = async () => {
   // get current user
-  const currentUser = await getCurrentUser();
+  currentUser = await getCurrentUser();
   // get current skin from the connected user 
   const currentSkinFromCurrentUser = await getCurrentSkinNameFromCurrentUser(currentUser);
   console.log('CURRENT SKIN',currentSkinFromCurrentUser);
@@ -204,7 +205,7 @@ async function getSkins() {
 
 
 
-async function buySkin(user, skinName){
+  async function buySkin(skinName){
   const responseSkinToBuy = await fetch(`/api/skins/skinName?name=${skinName}`);
   if (!responseSkinToBuy.ok) throw new Error(`fetch error : ${responseSkinToBuy.status} : ${responseSkinToBuy.statusText}`);
   
@@ -222,7 +223,7 @@ async function buySkin(user, skinName){
     },
   };
 
-  const responseAddingSkinToUser = await fetch(`/api/users/skins?username=${user.username}`, options);
+  const responseAddingSkinToUser = await fetch(`/api/users/skins?username=${currentUser.username}`, options);
   if (!responseAddingSkinToUser.ok) throw new Error(`fetch error : ${responseAddingSkinToUser.status} : ${responseAddingSkinToUser.statusText}`);
 
 } 

@@ -1,7 +1,9 @@
 import { setAuthenticatedUser, isAuthenticated, clearAuthenticatedUser } from '../../utils/auths';
 import { clearPage, renderPageTitle, renderMenuTitle } from '../../utils/render';
 import Footer from '../Footer/Footer';
+// import navigation
 import Navigate from '../Router/Navigate';
+// import images 
 import rope01 from '../../assets/img/rope_01.png';
 import rope02 from '../../assets/img/rope_02.png';
 import rope03 from '../../assets/img/rope_03.png';
@@ -11,12 +13,16 @@ import ice02 from '../../assets/img/iceberg_02.png';
 import seal from '../../assets/img/seal_cartoon.png';
 
 const HomePage = () => {
-  clearPage();
-  renderMenuTitle('SealRescue');
+    clearPage();
+    renderMenuTitle("SealRescue");
+  
+    // get main
+    const main = document.querySelector('main');
 
-  const main = document.querySelector('main');
-  main.innerHTML += renderMenu();
+    // add menu to main
+    main.innerHTML += renderMenu();
 
+    // get menu buttons 
   const startButton = document.querySelector('#start-button');
   const rankingButton = document.querySelector('#ranking-button');
 
@@ -28,28 +34,16 @@ const HomePage = () => {
     loginButton.addEventListener('click', redirectToLogin);
   }
 
+    // add listener to the buttons
   startButton.addEventListener('click', startGame);
   rankingButton.addEventListener('click', redirectToRanking);
 
   Footer();
 };
 
-function renderMenu() {
-  let loginButton = '';
-  if (isAuthenticated()) {
-    loginButton = `
-        <button id="logout-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
-        Logout
-        </button> 
-    `;
-  } else {
-    loginButton = `
-        <button id="login-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
-        Login
-        </button> 
-    `;
-  }
-  const menu = `
+function renderMenu(){
+    const buttonToDisplay = displayLoginOrLogout();
+    const menu = `
     <div class="flex flex-col min-w-full lg:px-60  mb-48">
         <div class="flex flex-col items-center mt-10">
             <div class="w-10 h-10">
@@ -67,7 +61,7 @@ function renderMenu() {
                     <img src="${rope02}" class="object-scale-down">
                 </div>
                 <div class="bg-wood-board-01 bg-cover bg-center grid content-center p-3 mt-10 w-full">
-                    ${loginButton}
+                    ${buttonToDisplay}
                 </div>
             </div>
             <div class="flex flex-col items-center w-full">
@@ -111,7 +105,29 @@ function renderMenu() {
   return menu;
 }
 
-function startGame() {
+// if the user is connected, the button to display is going to be the logout button
+// else, the login button
+function displayLoginOrLogout(){
+    let buttonToDisplay = '';
+    if(isAuthenticated()){
+        buttonToDisplay = `
+        <button id="logout-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
+        Logout
+        </button> 
+    `
+    } else{
+        buttonToDisplay = `
+        <button id="login-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
+        Login
+        </button> 
+    `
+    }
+
+    return buttonToDisplay;
+}
+
+
+function startGame(){
     Navigate('/game');
 }
 
