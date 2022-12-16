@@ -605,7 +605,7 @@ const createScene = async (scene) => {
   return scene;
 };
 
-  const GamePage = async () => {
+const GamePage = async () => {
   clearPage();
   const game = document.getElementById('game');
   const newCanvas = document.createElement('canvas');
@@ -663,7 +663,7 @@ async function scoreLoggedPlayer(score) {
   const user = getAuthenticatedUser();
   console.log(`Updating score for ${user.username}:${score} (if higher than highscore)`);
 
-  const res = await fetch(`/api/users/highscore?username=${user.username}`, {
+  const res = await fetch(`${process.env.API_BASE_URL}/users/highscore?username=${user.username}`, {
     method: 'PATCH',
     body: JSON.stringify({
       highscore: score,
@@ -680,7 +680,7 @@ async function addMoneyToBalance(money) {
   const user = getAuthenticatedUser();
   console.log(`adding money to ${user.username}'s balance :${money}`);
 
-  const res = await fetch(`/api/users/balance?username=${user.username}`, {
+  const res = await fetch(`${process.env.API_BASE_URL}/users/balance?username=${user.username}`, {
     method: 'PATCH',
     body: JSON.stringify({
       balance: money,
@@ -706,10 +706,12 @@ async function getGameOverMenu(scene, score, user = undefined) {
   const highscore = gameOverMenu.getControlByName('Highscore');
   const highscoreData = gameOverMenu.getControlByName('HighscoreData');
 
-  if (isAuthenticated()){
+  if (isAuthenticated()) {
     try {
       highscore.text = 'Highest score :';
-      const res = await fetch(`/api/users/user?username=${getAuthenticatedUser().username}`);
+      const res = await fetch(
+        `${process.env.API_BASE_URL}/users/user?username=${getAuthenticatedUser().username}`,
+      );
       if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
       const user = res.json();
 

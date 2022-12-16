@@ -1,5 +1,5 @@
-import { setAuthenticatedUser,isAuthenticated } from '../../utils/auths';
-import { clearPage, renderPageTitle, renderHomeButton} from '../../utils/render';
+import { setAuthenticatedUser, isAuthenticated } from '../../utils/auths';
+import { clearPage, renderPageTitle, renderHomeButton } from '../../utils/render';
 import Footer from '../Footer/Footer';
 import Navbar from '../Navbar/Navbar';
 import Navigate from '../Router/Navigate';
@@ -14,14 +14,14 @@ const LoginPage = () => {
   // get main
   const main = document.querySelector('main');
 
-  // verify if the user is already connected 
-  if(isAuthenticated()){
+  // verify if the user is already connected
+  if (isAuthenticated()) {
     console.log('access denied');
-    main.innerHTML+='<div class="max-h-screen max-w-screen"> You are already login </div>'
+    main.innerHTML += '<div class="max-h-screen max-w-screen"> You are already login </div>';
     return;
   }
 
-  renderPageTitle("Login");
+  renderPageTitle('Login');
 
   // adding home button and register form to main
   main.innerHTML += renderHomeButton();
@@ -35,7 +35,6 @@ const LoginPage = () => {
   const registerButton = document.querySelector('#register-redirection');
   registerButton.addEventListener('click', redirectToRegisterPage);
 
-  
   // get home button and adding listener
   const homeButton = document.querySelector('#home-button');
   homeButton.addEventListener('click', redirectToHomePage);
@@ -116,7 +115,6 @@ function renderLoginForm() {
 
 // login the user
 async function onLogin(e) {
-
   e.preventDefault();
 
   // get user info
@@ -134,17 +132,17 @@ async function onLogin(e) {
     },
   };
 
-  const response = await fetch('/api/auths/login', options);
+  const response = await fetch(`${process.env.API_BASE_URL}/auths/login`, options);
   console.log(response);
 
   // send error message if the information to login are incorect
-  if(response.status === 401 ){
+  if (response.status === 401) {
     LoginPage();
     console.log('error 401');
     const errorArea = document.querySelector('#error-area');
     const errorMessage401 = document.createElement('div');
     errorMessage401.innerText = 'Your password or username is incorrect';
-    errorMessage401.className = 'font-mono text-red'
+    errorMessage401.className = 'font-mono text-red';
     errorArea.appendChild(errorMessage401);
   }
 
@@ -161,11 +159,11 @@ async function onLogin(e) {
   redirectToHomePage();
 }
 
-function redirectToRegisterPage(){
+function redirectToRegisterPage() {
   Navigate('/register');
 }
 
-function redirectToHomePage(){
+function redirectToHomePage() {
   Navigate('/');
 }
 

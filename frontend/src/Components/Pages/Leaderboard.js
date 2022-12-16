@@ -5,7 +5,7 @@ const Leaderboard = async () => {
   try {
     clearPage();
     Footer();
-    const response = await fetch('/api/users/?order=score');
+    const response = await fetch(`${process.env.API_BASE_URL}/users/?order=score`);
 
     if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
 

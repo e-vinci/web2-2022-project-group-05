@@ -13,14 +13,15 @@ import helm from '../../assets/img/helm.png';
 
 const RegisterPage = () => {
   clearPage();
-  
+
   // get main
   const main = document.querySelector('main');
 
-  // verify if the user is already connected 
-  if(isAuthenticated()){
-    console.log('access denied') ;
-    main.innerHTML += '<div class="max-h-screen max-w-screen"> You are already register and login </div>';
+  // verify if the user is already connected
+  if (isAuthenticated()) {
+    console.log('access denied');
+    main.innerHTML +=
+      '<div class="max-h-screen max-w-screen"> You are already register and login </div>';
     return;
   }
 
@@ -93,11 +94,11 @@ function renderRegisterForm() {
   return form;
 }
 
-  // register the user
-  async function onRegister(e) {
+// register the user
+async function onRegister(e) {
   e.preventDefault();
 
-  // check if the user accepted the terms of use 
+  // check if the user accepted the terms of use
   checkTermOfUse();
 
   // get user info
@@ -116,7 +117,7 @@ function renderRegisterForm() {
     },
   };
 
-  const response = await fetch('/api/auths/register', options);
+  const response = await fetch(`${process.env.API_BASE_URL}/auths/register`, options);
 
   if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
 
@@ -129,11 +130,10 @@ function renderRegisterForm() {
   Navbar();
 
   redirectToHomePage();
-
 }
 
-// check if the user accepted the terms of use 
-function checkTermOfUse(){
+// check if the user accepted the terms of use
+function checkTermOfUse() {
   if (!document.getElementById('remember').checked) {
     RegisterPage();
     const errorArea = document.querySelector('#error-area');
@@ -142,8 +142,8 @@ function checkTermOfUse(){
   }
 }
 
-function redirectToHomePage(){
+function redirectToHomePage() {
   Navigate('/');
 }
 
-export default RegisterPage; 
+export default RegisterPage;
