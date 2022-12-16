@@ -77,12 +77,6 @@ function renderRegisterForm() {
       </form>
     </div>
 
-    <div class="absolute -z-10 left-1/3 top-11">
-      <div class="h-48 w-48">
-        <img src="${helm}" class="object-scale-down">
-      </div>
-    </div>
-
     <div class="absolute -z-10 left-0 top-0">
       <div class="h-20 w-20">
         <img src="${rope03}" class="object-scale-down">
@@ -125,8 +119,6 @@ function renderRegisterForm() {
   console.log('Newly registered & authenticated user : ', authenticatedUser);
 
   setAuthenticatedUser(authenticatedUser);
-
-  Navbar();
 
   redirectToHomePage();
 
