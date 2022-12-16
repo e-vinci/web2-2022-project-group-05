@@ -1,5 +1,4 @@
 import GamePage from '../Pages/GamePage';
-import NewPage from '../Pages/NewPage';
 import LoginPage from '../Pages/LoginPage';
 import RegisterPage from '../Pages/RegisterPage';
 import UserPage from '../Pages/UserPage';
@@ -12,7 +11,6 @@ import StorePage from '../Pages/StorePage';
 
 const routes = {
   '/': HomePage,
-  '/new': NewPage,
   '/ranking': Leaderboard,
   '/login': LoginPage,
   '/register': RegisterPage,
