@@ -210,6 +210,8 @@ async function buySkin(user, skinName){
   
   const skinToBuy = await responseSkinToBuy.json();
 
+  if(user.balance < skinToBuy.price) return;
+
   const options = {
     method: 'PATCH',
     body: JSON.stringify({
@@ -224,8 +226,6 @@ async function buySkin(user, skinName){
   if (!responseAddingSkinToUser.ok) throw new Error(`fetch error : ${responseAddingSkinToUser.status} : ${responseAddingSkinToUser.statusText}`);
 
 } 
-
-
 
 
 const StorePage = async () => {
