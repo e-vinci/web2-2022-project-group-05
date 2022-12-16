@@ -58,16 +58,16 @@ tigerSkin.uAng= Math.PI
 pandaSkin.uAng= Math.PI
 baseSkin.uAng= Math.PI
 
-const tiger = new StandardMaterial('tiger',newScene)
-const panda = new StandardMaterial('panda',newScene)
-const seal = new StandardMaterial('seal',newScene)
-tiger.backFaceCulling =false;
-panda.backFaceCulling =false;
-seal.backFaceCulling =false;
-tiger.lightmapTexture = tigerSkin
-panda.lightmapTexture = pandaSkin
-seal.lightmapTexture = baseSkin
-const materialArray = [seal, panda, tiger];
+  const tiger = new StandardMaterial('tiger', newScene);
+  const panda = new StandardMaterial('panda', newScene);
+  const seal = new StandardMaterial('seal', newScene);
+  tiger.backFaceCulling = false;
+  panda.backFaceCulling = false;
+  seal.backFaceCulling = false;
+  tiger.lightmapTexture = tigerSkin;
+  panda.lightmapTexture = pandaSkin;
+  seal.lightmapTexture = baseSkin;
+  const materialArray = [seal, panda, tiger];
 
   // This creates and positions a free camera (non-mesh)
   const camera = new BABYLON.ArcRotateCamera(
@@ -97,7 +97,7 @@ const materialArray = [seal, panda, tiger];
   sealMesh.parent = null;
   sealMesh.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
   // set skin to current skin
-  sealMesh.material = materialArray[materialArray.findIndex((material)=>material.name===currentTexture)] 
+  sealMesh.material = materialArray[materialArray.findIndex((material)=>material.name===currentTexture)]
 
 
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, newScene);
@@ -128,7 +128,7 @@ const materialArray = [seal, panda, tiger];
   nextSkin.onPointerClickObservable.add(()=>{
       const currentTextureIndex = materialArray.findIndex((material)=>material.name===currentTexture);
       const nextTextureIndex = (currentTextureIndex + 1) % materialArray.length;
-      
+
       sealMesh.material = materialArray[nextTextureIndex];
       currentTexture = sealMesh.material.name;
       skinName.text = currentTexture;
@@ -140,9 +140,9 @@ const materialArray = [seal, panda, tiger];
   const previousSkin = advancedTexture.getControlByName('previousSkin');
   previousSkin.onPointerClickObservable.add(() => {
       const currentTextureIndex = materialArray.findIndex((material)=>material.name===currentTexture);
-      
+
       const previousTextureIndex = (currentTextureIndex - 1 < 0 ? materialArray.length-1 : currentTextureIndex-1);
-      
+
       sealMesh.material = materialArray[previousTextureIndex];
       currentTexture = sealMesh.material.name;
   });
@@ -229,7 +229,6 @@ async function buySkin(user, skinName){
 
 
 const StorePage = async () => {
-
   const scene = await createScene();
   const engine = scene.getEngine();
 

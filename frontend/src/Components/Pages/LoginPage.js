@@ -11,6 +11,7 @@ import helm from '../../assets/img/helm.png';
 const LoginPage = () => {
   clearPage();
   const main = document.querySelector('main');
+
   if(isAuthenticated()){
     console.log('access denied');
     main.innerHTML+='<div class="max-h-screen max-w-screen"> You are already login </div>'
