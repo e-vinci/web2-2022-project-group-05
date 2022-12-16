@@ -27,7 +27,7 @@ const createScene = async () => {
   // get current user
   const currentUser = await getCurrentUser();
   // get current skin from the connected user 
-  const currentSkinFromCurrentUser = await getCurrentSkinNameFromCurrentUser(currentUser);
+  const currentSkinFromCurrentUser = await getCurrentSkinFromUser(currentUser);
   console.log('CURRENT SKIN',currentSkinFromCurrentUser);
 
   let currentTexture = currentSkinFromCurrentUser.name;
@@ -49,12 +49,12 @@ const createScene = async () => {
   const engine = new BABYLON.Engine(newCanvas, true);
   const newScene = new BABYLON.Scene(engine);
 
-const tigerSkin = new Texture(tigerImport,newScene)
-const pandaSkin = new Texture(pandaImport,newScene)
-const baseSkin = new Texture(baseImport,newScene)
-tigerSkin.uAng= Math.PI
-pandaSkin.uAng= Math.PI
-baseSkin.uAng= Math.PI
+  const tigerSkin = new Texture(tigerImport,newScene)
+  const pandaSkin = new Texture(pandaImport,newScene)
+  const baseSkin = new Texture(baseImport,newScene)
+  tigerSkin.uAng= Math.PI
+  pandaSkin.uAng= Math.PI
+  baseSkin.uAng= Math.PI
 
   const tiger = new StandardMaterial('tiger', newScene);
   const panda = new StandardMaterial('panda', newScene);
@@ -110,10 +110,10 @@ baseSkin.uAng= Math.PI
   // buy button
   const buyBtn = advancedTexture.getControlByName('buyButton');
   buyBtn.children[0].source = moneyBag;
-  buyBtn.children[1].text = currentSkinFromCurrentUser.price;
+  buyBtn.children[1].text = 'Owned';
   buyBtn.onPointerClickObservable.add(() => {
     if (!isAuthenticated()) Navigate('/login');
-    buySkin(currentUser, currentTexture);
+    if (currentSkinFromCurrentUser.name !== currentTexture) buySkin(currentUser, currentTexture);
   });
 
   // user balance
@@ -123,26 +123,38 @@ baseSkin.uAng= Math.PI
   // next skin 
   console.log('descendant', advancedTexture.getDescendants());
   const nextSkin = advancedTexture.getControlByName('nextSkin');
-  nextSkin.onPointerClickObservable.add(()=>{
+  nextSkin.onPointerClickObservable.add(async ()=>{
       const currentTextureIndex = materialArray.findIndex((material)=>material.name===currentTexture);
       const nextTextureIndex = (currentTextureIndex + 1) % materialArray.length;
 
       sealMesh.material = materialArray[nextTextureIndex];
       currentTexture = sealMesh.material.name;
+
       skinName.text = currentTexture;
-      buyBtn.children[1].text = '1000'; // replace with skin price (or 'Owned' if user got the skin)
+      if ((currentUser.skins).includes(currentTexture)) buyBtn.children[1].text = 'Owned';
+      else {
+        const price = await getSkinPrice(currentTexture);
+        buyBtn.children[1].text = `${price}`;
+      }
     }
   );
 
   // previous skin
   const previousSkin = advancedTexture.getControlByName('previousSkin');
-  previousSkin.onPointerClickObservable.add(() => {
+  previousSkin.onPointerClickObservable.add(async () => {
       const currentTextureIndex = materialArray.findIndex((material)=>material.name===currentTexture);
 
       const previousTextureIndex = (currentTextureIndex - 1 < 0 ? materialArray.length-1 : currentTextureIndex-1);
 
       sealMesh.material = materialArray[previousTextureIndex];
       currentTexture = sealMesh.material.name;
+
+      skinName.text = currentTexture;
+      if ((currentUser.skins).includes(currentTexture)) buyBtn.children[1].text = 'Owned';
+      else {
+        const price = await getSkinPrice(currentTexture);
+        buyBtn.children[1].text = `${price}`;
+      }
   });
 
   // buttons images
@@ -173,15 +185,22 @@ async function getCurrentUser() {
   return userData;
 }
 
-async function getCurrentSkinNameFromCurrentUser(user){
-  const responseSkin = await fetch(`/api/skins/skinId?id=${user.currentSkin}`);
+async function getCurrentSkinFromUser(user){
+  const responseSkin = await fetch(`/api/skins/skinName?name=${user.currentSkin}`);
   if (!responseSkin.ok) throw new Error(`fetch error : ${responseSkin.status} : ${responseSkin.statusText}`);
-  const skins = responseSkin.json();
+  const skin = responseSkin.json();
 
-  return skins;
+  return skin;
 }
 
-async function getSkins() {
+async function getSkinPrice(name){
+  const responseSkin = await fetch(`/api/skins/skinName?name=${name}`);
+  if (!responseSkin.ok) throw new Error(`fetch error : ${responseSkin.status} : ${responseSkin.statusText}`);
+  const skin = await responseSkin.json();
+  return skin.price;
+}
+
+ /* async function getSkins() {
   const response = await fetch('/api/skins');
   if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
   const skins = await response.json();
@@ -189,17 +208,17 @@ async function getSkins() {
   return skins;
 }
 
-// const options = {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-    //     username,
-    //     password,
-  //   }),
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  // };
-
+  // const options = {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+      //     username,
+      //     password,
+    //   }),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // };
+ */
 
 
   async function buySkin(user, skinName){

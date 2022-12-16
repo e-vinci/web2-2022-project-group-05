@@ -8,6 +8,8 @@ Content-Type: application/json
 GET {{baseUrl}}/skins?order=price
 Content-Type: application/json
 
-### Get one skin by its id 
-GET {{baseUrl}}/skins/skinId?id=1
+### Get one skin by its name
+GET {{baseUrl}}/skins/skinName?name=panda
 Content-Type: application/json
+
+
