@@ -9,7 +9,7 @@ import '@babylonjs/materials';
 
 // utils imports
 import { Material, StandardMaterial, Texture } from '@babylonjs/core';
-import { clearPage } from '../../utils/render';
+import { clearPage, renderHomeButton } from '../../utils/render';
 import { getAuthenticatedUser } from '../../utils/auths';
 
 // assets imports
@@ -175,7 +175,7 @@ async function getCurrentSkinNameFromCurrentUser(){
   return skins;
 }
 
-/* 
+
 async function getSkins() {
   const response = await fetch('/api/skins');
   if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
@@ -196,7 +196,7 @@ async function getSkins() {
   // };
 
 
-
+/*
 async function buySkin(skinName){
   const responseSkinToBuy = await fetch(`/api/skins/skinName?name=${skinName}`);
   if (!responseSkinToBuy.ok) throw new Error(`fetch error : ${responseSkinToBuy.status} : ${responseSkinToBuy.statusText}`);
@@ -222,7 +222,6 @@ async function buySkin(skinName){
 
 
 const StorePage = async () => {
-
   const scene = await createScene();
   const engine = scene.getEngine();
 
