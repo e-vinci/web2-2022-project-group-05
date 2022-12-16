@@ -17,42 +17,6 @@ body {
     background-repeat: no-repeat;
 }
 
-#navbarWrapper{
-    width: 100%;
-    background-color: #333;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-}
-#navbarWrapper nav{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-
-}
-#navbarWrapper > nav > ul {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-}
-
-#navbarWrapper > nav > ul > li {
-    list-style: none;
-}
-
-#navbarWrapper > nav > ul > li:hover {
-    background-color: skyblue;
-}
-#navbarWrapper > nav > ul > li > a {
-    text-decoration: none;
-    color: #fff;
-    padding: 1rem;
-}
-
 canvas {
     height: 100%;
     width: 100%;

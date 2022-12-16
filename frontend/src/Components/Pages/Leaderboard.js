@@ -1,16 +1,32 @@
-import { clearPage } from '../../utils/render';
+import { clearPage, renderHomeButton, renderPageTitle } from '../../utils/render';
 import Footer from '../Footer/Footer';
+import helm from '../../assets/img/helm.png';
+import Navigate from '../Router/Navigate';
 
 const Leaderboard = async () => {
   try {
     clearPage();
+    renderPageTitle('Scores');
     Footer();
-    const response = await fetch(`${process.env.API_BASE_URL}/users/?order=score`);
 
+    // get all users
+    const response = await fetch(`${process.env.API_BASE_URL}/users/?order=score`);
     if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
 
     const users = await response.json();
+
+    // render board
     renderUsersFromString(users);
+
+    // adding home button
+    const main = document.querySelector('main');
+    main.innerHTML += renderHomeButton();
+
+    // adding listener on home button
+    const homeButton = document.querySelector('#home-button');
+    homeButton.addEventListener('click', redirectToHomePage);
+
+    Footer();
   } catch (err) {
     console.error('Leaderboard error ', err);
   }
@@ -28,9 +44,9 @@ function getAllTableLinesAsString(listUsers) {
   let counter = 0;
 
   let usersLines = `
-  <div class="py-10 inline-block min-w-full sm:px-6 lg:px-8">
-  <h1 class="text-center mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-black">Leaderboard</h1>
-        <table class="text-center min-w-full">
+  <div class="py-10 inline-block w-2/3 sm:px-6 lg:px-8 bg-custom-blue rounded-3xl mb-40">
+    <div class="border-4 border-white rounded-3xl px-10">
+        <table class="text-center text-white min-w-full">
           <thead class="border-b">
             <tr class="bg-emerald-300">
               <th  class="text-sm font-bold text-gray-900 px-6 py-4">
@@ -45,6 +61,13 @@ function getAllTableLinesAsString(listUsers) {
             </tr>
           </thead>
         <tbody>
+    </div>
+
+    <div class="absolute -z-10 left-1/3 top-11">
+      <div class="h-48 w-48">
+        <img src="${helm}" class="object-scale-down">
+      </div>
+    </div>
   `;
 
   listUsers?.forEach((user) => {
@@ -67,6 +90,10 @@ function getAllTableLinesAsString(listUsers) {
 `;
 
   return usersLines;
+}
+
+function redirectToHomePage() {
+  Navigate('/');
 }
 
 export default Leaderboard;
