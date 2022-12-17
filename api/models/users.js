@@ -126,7 +126,6 @@ function updateHighscore(highscore, username){
   const index = users.findIndex((user) => user.username === username);
   if (index < 0) return undefined;
   
-  
   if (users[index].highscore >= parseInt(highscore,10)) return undefined; 
   
   const updatedUser = {...users[index], highscore: parseInt(highscore,10)};
@@ -153,9 +152,9 @@ function changeCurrentSkin(skinName, username){
   const index = users.findIndex((user) => user.username === username);
   if (index < 0) return undefined;
   
-  if (users[index].currentSkin === skinName || !users[index].skins.findIndex((skin) => skin === newSkin)) return undefined; 
+  if (users[index].currentSkin === skinName || !users[index].skins.findIndex((skin) => skin === skinName)) return undefined; 
   
-  users[index].currentSkin = newSkin;
+  users[index].currentSkin = skinName;
 
   serialize(jsonDbPath, users);
   return users[index].currentSkin;
