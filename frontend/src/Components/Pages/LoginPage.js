@@ -30,8 +30,8 @@ const LoginPage = () => {
   const form = document.querySelector('form');
   const registerButton = document.querySelector('#register-redirection');
   const homeButton = document.querySelector('#home-button');
-  console.log("MAINNNNNNNNNNNNNNNNNNNN" ,main);
-  
+  console.log('MAINNNNNNNNNNNNNNNNNNNN', main);
+
   form.addEventListener('submit', onLogin);
   registerButton.addEventListener('click', redirectToRegisterPage);
   homeButton.addEventListener('click', redirectToHomePage);
@@ -61,6 +61,7 @@ function renderLoginForm() {
             <input id="password" class="bg-custom-lightyellow shadow appearance-none rounded" name="password" type="password">
           </div>
         </div>
+      
 
         <div class="flex flex-row justify-around overflow-visible mt-100">
           <div class="relative flex flex-col justify-between">
@@ -68,18 +69,19 @@ function renderLoginForm() {
               <img src="${rope02}" class="object-scale-down">
             </div>
             <div class="bg-wood-board-02 bg-cover bg-center block w-full p-10">
-              <input required class="hover:text-custom-blue text-white text-xl font-mono" type="submit" value="login">
+            <input class="hover:text-custom-blue text-white text-xl font-mono" type="submit" value="login">
             </div>
           </div>
+        </form>
           <div class="relative flex flex-col justify-between">
               <div class="absolute h-1 w-10 left-10 -z-10 -top-8">
                 <img src="${rope02}" class="object-scale-down">
               </div>
             <div class="bg-wood-board-02 bg-cover bg-center block w-full h-full p-10">
+              <div id="register-redirection" class="hover:text-custom-blue text-white text-xl font-mono">register</div>
             </div>
           </div>
         </div>
-      </form>
     </div>
 
     <div class="absolute -z-10 right-0 top-10 rotate-180">

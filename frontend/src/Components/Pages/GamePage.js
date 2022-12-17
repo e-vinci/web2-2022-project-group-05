@@ -423,9 +423,10 @@ const createScene = async (scene) => {
 
       // adjust target parameters
       // let x = new Scene();
-
       target.position = startPosition;
+      target.position.y = target.absoluteScaling.y / 2;
       target.visibility = true;
+
       // add to targets
       obstacleTargets.push(target);
 

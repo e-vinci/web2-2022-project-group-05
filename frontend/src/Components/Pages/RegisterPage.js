@@ -82,7 +82,6 @@ function renderRegisterForm() {
       </div>
     </div>
     `;
-
   return form;
 }
 
