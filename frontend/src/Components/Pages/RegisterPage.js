@@ -41,11 +41,11 @@ const RegisterPage = () => {
 
 function renderRegisterForm() {
   const form = `
-    <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
-      <form method="post">
+    <div class="inline-block min-w-full sm:px-6 lg:px-60">
+      <form method="post" class="mb-28">
         <div class="bg-custom-blue px-10 pt-6 pb-8 mb-4 rounded-3xl" >
         <div class="flex flex-row justify-around border-4 border-white rounded-3xl py-10">
-            <div id="error-area" class="flex flex-col justify-start">
+            <div class="flex flex-col justify-start">
               <div class="bg-wood-board-01 bg-cover bg-left block p-3 text-center">
                 <label class="text-white text-xl font-mono" for="username">username :</label>
               </div>
@@ -54,12 +54,12 @@ function renderRegisterForm() {
                 <label class="text-white text-xl font-mono" for="password">password :</label>
               </div>
               <input required id="password" class="bg-custom-lightyellow shadow appearance-none rounded" name="password" type="password">
-              <div class="bg-wood-board-01 bg-cover bg-left block mt-10 py-3 px-12 text-center">
+              <div id="error-password" class="bg-wood-board-01 bg-cover bg-left block mt-10 py-3 px-12 text-center">
                 <label class="text-white text-xl font-mono" for="password-verification">verify password :</label>
               </div>
               <input required id="password2" class="bg-custom-lightyellow shadow appearance-none rounded" name="password-verification" type="password">
               <a href="https://policies.google.com/privacy?hl=en-US">
-                <input required id="remember" type="checkbox" name="policy">
+                <input required type="checkbox" name="policy">
                 <label for="policy" class="hover:text-white" >Accept our policy</label><br>
               </a>
             </div>
@@ -89,13 +89,18 @@ function renderRegisterForm() {
 async function onRegister(e) {
   e.preventDefault();
 
-  // check if the user accepted the terms of use
-  checkTermOfUse();
-
   // get user info
   const username = document.querySelector('#username').value;
   const password = document.querySelector('#password').value;
   const password2 = document.querySelector('#password2').value;
+
+  if(password !== password2){
+    RegisterPage();
+    const errorArea = document.querySelector('#error-password');
+    const error = '<div class="font-mono text-red"> Your passwords are not the same</div>';
+    errorArea.innerHTML += error;
+    return;
+  }
 
   const options = {
     method: 'POST',
@@ -121,14 +126,9 @@ async function onRegister(e) {
   redirectToHomePage();
 }
 
-// check if the user accepted the terms of use
-function checkTermOfUse() {
-  if (!document.getElementById('remember').checked) {
-    RegisterPage();
-    const errorArea = document.querySelector('#error-area');
-    const error = '<div class="font-mono text-red"> you need to accept the terms of use </div>';
-    errorArea.innerHTML += error;
-  }
+// check the verification between the two passwords
+function verifyPasswords(password,password2){
+  
 }
 
 function redirectToHomePage() {

@@ -30,7 +30,6 @@ const LoginPage = () => {
   const form = document.querySelector('form');
   const registerButton = document.querySelector('#register-redirection');
   const homeButton = document.querySelector('#home-button');
-  console.log('MAINNNNNNNNNNNNNNNNNNNN', main);
 
   form.addEventListener('submit', onLogin);
   registerButton.addEventListener('click', redirectToRegisterPage);
@@ -119,7 +118,6 @@ async function onLogin(e) {
   };
 
   const response = await fetch(`${process.env.API_BASE_URL}/auths/login`, options);
-  console.log(response);
 
   // send error message if the information to login are incorect
   if (response.status === 401) {
