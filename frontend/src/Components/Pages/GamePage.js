@@ -85,8 +85,6 @@ import sky_ny from '../../assets/img/Skybox/SkyboxCut/skybox_ny.png';
 // eslint-disable-next-line camelcase
 import sky_nz from '../../assets/img/Skybox/SkyboxCut/skybox_nz.png';
 
-import s from '../../assets/store.json'
-
 let startGame;
 
 const createScene = async (scene) => {
@@ -150,8 +148,8 @@ const createScene = async (scene) => {
   const widthCols = 10;
   const sceneWidth = numberCols * widthCols;
   const cameraOffset = 30;
-  const spawnStartZ = 20;
-  const spawnEndZ = -10;
+  const spawnStartZ = 40;
+  const spawnEndZ = -30;
   let score = 0;
   const maxJumpHeight = 4;
   let moneyCollected = 0;
@@ -175,7 +173,7 @@ const createScene = async (scene) => {
 
   const buttonScore = advancedTexture.getControlByName('score');
   const moneyCount = advancedTexture.getControlByName('money');
-  
+
   // Camera
   // eslint-disable-next-line no-unused-vars
   const camera = new ArcRotateCamera(
@@ -287,7 +285,7 @@ const createScene = async (scene) => {
     // Handle obstacles spawn
     let obstacle;
     const obstacleTargets = [];
-    let obstaclesSpawn = setInterval(spawnObstacle, 800, obstacle);
+    let obstaclesSpawn = setInterval(spawnObstacle, 1200, obstacle);
 
     // Handle money spawn
     const money = new Mesh();
@@ -624,6 +622,8 @@ async function scoreLoggedPlayer(score) {
     body: JSON.stringify({
       highscore: score,
     }),
+    mode: 'cors',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -642,6 +642,8 @@ async function addMoneyToBalance(money) {
       balance: money,
       operator: '+',
     }),
+    mode: 'cors',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -667,11 +669,19 @@ async function getGameOverMenu(scene, score, user = undefined) {
       highscore.text = 'Highest score :';
       const res = await fetch(
         `${process.env.API_BASE_URL}/users/user?username=${getAuthenticatedUser().username}`,
+        {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
       );
       if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
       const user = await res.json();
 
-      user.then((a) => (highscoreData.text = a.highscore));
+      highscoreData.text = user.highscore;
     } catch (err) {
       console.error('GET Highscore error :', err);
     }

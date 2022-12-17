@@ -112,9 +112,10 @@ async function onLogin(e) {
       username,
       password,
     }),
+    credentials: 'include',
+    mode:'cors',
     headers: {
-      'Content-Type': 'application/json',
-    },
+      'Content-Type': 'application/json'},
   };
 
   const response = await fetch(`${process.env.API_BASE_URL}/auths/login`, options);

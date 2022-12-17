@@ -109,6 +109,8 @@ async function onRegister(e) {
       username,
       password,
     }),
+    mode:'cors',
+    credentials :'include',
     headers: {
       'Content-Type': 'application/json',
     },
