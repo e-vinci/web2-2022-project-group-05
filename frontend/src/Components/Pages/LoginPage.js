@@ -21,8 +21,6 @@ const LoginPage = () => {
     return;
   }
 
-  renderPageTitle('Login');
-
   // adding home button and register form to main
   main.innerHTML += renderHomeButton();
   main.innerHTML += renderLoginForm();
@@ -39,6 +37,7 @@ const LoginPage = () => {
   const homeButton = document.querySelector('#home-button');
   homeButton.addEventListener('click', redirectToHomePage);
 
+  renderPageTitle('Login');
   Footer();
 };
 

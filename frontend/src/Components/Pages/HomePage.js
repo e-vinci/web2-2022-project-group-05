@@ -3,7 +3,7 @@ import { clearPage, renderPageTitle, renderMenuTitle } from '../../utils/render'
 import Footer from '../Footer/Footer';
 // import navigation
 import Navigate from '../Router/Navigate';
-// import images 
+// import images
 import rope01 from '../../assets/img/rope_01.png';
 import rope02 from '../../assets/img/rope_02.png';
 import rope03 from '../../assets/img/rope_03.png';
@@ -13,43 +13,41 @@ import ice02 from '../../assets/img/iceberg_02.png';
 import seal from '../../assets/img/seal_cartoon.png';
 
 const HomePage = () => {
-    clearPage();
-    renderMenuTitle("SealRescue");
-  
-    // get main
-    const main = document.querySelector('main');
-    // add menu to main
-    main.innerHTML += renderMenu();
+  clearPage();
+  renderMenuTitle('SealRescue');
 
-    // get menu buttons 
-  const startButton = document.querySelector('#start-button');
-  console.log('START BUTTON', startButton);
-  const rankingButton = document.querySelector('#ranking-button');
+  // get main
+  const main = document.querySelector('main');
+  // add menu to main
+  main.innerHTML += renderMenu();
 
   if (isAuthenticated()) {
+    main.innerHTML += renderStoreButton();
     const logoutButton = document.querySelector('#logout-button');
     logoutButton.addEventListener('click', logout);
 
     // render store button if user is connected
-    main.innerHTML += renderStoreButton();
     const storeButton = document.querySelector('#store-button');
     storeButton.addEventListener('click', redirectToStore);
-
   } else {
     const loginButton = document.querySelector('#login-button');
     loginButton.addEventListener('click', redirectToLogin);
   }
+  // get menu buttons
+  const startButton = document.querySelector('#start-button');
+  console.log('START BUTTON', startButton);
+  const rankingButton = document.querySelector('#ranking-button');
 
-    // add listener to the buttons
+  // add listener to the buttons
   startButton.addEventListener('click', startGame);
   rankingButton.addEventListener('click', redirectToRanking);
 
   Footer();
 };
 
-function renderMenu(){
-    const buttonToDisplay = displayLoginOrLogout();
-    const menu = `
+function renderMenu() {
+  const buttonToDisplay = displayLoginOrLogout();
+  const menu = `
     <div id="navbarWrapper" class="flex flex-col min-w-full lg:px-60  mb-48">
         <div class="flex flex-col items-center mt-10">
             <div class="w-10 h-10">
@@ -107,53 +105,52 @@ function renderMenu(){
 
 // if the user is connected, the button to display is going to be the logout button
 // else, the login button
-function displayLoginOrLogout(){
-    let buttonToDisplay = '';
-    if(isAuthenticated()){
-        buttonToDisplay = `
+function displayLoginOrLogout() {
+  let buttonToDisplay = '';
+  if (isAuthenticated()) {
+    buttonToDisplay = `
         <button id="logout-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
         Logout
         </button> 
-    `
-    } else{
-        buttonToDisplay = `
+    `;
+  } else {
+    buttonToDisplay = `
         <button id="login-button" class="text-white hover:text-custom-blue text-center text-xl font-mono">
         Login
         </button> 
-    `
-    }
+    `;
+  }
 
-    return buttonToDisplay;
+  return buttonToDisplay;
 }
 
-function renderStoreButton(){
-    const button = `
+function renderStoreButton() {
+  const button = `
   <button id="store-button" class="absolute bg-shopping-icon bg-contain bg-left right-0 top-0 h-20 w-20">
   </button>
-  `
+  `;
   return button;
 }
 
-
-function startGame(){
-    Navigate('/game');
+function startGame() {
+  Navigate('/game');
 }
 
 function redirectToLogin() {
-    Navigate('/login');
+  Navigate('/login');
 }
 
 function redirectToRanking() {
-    Navigate('/ranking');
+  Navigate('/ranking');
 }
 
 function redirectToStore() {
-    Navigate('/store');
+  Navigate('/store');
 }
 
 function logout() {
-    Navigate('/logout');
-    Navigate('/');
+  Navigate('/logout');
+  Navigate('/');
 }
 
 export default HomePage;

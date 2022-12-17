@@ -2,7 +2,7 @@ import helm from '../assets/img/helm.png';
 
 const clearPage = () => {
   const canva = document.getElementById('renderCanvas');
-  if(canva) canva.remove();
+  if (canva) canva.remove();
   const main = document.querySelector('main');
   main.innerHTML = '';
 };
@@ -23,7 +23,7 @@ const renderPageTitle = (title) => {
       </div>
     </div>
   </div>
-  `
+  `;
   main.innerHTML += pageTitle;
 };
 
@@ -43,15 +43,15 @@ const renderMenuTitle = (title) => {
       </div>
     </div>
   </div>
-  `
+  `;
   main.innerHTML += pageTitle;
 };
 
-function renderHomeButton(){
+function renderHomeButton() {
   const button = `
   <button id="home-button" class="absolute bg-seal bg-cover bg-left right-0 top-0 h-20 w-20">
   </button>
-  `
+  `;
   return button;
 }
 

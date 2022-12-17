@@ -132,13 +132,13 @@ const createScene = async (scene) => {
   sealSkin.backFaceCulling = false;
   const sealTexture = new Texture(tigerTextureURL, scene);
   sealTexture.uAng = Math.PI;
-  sealSkin.emissiveTexture = sealTexture;
+  sealSkin.lightmapTexture = sealTexture;
   sealMesh.material = sealSkin;
 
   const moneyImport = await SceneLoader.ImportMeshAsync(null, money, null, scene);
   const moneyMesh = moneyImport.meshes[1];
   moneyMesh.parent = null;
-  moneyMesh.scaling = new Vector3(0.5, 0.5, 0.5);
+  moneyMesh.scaling = new Vector3(0.3, 0.3, 0.3);
   console.log(moneyMesh);
 
   const waterParticles = ParticleSystem.Parse(importedWaterParticles, scene, '');
@@ -158,6 +158,7 @@ const createScene = async (scene) => {
   barrel.parent = null;
   // barrel.isVisible = false;
   barrel.position.y = 100;
+  barrel.scaling = new Vector3(0.75, 0.75, 0.75);
 
   const iceImport = await SceneLoader.ImportMeshAsync(null, iceImportUrl);
   console.log('iceImport', iceImport);
