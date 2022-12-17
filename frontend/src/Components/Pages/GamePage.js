@@ -180,7 +180,7 @@ const createScene = async (scene) => {
   // eslint-disable-next-line no-unused-vars
   const camera = new ArcRotateCamera(
     'Camera',
-    -Math.PI / 2,
+    (3 * -Math.PI) / 5,
     (2 * Math.PI) / 5,
     cameraOffset,
     new Vector3(0, 0, 0),

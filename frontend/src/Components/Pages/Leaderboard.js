@@ -44,7 +44,7 @@ function getAllTableLinesAsString(listUsers) {
   let counter = 0;
 
   let usersLines = `
-  <div class="py-10 inline-block w-2/3 sm:px-6 lg:px-8 bg-custom-blue rounded-3xl mb-40">
+  <div class="py-10 inline-block w-2/3 sm:px-6 lg:px-8 bg-custom-blue rounded-3xl">
     <div class="border-4 border-white rounded-3xl px-10">
         <table class="text-center text-white min-w-full">
           <thead class="border-b">
