@@ -9,7 +9,7 @@ import '@babylonjs/materials';
 
 // utils imports
 import { StandardMaterial, Texture } from '@babylonjs/core';
-import { clearPage } from '../../utils/render';
+import { clearPage, renderHomeButton } from '../../utils/render';
 import { isAuthenticated, getAuthenticatedUser } from '../../utils/auths';
 
 // assets imports
@@ -29,9 +29,17 @@ const createScene = async () => {
   // get current skin from the connected user
   const currentSkinFromCurrentUser = await getCurrentSkinFromUser(currentUser);
   console.log('CURRENT SKIN', currentSkinFromCurrentUser);
-
   let currentTexture = currentSkinFromCurrentUser.name;
+  
+  // create Page elements
+  clearPage();
+
   const game = document.querySelector('main');
+  
+  const button = renderHomeButton();
+  
+  game.innerHTML += button;
+
   const newCanvas = document.createElement('canvas');
   newCanvas.id = 'renderCanvas';
   newCanvas.style = `
@@ -42,10 +50,15 @@ const createScene = async () => {
     left: 50%;
     transform: translate(-50%, -50%);
   `;
-  // newCanvas.innerHTML = `
-  // <div id="guiStore" ">`
-  clearPage();
+
   game.appendChild(newCanvas);
+
+  // add event listeners
+  const homeButton = document.querySelector('#home-button');
+  homeButton.addEventListener('click', () => {
+    Navigate('/');
+  });
+
   const engine = new BABYLON.Engine(newCanvas, true);
   const newScene = new BABYLON.Scene(engine);
 
@@ -101,10 +114,10 @@ const createScene = async () => {
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, newScene);
   const loadedGui = advancedTexture.parseSerializedObject(guiButtonsStore, true);
   advancedTexture.addControl(loadedGui);
-
+console.log('LOADED GUI', advancedTexture.getDescendants());
   // current skin name
   const skinName = advancedTexture.getControlByName('skinName');
-  skinName.text = currentSkinFromCurrentUser.name;
+  skinName.text = currentSkinFromCurrentUser.name.substring(0, 1).toUpperCase() + currentSkinFromCurrentUser.name.substring(1);
 
   // buy button
   const buyBtn = advancedTexture.getControlByName('buyButton');
@@ -131,8 +144,11 @@ const createScene = async () => {
     sealMesh.material = materialArray[nextTextureIndex];
     currentTexture = sealMesh.material.name;
 
-    skinName.text = currentTexture;
-    if (currentUser.skins.includes(currentTexture)) buyBtn.children[1].text = 'Owned';
+    skinName.text = (currentTexture.substring(0, 1).toUpperCase() + currentTexture.substring(1));
+    if (currentUser.skins.includes(currentTexture)){
+      buyBtn.children[1].text = 'Owned';
+      buyBtn.disabled = true;
+    } 
     else {
       const price = await getSkinPrice(currentTexture);
       buyBtn.children[1].text = `${price}`;
@@ -197,7 +213,6 @@ async function getCurrentSkinFromUser(user) {
   if (!responseSkin.ok)
     throw new Error(`fetch error : ${responseSkin.status} : ${responseSkin.statusText}`);
   const skin = responseSkin.json();
-
   return skin;
 }
 

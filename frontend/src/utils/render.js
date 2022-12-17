@@ -51,9 +51,9 @@ const renderMenuTitle = (title) => {
 function renderHomeButton() {
   const button = `
   <div class="block">
-    <div class="absolute top-0 right-0 p-2 bg-custom-yellow inline-flex rounded-full mt-3 ml-3">
-  <button id="home-button" class="h-20 w-20">
-    <img src="${backButton}" class="object-scale-down h-20 w-20">
+    <div class="absolute top-0 right-0 p-2 bg-custom-yellow inline-flex rounded-full mt-3 mr-3">
+  <button id="home-button" class="h-auto w-auto">
+    <img src="${backButton}" class="object-scale-down h-10 w-10">
   </button>
   </div>
   </div>

@@ -26,7 +26,7 @@ const LoginPage = () => {
   main.innerHTML += renderLoginForm();
   Footer();
 
-  // get form and add listener
+  // get buttons and add listeners
   const form = document.querySelector('form');
   const registerButton = document.querySelector('#register-redirection');
   const homeButton = document.querySelector('#home-button');

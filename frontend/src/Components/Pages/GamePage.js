@@ -426,7 +426,6 @@ const createScene = async (scene) => {
       target.position = startPosition;
       target.position.y = target.absoluteScaling.y / 2;
       target.visibility = true;
-
       // add to targets
       obstacleTargets.push(target);
 
@@ -717,7 +716,7 @@ async function getGameOverMenu(scene, score, user = undefined) {
         `${process.env.API_BASE_URL}/users/user?username=${getAuthenticatedUser().username}`,
       );
       if (!res.ok) throw new Error(`fetch error : ${res.status} : ${res.statusText}`);
-      const user = res.json();
+      const user = await res.json();
 
       user.then((a) => (highscoreData.text = a.highscore));
     } catch (err) {

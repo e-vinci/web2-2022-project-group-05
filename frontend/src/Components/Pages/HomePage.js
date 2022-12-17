@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import lottie from 'lottie-web';
 import { isAuthenticated } from '../../utils/auths';
-import { clearPage, renderMenuTitle } from '../../utils/render';
+import { clearPage, renderMenuTitle,renderPageTitle } from '../../utils/render';
 import Footer from '../Footer/Footer';
 // import navigation
 import Navigate from '../Router/Navigate';
