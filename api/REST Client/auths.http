@@ -1,5 +1,5 @@
-@baseUrl = https://sealrescue-api2.azurewebsites.net/
-
+# @baseUrl = https://sealrescue-api2.azurewebsites.net/
+@baseUrl = http://localhost:3000
 ### Try to login an unknow user
 POST {{baseUrl}}/auths/login
 Content-Type: application/json
@@ -34,8 +34,8 @@ POST {{baseUrl}}/auths/register
 Content-Type: application/json
 
 {
-    "username":"user3",
-    "password":"user3"
+    "username":"user4",
+    "password":"user4"
 }
 
 ### Login user2

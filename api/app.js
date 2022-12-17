@@ -11,7 +11,10 @@ const animalsRouter = require('./routes/animals');
 const skinsRouter = require('./routes/skins');
 
 const corsOptions = {
-  origin: ['https://e-vinci.github.io/SealRescue-Frontend', 'http://localhost:8080'],
+origin: [/https:\/\/e-vinci\.github\.io\/SealRescue-Frontend.*/, /http:\/\/localhost:8080/, /http:\/\/e-vinci\.github\.io.*/,/http:\/\/localhost.*/],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 const app = express();
@@ -24,7 +27,10 @@ app.use(
     keys: [cookieSecreteKey],
     cookie: {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
       expires: expiryDateIn3Months,
+      credentials : true,
     },
   }),
 );
