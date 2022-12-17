@@ -94,6 +94,7 @@ async function onRegister(e) {
   const password = document.querySelector('#password').value;
   const password2 = document.querySelector('#password2').value;
 
+  // check the verification between the two passwords
   if(password !== password2){
     RegisterPage();
     const errorArea = document.querySelector('#error-password');
@@ -126,10 +127,6 @@ async function onRegister(e) {
   redirectToHomePage();
 }
 
-// check the verification between the two passwords
-function verifyPasswords(password,password2){
-  
-}
 
 function redirectToHomePage() {
   Navigate('/');
