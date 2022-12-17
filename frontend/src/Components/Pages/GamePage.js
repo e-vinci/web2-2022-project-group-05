@@ -69,6 +69,8 @@ import loadSealURL from '../../assets/img/seal load.json';
 import bottleImportUrl from '../../assets/3Dmodels/waterBottle.glb';
 import barelImportUrl from '../../assets/3Dmodels/metalBarel.glb';
 import iceImportUrl from '../../assets/3Dmodels/ice.glb';
+import fishIcon from '../../assets/img/poisson.png';
+import moneyJSON from '../../assets/img/moneyInGame.json';
 
 // eslint-disable-next-line camelcase
 import sky_px from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_px.bmp';
@@ -214,16 +216,15 @@ const createScene = async (scene) => {
   UiPanel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
   advancedTexture.addControl(UiPanel);
 
-  // button
-  const buttonScore = GUI.Button.CreateSimpleButton('scoreButton');
-  buttonScore.textBlock.text = `Score : ${score}`;
-  buttonScore.paddingTop = '10px';
-  buttonScore.width = '100px';
-  buttonScore.height = '50px';
-  buttonScore.color = 'white';
-  buttonScore.background = 'grey';
-  UiPanel.addControl(buttonScore);
+  // money + icon + score
+  const moneyTexture = advancedTexture.parseSerializedObject(moneyJSON, true);
+  UiPanel.addControl(moneyTexture);
+  const fishImg = advancedTexture.getControlByName('fish');
+  fishImg.source = fishIcon;
 
+  const buttonScore = advancedTexture.getControlByName('score');
+  const moneyCount = advancedTexture.getControlByName('money');
+  
   // Camera
   // eslint-disable-next-line no-unused-vars
   const camera = new ArcRotateCamera(
@@ -404,6 +405,7 @@ const createScene = async (scene) => {
           },
           () => {
             moneyCollected++;
+            moneyCount.text = `${moneyCollected}`;
             target.dispose();
           },
         ),
@@ -496,7 +498,7 @@ const createScene = async (scene) => {
           },
           () => {
             score++;
-            buttonScore.textBlock.text = `Score : ${score}`;
+            buttonScore.text = `Score : ${score}`;
           },
         ),
       );
