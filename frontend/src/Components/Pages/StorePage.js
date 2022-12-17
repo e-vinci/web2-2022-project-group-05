@@ -31,7 +31,7 @@ const createScene = async () => {
   console.log('CURRENT SKIN', currentSkinFromCurrentUser);
 
   let currentTexture = currentSkinFromCurrentUser.name;
-  const game = document.getElementById('game');
+  const game = document.querySelector('main');
   const newCanvas = document.createElement('canvas');
   newCanvas.id = 'renderCanvas';
   newCanvas.style = `

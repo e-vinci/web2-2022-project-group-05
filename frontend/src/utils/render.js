@@ -1,4 +1,5 @@
 import helm from '../assets/img/helm.png';
+import backButton from '../assets/img/backButton.png';
 
 const clearPage = () => {
   const canva = document.getElementById('renderCanvas');
@@ -49,8 +50,13 @@ const renderMenuTitle = (title) => {
 
 function renderHomeButton() {
   const button = `
-  <button id="home-button" class="absolute bg-seal bg-cover bg-left right-0 top-0 h-20 w-20">
+  <div class="block">
+    <div class="absolute top-0 right-0 p-2 bg-custom-yellow inline-flex rounded-full mt-3 ml-3">
+  <button id="home-button" class="h-20 w-20">
+    <img src="${backButton}" class="object-scale-down h-20 w-20">
   </button>
+  </div>
+  </div>
   `;
   return button;
 }

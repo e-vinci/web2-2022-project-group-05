@@ -83,6 +83,8 @@ import sky_ny from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_ny.
 // eslint-disable-next-line camelcase
 import sky_nz from '../../assets/img/Skybox/Daylight_Box_Pieces/Daylight_Box_nz.bmp';
 
+import s from '../../assets/store.json'
+
 let startGame;
 
 const createScene = async (scene) => {
@@ -544,6 +546,7 @@ const createScene = async (scene) => {
                 case 'd':
                 case 'D':
                 case 'ArrowRight':
+                  kbInfo.event.preventDefault();
                   if (sealMesh.position.x !== widthCols) {
                     isMoving = true;
                     Animation.CreateAndStartAnimation(
@@ -563,6 +566,7 @@ const createScene = async (scene) => {
                 case 'q':
                 case 'Q':
                 case 'ArrowLeft':
+                  kbInfo.event.preventDefault();
                   if (sealMesh.position.x !== -widthCols) {
                     isMoving = true;
                     Animation.CreateAndStartAnimation(
@@ -582,6 +586,7 @@ const createScene = async (scene) => {
                 case 's':
                 case 'S':
                 case 'ArrowDown':
+                  kbInfo.event.preventDefault();
                   if (sealMesh.position.y < maxJumpHeight) {
                     waterParticles.stop();
                     isMoving = true;
@@ -608,11 +613,10 @@ const createScene = async (scene) => {
 
 const GamePage = async () => {
   clearPage();
-  const game = document.getElementById('game');
-  const newCanvas = document.createElement('canvas');
-  newCanvas.id = 'renderCanvas';
-  game.appendChild(newCanvas);
-  const canvas = document.getElementById('renderCanvas');
+  const game = document.querySelector('main');
+  const canvas = document.createElement('canvas');
+  canvas.id = 'renderCanvas';
+  game.appendChild(canvas);
   let engine = new Engine(canvas, true, null, true);
   let scene = new Scene(engine);
   scene.detachControl();
@@ -624,17 +628,15 @@ const GamePage = async () => {
     255,
   )},${tools.getRandomIntBetween(0, 255)})`;
   const loadingScreen = new CustomLoadingScreen(loadingCanvas, text, bgColor);
-  // const loadingScreen = new DefaultLoadingScreen(loadingCanvas, 'Loading...', bgColor);
-  scene.detachControl();
   // TODO chercher info sur ca ...bon pour perf?
-  // scene.useDelayedTextureLoading = true;
+  scene.useDelayedTextureLoading = true;
   loadingScreen.displayLoadingUI();
   scene = await createScene(scene);
   SceneOptimizer.OptimizeAsync(scene, SceneOptimizerOptions.ModerateDegradationAllowed());
-
   scene.executeWhenReady(() => {
     loadingScreen.hideLoadingUI();
     scene.attachControl();
+    canvas.focus();
     startGame();
   }, true);
 

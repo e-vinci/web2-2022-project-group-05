@@ -36,7 +36,7 @@ async function renderRandomFacts() {
   const footer = document.createElement('footer');
   const animal = await getRandomAnimalInfo();
   const main = document.querySelector('main');
-  footer.classList = 'bg-custom-brown text-center text-white';
+  footer.classList = `bg-custom-lightbrown text-center text-white`;
   footer.innerHTML = `<div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.2);">
     <b>Did you know ?</b> The biggest threat of the ${
       animal.name

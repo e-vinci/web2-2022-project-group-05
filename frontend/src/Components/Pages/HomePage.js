@@ -1,5 +1,7 @@
-import { setAuthenticatedUser, isAuthenticated, clearAuthenticatedUser } from '../../utils/auths';
-import { clearPage, renderPageTitle, renderMenuTitle } from '../../utils/render';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import lottie from 'lottie-web';
+import { isAuthenticated } from '../../utils/auths';
+import { clearPage, renderMenuTitle } from '../../utils/render';
 import Footer from '../Footer/Footer';
 // import navigation
 import Navigate from '../Router/Navigate';
@@ -11,6 +13,7 @@ import helm from '../../assets/img/helm.png';
 import ice01 from '../../assets/img/iceberg_01.png';
 import ice02 from '../../assets/img/iceberg_02.png';
 import seal from '../../assets/img/seal_cartoon.png';
+import shop from '../../assets/store.json';
 
 const HomePage = () => {
   clearPage();
@@ -20,29 +23,31 @@ const HomePage = () => {
   const main = document.querySelector('main');
   // add menu to main
   main.innerHTML += renderMenu();
-
-  if (isAuthenticated()) {
-    main.innerHTML += renderStoreButton();
-    const logoutButton = document.querySelector('#logout-button');
-    logoutButton.addEventListener('click', logout);
-
-    // render store button if user is connected
-    const storeButton = document.querySelector('#store-button');
-    storeButton.addEventListener('click', redirectToStore);
-  } else {
-    const loginButton = document.querySelector('#login-button');
-    loginButton.addEventListener('click', redirectToLogin);
-  }
-  // get menu buttons
-  const startButton = document.querySelector('#start-button');
-  console.log('START BUTTON', startButton);
-  const rankingButton = document.querySelector('#ranking-button');
-
-  // add listener to the buttons
-  startButton.addEventListener('click', startGame);
-  rankingButton.addEventListener('click', redirectToRanking);
-
+  // if connected add store button
+  if (isAuthenticated()) main.innerHTML += renderStoreButton();
   Footer();
+  // get buttons
+  const storeButton = document.querySelector('#store-button');
+  const logoutButton = document.querySelector('#logout-button');
+  const startButton = document.querySelector('#start-button');
+  const rankingButton = document.querySelector('#ranking-button');
+  const loginButton = document.querySelector('#login-button');
+  let loadingAnimation;
+  if (storeButton) {
+    loadingAnimation = lottie.loadAnimation({
+      container: document.getElementById('loadingAnimationDiv'),
+      animationData: shop,
+    });
+  }  
+  // add listener to the buttons
+  loginButton?.addEventListener('click', redirectToLogin);
+  logoutButton?.addEventListener('click', logout);
+  startButton?.addEventListener('click', startGame);
+  rankingButton?.addEventListener('click', redirectToRanking);
+  storeButton?.addEventListener('click', redirectToStore);
+  loadingAnimation?.addEventListener('DOMLoaded', () => {
+    loadingAnimation.play();
+  });
 };
 
 function renderMenu() {
@@ -126,9 +131,11 @@ function displayLoginOrLogout() {
 
 function renderStoreButton() {
   const button = `
-  <button id="store-button" class="absolute bg-shopping-icon bg-contain bg-left right-0 top-0 h-20 w-20">
+  <button id="store-button" class="absolute right-0 top-0 h-20 w-20">
+    <div id="loadingAnimationDiv"></div>
   </button>
   `;
+
   return button;
 }
 

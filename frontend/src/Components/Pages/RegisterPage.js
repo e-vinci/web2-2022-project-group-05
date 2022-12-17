@@ -19,7 +19,6 @@ const RegisterPage = () => {
 
   // verify if the user is already connected
   if (isAuthenticated()) {
-    console.log('access denied');
     main.innerHTML +=
       '<div class="max-h-screen max-w-screen"> You are already register and login </div>';
     return;
@@ -29,39 +28,38 @@ const RegisterPage = () => {
   // adding home button and register form to main
   main.innerHTML += renderHomeButton();
   main.innerHTML += renderRegisterForm();
+  Footer();
 
   // get form and adding listener
   const form = document.querySelector('form');
-  form.addEventListener('submit', onRegister);
-
-  // get home button and adding listener
   const homeButton = document.querySelector('#home-button');
+  
+  // get home button and adding listener
+  form.addEventListener('submit', onRegister);
   homeButton.addEventListener('click', redirectToHomePage);
-
-  Footer();
 };
 
 function renderRegisterForm() {
   const form = `
     <div class="pb-10 inline-block min-w-full sm:px-6 lg:px-60">
-      <form>
+      <form method="post">
         <div class="bg-custom-blue px-10 pt-6 pb-8 mb-4 rounded-3xl" >
         <div class="flex flex-row justify-around border-4 border-white rounded-3xl py-10">
             <div id="error-area" class="flex flex-col justify-start">
               <div class="bg-wood-board-01 bg-cover bg-left block p-3 text-center">
                 <label class="text-white text-xl font-mono" for="username">username :</label>
               </div>
-              <input  id="username" class="bg-custom-lightyellow shadow appearance-none rounded" name="username" type="text">
+              <input required id="username" class="bg-custom-lightyellow shadow appearance-none rounded" name="username" type="text">
               <div class="bg-wood-board-01 bg-cover bg-left block mt-10 p-3 text-center">
                 <label class="text-white text-xl font-mono" for="password">password :</label>
               </div>
-              <input  id="password" class="bg-custom-lightyellow shadow appearance-none rounded" name="password" type="password">
+              <input required id="password" class="bg-custom-lightyellow shadow appearance-none rounded" name="password" type="password">
               <div class="bg-wood-board-01 bg-cover bg-left block mt-10 py-3 px-12 text-center">
                 <label class="text-white text-xl font-mono" for="password-verification">verify password :</label>
               </div>
-              <input id="password2" class="bg-custom-lightyellow shadow appearance-none rounded" name="password-verification" type="password">
+              <input required id="password2" class="bg-custom-lightyellow shadow appearance-none rounded" name="password-verification" type="password">
               <a href="https://policies.google.com/privacy?hl=en-US">
-                <input id="remember" type="checkbox" name="policy">
+                <input required id="remember" type="checkbox" name="policy">
                 <label for="policy" class="hover:text-white" >Accept our policy</label><br>
               </a>
             </div>

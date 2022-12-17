@@ -23,8 +23,8 @@ module.exports = {
         'rope-03': "url('../assets/img/rope_03.png')",
         'helm': "url('../assets/img/helm.png')",
         'seal': "url('../assets/img/seal_cartoon.png')",
+        'backButton': "url('../assets/img/backButton.png')",
         'shopping-icon': "url('../assets/img/shopping-cart.png')",
-
       }
     },
   },
