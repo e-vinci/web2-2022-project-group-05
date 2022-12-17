@@ -12,8 +12,8 @@ const renderPageTitle = (title) => {
   if (!title) return;
   const main = document.querySelector('main');
   const pageTitle = `
-  <div class="relative bg-wood-board-04 bg-cover bg-left w-1/4 p-3 mt-10">
-    <div class="absolute -z-10 -left-10 -top-10">
+  <div class="relative bg-wood-board-04 bg-cover bg-left w-1/4 p-3 mt-14">
+    <div class="absolute -z-10 -left-16 -top-12">
         <div class="h-48 w-48">
           <img src="${helm}" class="object-scale-down">
         </div>
@@ -32,7 +32,7 @@ const renderMenuTitle = (title) => {
   if (!title) return;
   const main = document.querySelector('main');
   const pageTitle = `
-  <div class="relative bg-custom-blue w-1/2 rounded-3xl h-20 mt-10">
+  <div class="relative bg-custom-blue w-1/2 rounded-3xl h-20 mt-10 grid content-center">
     <div class="absolute -z-10 left-0 top-0">
         <div class="h-48 w-48">
           <img src="${helm}" class="object-scale-down">

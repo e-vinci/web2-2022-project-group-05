@@ -62,12 +62,6 @@ function getAllTableLinesAsString(listUsers) {
           </thead>
         <tbody>
     </div>
-
-    <div class="absolute -z-10 left-1/3 top-11">
-      <div class="h-48 w-48">
-        <img src="${helm}" class="object-scale-down">
-      </div>
-    </div>
   `;
 
   listUsers?.forEach((user) => {
