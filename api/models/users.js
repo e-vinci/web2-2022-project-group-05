@@ -24,8 +24,10 @@ const defaultUsers = [
 ];
 
 async function login(username, password) {
-  const userFound = readOneUserFromUsername(username);
-  if (!userFound) return undefined;
+  const users = parse(jsonDbPath, defaultUsers);
+  const indexOfUserFound = users.findIndex((user) => user.username === username);
+  if (indexOfUserFound < 0) return undefined;
+  const userFound = users[indexOfUserFound];
 
   const passwordMatch = await bcrypt.compare(password, userFound.password);
   if (!passwordMatch) return undefined;
@@ -45,8 +47,10 @@ async function login(username, password) {
 }
 
 async function register(username, password) {
-  const userFound = readOneUserFromUsername(username);
-  if (userFound) return undefined;
+  const users = parse(jsonDbPath, defaultUsers);
+  const indexOfUserFound = users.findIndex((user) => user.username === username);
+  if (indexOfUserFound != -1) return undefined;
+
 
   await createOneUser(username, password);
 
@@ -70,7 +74,9 @@ function readOneUserFromUsername(username) {
   const indexOfUserFound = users.findIndex((user) => user.username === username);
   if (indexOfUserFound < 0) return undefined;
 
-  return users[indexOfUserFound];
+  const userToReturn = users[indexOfUserFound];
+  delete userToReturn.password;
+  return userToReturn;
 }
 
 async function createOneUser(username, password) {
@@ -98,10 +104,12 @@ function getAllUsers(orderBy){
   const orderByScore = orderBy?.includes('score') ? orderBy : undefined;
   let orderedLeaderboard; 
   const users = parse(jsonDbPath,defaultUsers);
+  users.forEach((user) => delete user.password);
 
   if (orderByScore) orderedLeaderboard = [...users].sort((a, b) => b.highscore-a.highscore);
 
   const usersPotentiallyOrdered = orderedLeaderboard ?? users;
+  
   return usersPotentiallyOrdered;
 }
 
@@ -132,6 +140,7 @@ function updateHighscore(highscore, username){
   const updatedUser = {...users[index], highscore: parseInt(highscore,10)};
   users[index] = updatedUser;
   serialize(jsonDbPath, users);
+  delete updatedUser.password;
   return updatedUser;
 }
 
@@ -157,6 +166,7 @@ function changeCurrentSkin(skinName, username){
   users[index].currentSkin = skinName;
   
   serialize(jsonDbPath, users);
+  delete users[index].password;
   return users[index].currentSkin;
 }
 
