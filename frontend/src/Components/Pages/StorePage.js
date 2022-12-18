@@ -27,7 +27,7 @@ import check from '../../assets/img/white-check.png';
 
 const createScene = async () => {
   // get current user
-  let currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser();
   // get current skin from the connected user
   const currentSkinFromCurrentUser = await getCurrentSkinFromUser(currentUser);
   console.log('CURRENT SKIN', currentSkinFromCurrentUser);
@@ -135,14 +135,13 @@ const createScene = async () => {
   const buyBtn = advancedTexture.getControlByName('buyButton');
   buyBtn.children[0].source = moneyBag;
   buyBtn.children[1].text = 'Owned';
-  buyBtn.onPointerClickObservable.add(() => {
+  buyBtn.onPointerClickObservable.add(async () => {
     if (currentSkinFromCurrentUser.name !== currentTexture){
-      const bought = buySkin(currentUser, currentTexture);
+      const bought = await buySkin(currentUser, currentTexture);
       if(bought) {
         buyBtn.children[1].text = 'Owned';
-        balance.text = currentUser.balance;
+        balance.text = `Balance : ${currentUser.balance}`;
         setSkinBtn.children[0].source = check;
-        currentUser = getCurrentUser();
       };
     };
   });
@@ -261,7 +260,6 @@ async function buySkin(user, skinName) {
 
   // verify if the user have enough money
   if (user.balance < skinToBuy.price) return false;
-
   
   await addSkinToUser(user,skinToBuy.name);
   await updateUserBalance(user,skinToBuy.price);
