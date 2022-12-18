@@ -47,6 +47,6 @@ PATCH {{baseUrl}}/users/currentSkin?username=user
 Content-Type: application/json
 
 {
-    "name":"panda"
+    "name":"tiger"
 }
 

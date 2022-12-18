@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const path = require('node:path');
 const { parse, serialize } = require('../utils/json');
+const { log } = require('node:console');
 
 const jwtSecret = process.env.JWT_KEY;
 const lifetimeJwt = 24 * 60 * 60 * 1000; // in ms : 24 * 60 * 60 * 1000 = 24h
@@ -152,8 +153,7 @@ function changeCurrentSkin(skinName, username){
   const index = users.findIndex((user) => user.username === username);
   if (index < 0) return undefined;
   
-  if (users[index].currentSkin === skinName || !users[index].skins.findIndex((skin) => skin === skinName)) return undefined; 
-  
+  if (users[index].currentSkin === skinName || !users[index].skins.includes(skinName)) return undefined; 
   users[index].currentSkin = skinName;
   
   serialize(jsonDbPath, users);

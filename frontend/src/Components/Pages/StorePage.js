@@ -127,8 +127,12 @@ const createScene = async () => {
   setSkinBtn.children[0].source = check;
   setSkinBtn.onPointerClickObservable.add(async () => {
     if (currentSkinFromCurrentUser.name !== currentTexture && currentUser.skins.includes(currentTexture)){
-      const res = await changeCurrentSkin(currentUser, skinName);
-      if (res) setSkinBtn.children[0].source = check;
+      const res = await changeCurrentSkin(currentUser, currentTexture);
+      console.log(res);
+      if (res){
+         setSkinBtn.children[0].source = check;
+         currentSkinFromCurrentUser.name = currentTexture;
+      }
     }
   });
 
@@ -332,10 +336,11 @@ async function changeCurrentSkin(user, skinName){
       },
     },
   );
-
+  
   if (!response.ok)
     throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
 
+  return true;
 }
 
 // render page 
