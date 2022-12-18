@@ -54,7 +54,7 @@ import '@babylonjs/procedural-textures';
 // assets
 import water from '../../assets/3Dmodels/test3.glb';
 import vague from '../../assets/vague.json';
-import seal from '../../assets/3Dmodels/seal_animated.glb';
+import sealImport from '../../assets/3Dmodels/seal_animated.glb';
 import money from '../../assets/3Dmodels/fishMoney.glb';
 import importedWaterParticles from '../../assets/waterParticles.json';
 import waterTexture from '../../assets/texture/flare.png';
@@ -65,6 +65,8 @@ import homeIcon from '../../assets/img/home-icon.png';
 import pauseMenuURL from '../../assets/img/menuPause.json';
 import moneyIcon from '../../assets/img/leaderboard-icon.png';
 import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
+import pandaTextureURL from '../../assets/texture/Seal_ColorMap_Panda.png';
+import baseTextureURL from '../../assets/texture/Seal_ColorMap_Base.png';
 import loadSealURL from '../../assets/img/seal load.json';
 import bottleImportUrl from '../../assets/3Dmodels/waterBottle.glb';
 import barelImportUrl from '../../assets/3Dmodels/metalBarel.glb';
@@ -98,18 +100,56 @@ const createScene = async (scene) => {
 
   console.log('here', waterMesh);
 
-  const sealMeshImport = await SceneLoader.ImportMeshAsync(null, seal);
+  const sealMeshImport = await SceneLoader.ImportMeshAsync(null, sealImport);
   const sealMesh = sealMeshImport.meshes[1];
   sealMesh.scaling = new Vector3(0.5, 0.5, 0.5);
   sealMesh.parent = null;
   console.log(sealMesh);
 
-  const sealSkin = new StandardMaterial('panda', scene);
-  sealSkin.backFaceCulling = false;
-  const sealTexture = new Texture(tigerTextureURL, scene);
-  sealTexture.uAng = Math.PI;
-  sealSkin.lightmapTexture = sealTexture;
-  sealMesh.material = sealSkin;
+  // get current user
+  const currentUserName = await getAuthenticatedUser();
+  console.log(currentUserName);
+  const currentUserResponse = await fetch(`
+  ${process.env.API_BASE_URL}/users/user?username=${currentUserName.username}`,
+    {
+      method: 'GET',
+      credentials: 'include',
+      mode:'cors',
+      headers: {
+        'Content-Type': 'application/json'},
+    });
+  
+  if (!currentUserResponse.ok)
+    throw new Error(`fetch error : ${currentUserResponse.status} : ${currentUserResponse.statusText}`);
+  const currentUser = await currentUserResponse.json();
+
+  let currentSkin = 'seal';
+
+  // if current user connected then get their currentSkin
+  if(currentUser){
+  currentSkin = currentUser.currentSkin;
+  }
+
+  const tigerSkin = new Texture(tigerTextureURL, scene);
+  const pandaSkin = new Texture(pandaTextureURL, scene);
+  const baseSkin = new Texture(baseTextureURL, scene);
+  tigerSkin.uAng = Math.PI;
+  pandaSkin.uAng = Math.PI;
+  baseSkin.uAng = Math.PI;
+
+  const tiger = new StandardMaterial('tiger', scene);
+  const panda = new StandardMaterial('panda', scene);
+  const seal = new StandardMaterial('seal', scene);
+  tiger.backFaceCulling = false;
+  panda.backFaceCulling = false;
+  seal.backFaceCulling = false;
+  tiger.lightmapTexture = tigerSkin;
+  panda.lightmapTexture = pandaSkin;
+  seal.lightmapTexture = baseSkin;
+  const materialArray = [seal, panda, tiger];
+
+  const currentSkinIndex = materialArray.findIndex((material) => material.name === currentSkin);
+  sealMesh.material = materialArray[currentSkinIndex];
 
   const moneyImport = await SceneLoader.ImportMeshAsync(null, money, null, scene);
   const moneyMesh = moneyImport.meshes[1];
