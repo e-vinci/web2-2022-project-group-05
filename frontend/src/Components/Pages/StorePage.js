@@ -28,6 +28,7 @@ import check from '../../assets/img/white-check.png';
 const createScene = async () => {
   // get current user
   const currentUser = await getCurrentUser();
+  const userBalance = currentUser.balance;
   // get current skin from the connected user
   const currentSkinFromCurrentUser = await getCurrentSkinFromUser(currentUser);
   console.log('CURRENT SKIN', currentSkinFromCurrentUser);
@@ -264,6 +265,8 @@ async function buySkin(user, skinName) {
   await addSkinToUser(user,skinToBuy.name);
   await updateUserBalance(user,skinToBuy.price);
   await changeCurrentSkin(user,skinToBuy.name);
+
+  user.balance -= skinToBuy.price;
 
   return true;
 }
