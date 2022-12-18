@@ -106,28 +106,29 @@ const createScene = async (scene) => {
   sealMesh.parent = null;
   console.log(sealMesh);
 
-  // get current user
-  const currentUserName = await getAuthenticatedUser();
-  console.log(currentUserName);
-  const currentUserResponse = await fetch(`
-  ${process.env.API_BASE_URL}/users/user?username=${currentUserName.username}`,
-    {
-      method: 'GET',
-      credentials: 'include',
-      mode:'cors',
-      headers: {
-        'Content-Type': 'application/json'},
-    });
-  
-  if (!currentUserResponse.ok)
-    throw new Error(`fetch error : ${currentUserResponse.status} : ${currentUserResponse.statusText}`);
-  const currentUser = await currentUserResponse.json();
-
+  // define current skin
   let currentSkin = 'seal';
 
+  // get current user if connected
+  if(isAuthenticated()){
+    const currentUserName = await getAuthenticatedUser();
+    console.log(currentUserName);
+    const currentUserResponse = await fetch(`
+    ${process.env.API_BASE_URL}/users/user?username=${currentUserName.username}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        mode:'cors',
+        headers: {
+          'Content-Type': 'application/json'},
+      });
+    
+    if (!currentUserResponse.ok)
+      throw new Error(`fetch error : ${currentUserResponse.status} : ${currentUserResponse.statusText}`);
+    const currentUser = await currentUserResponse.json();
+
   // if current user connected then get their currentSkin
-  if(currentUser){
-  currentSkin = currentUser.currentSkin;
+    currentSkin = currentUser.currentSkin;
   }
 
   const tigerSkin = new Texture(tigerTextureURL, scene);

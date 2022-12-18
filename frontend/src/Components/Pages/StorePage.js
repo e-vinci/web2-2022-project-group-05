@@ -314,13 +314,13 @@ async function updateUserBalance(user,skinToBuy){
 }
 
 // change current skin to the new one
-async function changeCurrentSkin(user, boughtSkin){
+async function changeCurrentSkin(user, skin){
   const response = await fetch(
     `${process.env.API_BASE_URL}/users/currentSkin?username=${user.username}`,
     {
       method: 'PATCH',
       body: JSON.stringify({
-        name: boughtSkin.name,
+        name: skin.name,
       }),
       credentials: 'include',
       mode:'cors',
