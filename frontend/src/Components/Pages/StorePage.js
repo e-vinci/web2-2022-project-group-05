@@ -125,7 +125,12 @@ console.log('LOADED GUI', advancedTexture.getDescendants());
   buyBtn.children[1].text = 'Owned';
   buyBtn.onPointerClickObservable.add(() => {
     if (!isAuthenticated()) Navigate('/login');
-    if (currentSkinFromCurrentUser.name !== currentTexture) buySkin(currentUser, currentTexture);
+    if (currentSkinFromCurrentUser.name !== currentTexture){
+      if(buySkin(currentUser, currentTexture)) {
+        buyBtn.children[1].text = 'Owned';
+        balance.text = currentUser.balance;
+      };
+    };
   });
 
   // user balance
@@ -245,6 +250,7 @@ async function getSkinPrice(name) {
  */
 
 async function buySkin(user, skinName) {
+  // get skin to buy
   const responseSkinToBuy = await fetch(
     `${process.env.API_BASE_URL}/skins/skinName?name=${skinName}`,
   );
@@ -253,28 +259,83 @@ async function buySkin(user, skinName) {
 
   const skinToBuy = await responseSkinToBuy.json();
 
-  if (user.balance < skinToBuy.price) return;
+  // verify if the user have enough money
+  if (user.balance < skinToBuy.price) return false;
 
-  const options = {
-    method: 'PATCH',
-    body: JSON.stringify({
-      id: skinToBuy.id,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
+  
+ addSkinToUser(user,skinToBuy);
+ updateUserBalance(user,skinToBuy);
+ changeCurrentSkin(user,skinToBuy);
 
-  const responseAddingSkinToUser = await fetch(
-    `${process.env.API_BASE_URL}/users/skins?username=${user.username}`,
-    options,
-  );
-  if (!responseAddingSkinToUser.ok)
-    throw new Error(
-      `fetch error : ${responseAddingSkinToUser.status} : ${responseAddingSkinToUser.statusText}`,
-    );
+ return true;
 }
 
+// add skin tu user skin list
+async function addSkinToUser(user, skinToBuy){
+  const responseAddingSkinToUser = await fetch(
+    `${process.env.API_BASE_URL}/users/skins?username=${user.username}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({
+        name: skinToBuy.name,
+      }),
+      credentials: 'include',
+      mode:'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+
+  if (!responseAddingSkinToUser.ok)
+    throw new Error(`fetch error : ${responseAddingSkinToUser.status} : ${responseAddingSkinToUser.statusText}`);
+}
+
+// remove money to user balance
+async function updateUserBalance(user,skinToBuy){
+ const response = await fetch(
+  `${process.env.API_BASE_URL}/users/balance?username=${user.username}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({
+        balance: skinToBuy.price,
+        operator:"-"
+      }),
+      credentials: 'include',
+      mode:'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+
+  if (!response.ok)
+  throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
+}
+
+// change current skin to the new one
+async function changeCurrentSkin(user, boughtSkin){
+  const response = await fetch(
+    `${process.env.API_BASE_URL}/users/currentSkin?username=${user.username}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({
+        name: boughtSkin.name,
+      }),
+      credentials: 'include',
+      mode:'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+
+  if (!response.ok)
+    throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
+
+}
+
+// render page 
 const StorePage = async () => {
   const scene = await createScene();
   const engine = scene.getEngine();

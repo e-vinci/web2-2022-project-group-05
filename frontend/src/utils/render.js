@@ -12,7 +12,7 @@ const renderPageTitle = (title) => {
   if (!title) return;
   const main = document.querySelector('main');
   const pageTitle = `
-  <div class="relative bg-wood-board-04 bg-cover bg-left w-1/4 p-3 mt-14">
+  <div class="relative bg-wood-board-04 bg-cover bg-left w-1/4 p-3 mt-14 grid content-center">
     <div class="absolute -z-10 -left-16 -top-12">
         <div class="h-48 w-48">
           <img src="${helm}" class="object-scale-down">
