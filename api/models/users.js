@@ -1,9 +1,7 @@
-// const escape = require('escape-html');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const path = require('node:path');
 const { parse, serialize } = require('../utils/json');
-const { log } = require('node:console');
 
 const jwtSecret = process.env.JWT_KEY;
 const lifetimeJwt = 24 * 60 * 60 * 1000; // in ms : 24 * 60 * 60 * 1000 = 24h
@@ -24,10 +22,8 @@ const defaultUsers = [
 ];
 
 async function login(username, password) {
-  const users = parse(jsonDbPath, defaultUsers);
-  const indexOfUserFound = users.findIndex((user) => user.username === username);
-  if (indexOfUserFound < 0) return undefined;
-  const userFound = users[indexOfUserFound];
+  const userFound = readOneUserFromUsername(username);
+  if (!userFound) return undefined;
 
   const passwordMatch = await bcrypt.compare(password, userFound.password);
   if (!passwordMatch) return undefined;
@@ -47,10 +43,8 @@ async function login(username, password) {
 }
 
 async function register(username, password) {
-  const users = parse(jsonDbPath, defaultUsers);
-  const indexOfUserFound = users.findIndex((user) => user.username === username);
-  if (indexOfUserFound != -1) return undefined;
-
+  const userFound = readOneUserFromUsername(username);
+  if (userFound) return undefined;
 
   await createOneUser(username, password);
 
@@ -74,9 +68,7 @@ function readOneUserFromUsername(username) {
   const indexOfUserFound = users.findIndex((user) => user.username === username);
   if (indexOfUserFound < 0) return undefined;
 
-  const userToReturn = users[indexOfUserFound];
-  delete userToReturn.password;
-  return userToReturn;
+  return users[indexOfUserFound];
 }
 
 async function createOneUser(username, password) {
@@ -104,12 +96,10 @@ function getAllUsers(orderBy){
   const orderByScore = orderBy?.includes('score') ? orderBy : undefined;
   let orderedLeaderboard; 
   const users = parse(jsonDbPath,defaultUsers);
-  users.forEach((user) => delete user.password);
 
   if (orderByScore) orderedLeaderboard = [...users].sort((a, b) => b.highscore-a.highscore);
 
   const usersPotentiallyOrdered = orderedLeaderboard ?? users;
-  
   return usersPotentiallyOrdered;
 }
 
@@ -140,7 +130,6 @@ function updateHighscore(highscore, username){
   const updatedUser = {...users[index], highscore: parseInt(highscore,10)};
   users[index] = updatedUser;
   serialize(jsonDbPath, users);
-  delete updatedUser.password;
   return updatedUser;
 }
 
@@ -162,11 +151,11 @@ function changeCurrentSkin(skinName, username){
   const index = users.findIndex((user) => user.username === username);
   if (index < 0) return undefined;
   
-  if (users[index].currentSkin === skinName || !users[index].skins.includes(skinName)) return undefined; 
+  if (users[index].currentSkin === skinName || !users[index].skins.include(skinName)) return undefined; 
+  
   users[index].currentSkin = skinName;
   
   serialize(jsonDbPath, users);
-  delete users[index].password;
   return users[index].currentSkin;
 }
 
@@ -180,4 +169,3 @@ module.exports = {
   addSkinToUser,
   changeCurrentSkin
 };
-
