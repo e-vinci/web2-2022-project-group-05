@@ -22,10 +22,12 @@ import baseImport from '../../assets/texture/Seal_ColorMap_Base.png';
 import guiButtonsStore from '../../assets/img/storeGUI.json';
 import moneyBag from '../../assets/img/moneybagstore.png';
 import Navigate from '../Router/Navigate';
+import noCheck from '../../assets/img/no-check.png';
+import check from '../../assets/img/white-check.png';
 
 const createScene = async () => {
   // get current user
-  const currentUser = await getCurrentUser();
+  let currentUser = await getCurrentUser();
   // get current skin from the connected user
   const currentSkinFromCurrentUser = await getCurrentSkinFromUser(currentUser);
   console.log('CURRENT SKIN', currentSkinFromCurrentUser);
@@ -114,21 +116,33 @@ const createScene = async () => {
   const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('GUI', true, newScene);
   const loadedGui = advancedTexture.parseSerializedObject(guiButtonsStore, true);
   advancedTexture.addControl(loadedGui);
-console.log('LOADED GUI', advancedTexture.getDescendants());
+
   // current skin name
   const skinName = advancedTexture.getControlByName('skinName');
   skinName.text = currentSkinFromCurrentUser.name.substring(0, 1).toUpperCase() + currentSkinFromCurrentUser.name.substring(1);
+
+  // set current skin check
+  const setSkinBtn = advancedTexture.getControlByName('setSkin');
+  setSkinBtn.children[0].source = check;
+  setSkinBtn.onPointerClickObservable.add(async () => {
+    if (currentSkinFromCurrentUser.name !== currentTexture && currentUser.skins.includes(currentTexture)){
+      const res = await changeCurrentSkin(currentUser, skinName);
+      if (res) setSkinBtn.children[0].source = check;
+    }
+  });
 
   // buy button
   const buyBtn = advancedTexture.getControlByName('buyButton');
   buyBtn.children[0].source = moneyBag;
   buyBtn.children[1].text = 'Owned';
   buyBtn.onPointerClickObservable.add(() => {
-    if (!isAuthenticated()) Navigate('/login');
     if (currentSkinFromCurrentUser.name !== currentTexture){
-      if(buySkin(currentUser, currentTexture)) {
+      const bought = buySkin(currentUser, currentTexture);
+      if(bought) {
         buyBtn.children[1].text = 'Owned';
         balance.text = currentUser.balance;
+        setSkinBtn.children[0].source = check;
+        currentUser = getCurrentUser();
       };
     };
   });
@@ -158,6 +172,9 @@ console.log('LOADED GUI', advancedTexture.getDescendants());
       const price = await getSkinPrice(currentTexture);
       buyBtn.children[1].text = `${price}`;
     }
+
+    if (currentSkinFromCurrentUser.name !== currentTexture) setSkinBtn.children[0].source = noCheck;
+    else setSkinBtn.children[0].source = check;
   });
 
   // previous skin
@@ -179,6 +196,9 @@ console.log('LOADED GUI', advancedTexture.getDescendants());
       const price = await getSkinPrice(currentTexture);
       buyBtn.children[1].text = `${price}`;
     }
+
+    if (currentSkinFromCurrentUser.name !== currentTexture) setSkinBtn.children[0].source = noCheck;
+    else setSkinBtn.children[0].source = check;
   });
 
   // buttons images
@@ -229,26 +249,6 @@ async function getSkinPrice(name) {
   return skin.price;
 }
 
-/* async function getSkins() {
-  const response = await fetch('${process.env.API_BASE_URL}/skins');
-  if (!response.ok) throw new Error(`fetch error : ${response.status} : ${response.statusText}`);
-  const skins = await response.json();
-  console.log(skins);
-  return skins;
-}
-
-  // const options = {
-    //   method: 'POST',
-    //   body: JSON.stringify({
-      //     username,
-      //     password,
-    //   }),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // };
- */
-
 async function buySkin(user, skinName) {
   // get skin to buy
   const responseSkinToBuy = await fetch(
@@ -263,21 +263,21 @@ async function buySkin(user, skinName) {
   if (user.balance < skinToBuy.price) return false;
 
   
- await addSkinToUser(user,skinToBuy);
- await updateUserBalance(user,skinToBuy);
- await changeCurrentSkin(user,skinToBuy);
+  await addSkinToUser(user,skinToBuy.name);
+  await updateUserBalance(user,skinToBuy.price);
+  await changeCurrentSkin(user,skinToBuy.name);
 
- return true;
+  return true;
 }
 
 // add skin tu user skin list
-async function addSkinToUser(user, skinToBuy){
+async function addSkinToUser(user, skinName){
   const responseAddingSkinToUser = await fetch(
     `${process.env.API_BASE_URL}/users/skins?username=${user.username}`,
     {
       method: 'PATCH',
       body: JSON.stringify({
-        name: skinToBuy.name,
+        name: skinName,
       }),
       credentials: 'include',
       mode:'cors',
@@ -289,16 +289,18 @@ async function addSkinToUser(user, skinToBuy){
 
   if (!responseAddingSkinToUser.ok)
     throw new Error(`fetch error : ${responseAddingSkinToUser.status} : ${responseAddingSkinToUser.statusText}`);
+
+  return true;
 }
 
 // remove money to user balance
-async function updateUserBalance(user,skinToBuy){
+async function updateUserBalance(user,price){
  const response = await fetch(
   `${process.env.API_BASE_URL}/users/balance?username=${user.username}`,
     {
       method: 'PATCH',
       body: JSON.stringify({
-        balance: skinToBuy.price,
+        balance: price,
         operator:"-"
       }),
       credentials: 'include',
@@ -314,13 +316,13 @@ async function updateUserBalance(user,skinToBuy){
 }
 
 // change current skin to the new one
-async function changeCurrentSkin(user, skin){
+async function changeCurrentSkin(user, skinName){
   const response = await fetch(
     `${process.env.API_BASE_URL}/users/currentSkin?username=${user.username}`,
     {
       method: 'PATCH',
       body: JSON.stringify({
-        name: skin.name,
+        name: skinName,
       }),
       credentials: 'include',
       mode:'cors',
