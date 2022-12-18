@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { readOneUserFromUsername } = require('../models/users');
 
-const jwtSecret = 'myRealNameIsOTTO!';
+const jwtSecret = process.env.JWT_KEY;
 
 const authorize = (req, res, next) => {
   const { token } = req.session;

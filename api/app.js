@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const logger = require('morgan');
 const cors = require('cors');
+require("dotenv").config();
 
 // our routers
 const usersRouter = require('./routes/users');
@@ -20,11 +21,11 @@ origin: [/https:\/\/e-vinci\.github\.io\/SealRescue-Frontend.*/, /http:\/\/local
 const app = express();
 
 const expiryDateIn3Months = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30 * 3);
-const cookieSecreteKey = 'SealRescue';
+const cookieSecretKey = process.env.COOKIE_KEY;
 app.use(
   cookieSession({
     name: 'user',
-    keys: [cookieSecreteKey],
+    keys: [cookieSecretKey],
     cookie: {
       httpOnly: true,
       secure: true,
