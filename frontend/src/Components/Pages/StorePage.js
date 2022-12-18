@@ -263,9 +263,9 @@ async function buySkin(user, skinName) {
   if (user.balance < skinToBuy.price) return false;
 
   
- addSkinToUser(user,skinToBuy);
- updateUserBalance(user,skinToBuy);
- changeCurrentSkin(user,skinToBuy);
+ await addSkinToUser(user,skinToBuy);
+ await updateUserBalance(user,skinToBuy);
+ await changeCurrentSkin(user,skinToBuy);
 
  return true;
 }
