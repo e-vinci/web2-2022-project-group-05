@@ -1,3 +1,4 @@
+import { removePathPrefix, usePathPrefix } from '../../utils/path-prefix';
 import routes from './routes';
 
 const Router = () => {
@@ -7,24 +8,25 @@ const Router = () => {
 };
 
 function onNavBarClick() {
-  const navItems = document.querySelectorAll('.nav-link');
+  const navbarWrapper = document.querySelector('#navbarWrapper');
 
-  navItems.forEach((item) => {
-    item.addEventListener('click', (e) => {
-      e.preventDefault();
-      const uri = e.target?.dataset?.uri;
+  navbarWrapper.addEventListener('click', (e) => {
+    e.preventDefault();
+    const navBarItemClicked = e.target;
+    const uri = navBarItemClicked?.dataset?.uri;
+    if (uri) {
       const componentToRender = routes[uri];
       if (!componentToRender) throw Error(`The ${uri} ressource does not exist.`);
 
       componentToRender();
-      window.history.pushState({}, '', uri);
-    });
+      window.history.pushState({}, '', usePathPrefix(uri));
+    }
   });
 }
 
 function onHistoryChange() {
   window.addEventListener('popstate', () => {
-    const uri = window.location.pathname;
+    const uri = removePathPrefix(window.location.pathname);
     const componentToRender = routes[uri];
     componentToRender();
   });
@@ -32,7 +34,7 @@ function onHistoryChange() {
 
 function onFrontendLoad() {
   window.addEventListener('load', () => {
-    const uri = window.location.pathname;
+    const uri = removePathPrefix(window.location.pathname);
     const componentToRender = routes[uri];
     if (!componentToRender) throw Error(`The ${uri} ressource does not exist.`);
 

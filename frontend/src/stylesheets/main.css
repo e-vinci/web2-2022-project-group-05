@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100%;
+    color: #333;
+    background-color: #ffec22;
+    background-image: linear-gradient(180deg, #ffbe00 2%,#ffec22 50%, #9ff6cd 100%);
+    background-repeat: no-repeat;
+}
+
+canvas {
+    height: 100%;
+    width: 100%;
+}
+
+footer {
+    position: fixed;
+    height: 50px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin-bottom: 0px;
+}

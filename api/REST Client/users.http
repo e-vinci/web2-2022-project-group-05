@@ -2,3 +2,51 @@
 
 ### Read all users
 GET {{baseUrl}}/users
+### Read all users ordered by highscore
+GET {{baseUrl}}/users?order=score
+### Get one user by its username 
+GET {{baseUrl}}/users/user?username=user
+
+
+### Update balance of the user
+PATCH {{baseUrl}}/users/balance?username=user
+Content-Type: application/json
+
+{
+    "balance":"200",
+    "operator": "+"
+}
+
+### Update user's highscore
+PATCH {{baseUrl}}/users/highscore?username=user
+Content-Type: application/json
+
+{
+    "highscore": 32222
+}
+
+### add one skin to the user
+PATCH {{baseUrl}}/users/skins?username=user
+Content-Type: application/json
+
+{
+    "name":"tiger"
+}
+
+
+### Update current skin of the user
+PATCH {{baseUrl}}/users/currentSkin?username=user
+Content-Type: application/json
+
+{
+    "name":"tiger"
+}
+
+### Update curent skin of the user
+PATCH {{baseUrl}}/users/currentSkin?username=user
+Content-Type: application/json
+
+{
+    "name":"tiger"
+}
+

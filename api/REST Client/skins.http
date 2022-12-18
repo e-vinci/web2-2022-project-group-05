@@ -1,0 +1,15 @@
+@baseUrl = http://localhost:3000
+
+### Get all skins
+GET {{baseUrl}}/skins
+Content-Type: application/json
+
+### Get all skins ordered by price
+GET {{baseUrl}}/skins?order=price
+Content-Type: application/json
+
+### Get one skin by its name
+GET {{baseUrl}}/skins/skinName?name=panda
+Content-Type: application/json
+
+
