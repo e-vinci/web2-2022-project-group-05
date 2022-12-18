@@ -63,7 +63,7 @@ import playIcon from '../../assets/img/play-icon.png';
 import restartIcon from '../../assets/img/restart-icon.png';
 import homeIcon from '../../assets/img/home-icon.png';
 import pauseMenuURL from '../../assets/img/menuPause.json';
-import moneyIcon from '../../assets/img/money-icon.png';
+import moneyIcon from '../../assets/img/leaderboard-icon.png';
 import tigerTextureURL from '../../assets/texture/Seal_ColorMap_Tiger.png';
 import loadSealURL from '../../assets/img/seal load.json';
 import bottleImportUrl from '../../assets/3Dmodels/waterBottle.glb';
