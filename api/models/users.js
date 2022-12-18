@@ -155,7 +155,7 @@ function changeCurrentSkin(skinName, username){
   if (users[index].currentSkin === skinName || !users[index].skins.findIndex((skin) => skin === skinName)) return undefined; 
   
   users[index].currentSkin = skinName;
-
+  
   serialize(jsonDbPath, users);
   return users[index].currentSkin;
 }

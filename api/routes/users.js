@@ -48,22 +48,22 @@ router.patch('/highscore', authorize,(req, res) => {
 router.patch('/skins', authorize, (req, res) => {
   let user;
   if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
-  const skinId = req?.body?.id;
-  if (!skinId) return res.sendStatus(404);
+  const skinName = req?.body?.name;
+  if (!skinName) return res.sendStatus(404);
   
-  const newLenght = userData.addSkinToUser(skinId, user.username);
-  if (!newLenght) return res.json(); // empty json
-  return res.json(newLenght);
+  const newLength = userData.addSkinToUser(skinName, user.username);
+  if (!newLength) return res.json(); // empty json
+  return res.json(newLength);
 }); 
 
 /* PATCH replace the user's current skin */
 router.patch('/currentSkin', authorize, (req,res) => {
   let user;
   if (req?.query?.username) user = userData.readOneUserFromUsername(req.query.username);
-  const newSkin = req?.body?.id;
+  const newSkin = req?.body?.name;
   if (!newSkin) return res.sendStatus(404);
 
-  const newCurrentSkin = userData.changeCurrentSkin(parseInt(newSkin,10),user);
+  const newCurrentSkin = userData.changeCurrentSkin(newSkin,user.username);
   return res.json(newCurrentSkin);
 });
 

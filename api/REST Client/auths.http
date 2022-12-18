@@ -1,45 +1,7 @@
 # @baseUrl = https://sealrescue-api2.azurewebsites.net/
 @baseUrl = http://localhost:3000
-### Try to login an unknow user
-POST {{baseUrl}}/auths/login
-Content-Type: application/json
-
-{
-    "username":"unknown",
-    "password":"unknown"
-}
-
-### Login the default user
-POST {{baseUrl}}/auths/login
-Content-Type: application/json
-
-{
-    "username":"hi",
-    "password":"hi"
-}
-
-
-### Create random user
-POST {{baseUrl}}/auths/register
-Content-Type: application/json
-
-{
-    "username":"user2",
-    "password":"user2"
-}
-
-
-### Create random user
-POST {{baseUrl}}/auths/register
-Content-Type: application/json
-
-{
-    "username":"user4",
-    "password":"user4"
-}
 
 ### Login user2
-
 POST {{baseUrl}}/auths/login
 Content-Type: application/json
 
@@ -53,8 +15,17 @@ POST {{baseUrl}}/auths/login
 Content-Type: application/json
 
 {
-    "username":"hello",
-    "password":"hello"
+    "username":"newUser",
+    "password":"123"
+}
+
+### register an user
+POST {{baseUrl}}/auths/register
+Content-Type: application/json
+
+{
+    "username":"newUsername",
+    "password":"123"
 }
 
 ### Logout any user

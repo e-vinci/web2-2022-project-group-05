@@ -3,14 +3,13 @@
 ### Read all users
 GET {{baseUrl}}/users
 ### Read all users ordered by highscore
-GET {{baseUrl}}/users/?order=score
+GET {{baseUrl}}/users?order=score
 ### Get one user by its username 
-GET {{baseUrl}}/users/user?username=user1
-
+GET {{baseUrl}}/users/user?username=user
 
 
 ### Update balance of the user
-PATCH {{baseUrl}}/users/balance?username=user1
+PATCH {{baseUrl}}/users/balance?username=user
 Content-Type: application/json
 
 {
@@ -27,20 +26,20 @@ Content-Type: application/json
 }
 
 ### add one skin to the user
-PATCH {{baseUrl}}/users/skins?username=user2
+PATCH {{baseUrl}}/users/skins?username=user
 Content-Type: application/json
 
 {
-    "id":3
+    "name":"tiger"
 }
 
 
-### Update current skin of the user2
-PATCH {{baseUrl}}/users/currentSkin?username=user2
+### Update current skin of the user
+PATCH {{baseUrl}}/users/currentSkin?username=user
 Content-Type: application/json
 
 {
-    "id":3
+    "name":"tiger"
 }
 
 ### Update curent skin of the user
@@ -48,6 +47,6 @@ PATCH {{baseUrl}}/users/currentSkin?username=user
 Content-Type: application/json
 
 {
-    "id":2
+    "name":"panda"
 }
 
